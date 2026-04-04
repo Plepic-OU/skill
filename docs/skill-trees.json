@@ -1,0 +1,339 @@
+{
+  "axes": {
+    "autonomy": {
+      "name": "Autonomy",
+      "description": "How much you delegate to AI and what verification strategy replaces human review at each level.",
+      "icon": "🎯",
+      "color": "#6366f1",
+      "levels": [
+        {
+          "level": 1,
+          "name": "Autocomplete",
+          "desc": "AI suggests completions, you accept or reject inline. You write the code, AI accelerates typing.",
+          "verification": "Human verifies inline as they type.",
+          "obstacles": [
+            "Feels like 'just autocomplete' — hard to see it as the first step of a progression",
+            "Tab-accepting without reading creates subtle bugs early",
+            "No mental model of what the AI is doing behind the scenes"
+          ],
+          "howToProgress": [
+            "Start noticing when you accept suggestions without reading them",
+            "Try giving the AI a whole function to write via chat — observe the difference",
+            "Compare your output speed on a task with and without completions"
+          ]
+        },
+        {
+          "level": 2,
+          "name": "Review Every Edit",
+          "desc": "AI generates code blocks or diffs. You review and approve every single change before it lands.",
+          "verification": "Human is the full verification layer. Every diff gets eyes.",
+          "obstacles": [
+            "Review fatigue — rubber-stamping after the 20th diff",
+            "Output looks plausible, so your brain registers 'good' before you've checked logic",
+            "Trusting code that compiles but has subtle logic errors"
+          ],
+          "howToProgress": [
+            "Set up YOLO mode, so agent can do it's thing, but be safe enough for your use case",
+            "Review 100 diffs manually — note where errors actually hide",
+            "Experiment by trying to fix the bugs with AI",
+            "Start categorizing: which types of prompts are always safe vs. need scrutiny"
+          ]
+        },
+        {
+          "level": 3,
+          "name": "Review Per Session",
+          "desc": "You let the AI work on a task without human approval, then review the full session output holistically. You use some sort of YOLO mode for that.",
+          "verification": "Human reviews holistically. Linter, formatter, and basic tests support the review.",
+          "obstacles": [
+            "Missing subtle errors buried in a larger changeset",
+            "Losing track of what the AI changed vs. what was already there",
+            "Session output too large to review effectively"
+          ],
+          "howToProgress": [
+            "Use git diff as your review surface instead of watching edits live",
+            "Set up linting and formatting to catch mechanical issues automatically",
+            "Practice identifying the 'critical path' in a changeset — what matters most",
+            "Start writing tests before delegating so you can verify the result"
+          ]
+        },
+        {
+          "level": 4,
+          "name": "Review Critical Only",
+          "desc": "You only review architecture decisions, security-sensitive code, and critical business logic. Everything else is covered by automated verification.",
+          "verification": "Automated code review, agentic verification loops, CI/test suites cover non-critical code. Human focuses on what matters.",
+          "obstacles": [
+            "Defining what's 'critical' vs. 'non-critical' is harder than it sounds",
+            "Automated review tooling isn't set up yet — you skip review instead of automating it",
+            "False confidence in test coverage that doesn't actually catch agent-introduced bugs",
+            "Agentic verification loops need their own validation"
+          ],
+          "howToProgress": [
+            "Set up automated code review (agentic reviewers, linters, static analysis)",
+            "Define explicit criteria: what always needs human eyes",
+            "Build agentic verification loops — AI reviews AI output",
+            "Measure: what percentage of bugs are caught by automation vs. human review",
+            "Write tests before delegating tasks so the AI has success criteria"
+          ]
+        },
+        {
+          "level": 5,
+          "name": "Review the Result",
+          "desc": "You don't look at code. You review the outcome — does the feature work, does the test pass, does the deploy succeed.",
+          "verification": "Full CI/test pipeline, automated quality gates, staging environment validation. Code is a black box.",
+          "obstacles": [
+            "Technical debt accumulates invisibly when nobody reads the code",
+            "Edge cases that pass automated tests but fail in production",
+            "Losing architectural coherence across many AI-generated changes",
+            "Hard to debug when something eventually does break"
+          ],
+          "howToProgress": [
+            "Build comprehensive test suites that you trust more than code review",
+            "Set up staging environments that mirror production",
+            "Implement automated architecture checks (dependency rules, module boundaries)",
+            "Schedule periodic deep-dive code audits even if you don't review daily"
+          ]
+        },
+        {
+          "level": 6,
+          "name": "Fully Automated",
+          "desc": "No human review. Tasks flow in, code ships out. End-to-end automated verification, monitoring, and rollback handle quality.",
+          "verification": "End-to-end automated verification pipeline, production monitoring, automatic rollback on anomalies. Human intervention is the exception, not the rule.",
+          "obstacles": [
+            "Requires extremely mature testing, monitoring, and rollback infrastructure",
+            "Novel failure modes that no automated check anticipates",
+            "Organizational trust — stakeholders uncomfortable with no human in the loop",
+            "Regulatory requirements may mandate human review in some domains"
+          ],
+          "howToProgress": [
+            "This is the frontier. Build confidence incrementally by automating review for low-risk tasks first.",
+            "Invest in production monitoring and anomaly detection",
+            "Design circuit breakers that halt automation when metrics deviate",
+            "Maintain the ability to drop back to level 5 or 4 instantly when needed"
+          ]
+        }
+      ]
+    },
+    "parallelExecution": {
+      "name": "Parallel Execution",
+      "description": "How many concurrent AI tasks you manage and how they're coordinated.",
+      "icon": "⚡",
+      "color": "#0891b2",
+      "levels": [
+        {
+          "level": 1,
+          "name": "Single Task",
+          "desc": "One agent, one task, one branch. You wait for it to finish before starting the next thing.",
+          "obstacles": [
+            "Waiting feels natural — hard to see idle time as waste",
+            "No concept of task independence — everything feels sequential",
+            "The agent finishes fast enough that parallelism seems unnecessary"
+          ],
+          "howToProgress": [
+            "While waiting for one agent, ask yourself: is there a second independent task I could start?",
+            "Time your idle wait across 10 sessions — that's your parallelism opportunity",
+            "Identify tasks in your backlog that don't touch the same files"
+          ]
+        },
+        {
+          "level": 2,
+          "name": "Manual Parallel",
+          "desc": "You run 2-5 agents in parallel on separate tasks. You launch them manually and track their progress yourself.",
+          "obstacles": [
+            "Context switching between agents is cognitively expensive",
+            "Parallel tasks that step on each other (same files, merge conflicts)",
+            "Losing track of which agent is doing what"
+          ],
+          "howToProgress": [
+            "Identify 3 truly independent tasks and run them simultaneously for a week",
+            "Build a lightweight tracking system for parallel agent state",
+            "Learn to decompose work into non-overlapping units",
+            "Practice the attention discipline: check in on agents, don't hover"
+          ]
+        },
+        {
+          "level": 3,
+          "name": "Task Queue",
+          "desc": "You have an AI task orchestrator. You write tasks, the orchestrator picks them up and assigns them to agents automatically.",
+          "obstacles": [
+            "Task specification must be precise enough for autonomous execution",
+            "Queue management overhead — stale tasks, priority inversion",
+            "Orchestrator errors compound across the queue"
+          ],
+          "howToProgress": [
+            "Set up a simple task queue (even a file-based one) that agents consume",
+            "Write task specs precise enough that any agent can pick them up without clarification",
+            "Build monitoring for queue health: stuck tasks, failure rates, throughput"
+          ]
+        },
+        {
+          "level": 4,
+          "name": "Directed Orchestration",
+          "desc": "You give high-level direction. AI proposes a task breakdown, you review and approve it, then the orchestrator executes.",
+          "obstacles": [
+            "AI task decomposition may miss dependencies or create wrong abstractions",
+            "Reviewing proposed tasks requires understanding the full scope",
+            "Approval bottleneck — you become the queue's limiting factor"
+          ],
+          "howToProgress": [
+            "Start with AI proposing task breakdowns for features you understand well — calibrate trust",
+            "Build templates for common task decomposition patterns",
+            "Define approval criteria: what makes a proposed breakdown good enough to execute",
+            "Gradually expand to less familiar areas as you build confidence in the decomposition quality"
+          ]
+        },
+        {
+          "level": 5,
+          "name": "Autonomous Orchestration",
+          "desc": "You give direction, AI creates tasks and executes them. You define goals and constraints, the system handles decomposition and execution.",
+          "obstacles": [
+            "Wrong decomposition propagates errors across all spawned tasks",
+            "Cost explosion without governance — autonomous agents burn tokens freely",
+            "Emergent behavior when many agents interact without human checkpoint",
+            "Hard to debug: which decision in the chain caused the bad outcome"
+          ],
+          "howToProgress": [
+            "This is the frontier of parallel execution.",
+            "Build robust monitoring and cost controls before enabling full autonomy",
+            "Implement circuit breakers that pause orchestration on anomalies",
+            "Start with narrow domains where autonomous decomposition is well-understood"
+          ]
+        }
+      ]
+    },
+    "skillUsage": {
+      "name": "Skill Usage",
+      "description": "How sophisticated your AI tooling is — from using what's built in to creating self-improving tool chains.",
+      "icon": "🔧",
+      "color": "#059669",
+      "levels": [
+        {
+          "level": 1,
+          "name": "Built-in Only",
+          "desc": "You use the AI tool's default capabilities. No custom configuration, no extensions, no plugins.",
+          "obstacles": [
+            "Don't know what extensions exist or why you'd want them",
+            "Built-in capabilities feel sufficient for current tasks",
+            "Configuration feels like yak-shaving"
+          ],
+          "howToProgress": [
+            "Browse the extension/plugin marketplace for your AI tool",
+            "Ask other developers what tools they've added to their setup",
+            "Identify one repetitive task that a plugin might automate"
+          ]
+        },
+        {
+          "level": 2,
+          "name": "Third-Party Skills",
+          "desc": "You install and use third-party plugins, extensions, or skill packs that extend your AI's capabilities.",
+          "obstacles": [
+            "Evaluating quality — many plugins are poorly maintained",
+            "Configuration overhead for each new tool",
+            "Security concerns with third-party extensions accessing your code"
+          ],
+          "howToProgress": [
+            "Install 3 well-regarded extensions and use them for a week",
+            "Evaluate: which actually saved time vs. which were overhead",
+            "Start reading how existing skills are built — peek at the source"
+          ]
+        },
+        {
+          "level": 3,
+          "name": "MCP Services",
+          "desc": "You connect AI to external services via MCP (Model Context Protocol) — databases, APIs, monitoring tools. The AI can query and act on real systems.",
+          "obstacles": [
+            "MCP setup and configuration can be fiddly",
+            "Security implications of giving AI access to external systems",
+            "Knowing which services benefit most from MCP integration"
+          ],
+          "howToProgress": [
+            "Connect one MCP service to your AI tool (e.g., database, monitoring)",
+            "Use it for a real task and evaluate the workflow improvement",
+            "Think about which of your daily workflows involve systems the AI can't currently reach"
+          ]
+        },
+        {
+          "level": 4,
+          "name": "Create Skills Manually",
+          "desc": "You write custom skills, commands, or workflows that extend your AI's capabilities for your specific needs.",
+          "obstacles": [
+            "Learning the skill/extension authoring format",
+            "Scoping: writing skills that are too broad or too narrow",
+            "Maintenance burden of custom tooling"
+          ],
+          "howToProgress": [
+            "Identify your most repeated AI workflow and codify it as a custom skill",
+            "Write 3 skills and iterate based on daily use",
+            "Share a skill with a teammate — their feedback reveals your assumptions"
+          ]
+        },
+        {
+          "level": 5,
+          "name": "Create Skills with AI",
+          "desc": "You use AI to generate and iterate on custom skills. The AI helps build its own tooling.",
+          "obstacles": [
+            "AI-generated skills may have subtle bugs in edge cases",
+            "Prompt engineering for skill generation is its own skill",
+            "Testing AI-generated tools requires understanding what they should do"
+          ],
+          "howToProgress": [
+            "Have AI generate a skill from a natural language description of what you need",
+            "Iterate: use the skill, find gaps, have AI fix them",
+            "Build a feedback loop: use → evaluate → improve → repeat"
+          ]
+        },
+        {
+          "level": 6,
+          "name": "Self-Improving Loop",
+          "desc": "Skills improve themselves. AI evaluates skill effectiveness, identifies weaknesses, and generates improved versions — a recursive self-improvement cycle.",
+          "obstacles": [
+            "Improvement loops can drift from the original intent",
+            "Evaluating whether an 'improvement' is actually better requires clear metrics",
+            "Runaway optimization for the wrong objective",
+            "Diminishing returns after initial improvements"
+          ],
+          "howToProgress": [
+            "This is the frontier of skill development.",
+            "Define clear success criteria before starting improvement loops",
+            "Build in human checkpoints to prevent drift",
+            "Track metrics across iterations to know when to stop"
+          ]
+        }
+      ]
+    }
+  },
+  "safety": {
+    "name": "Safety Zone",
+    "description": "The consequence level of your environment. This is not a progression — it's where you operate. It determines how much verification infrastructure you need at each autonomy level.",
+    "icon": "🛡️",
+    "zones": {
+      "safe-zone": {
+        "label": "Safe-zone",
+        "color": "#16a34a",
+        "bg": "#f0fdf4",
+        "border": "#86efac",
+        "desc": "Mistake shows incorrect information. Static websites, hobby projects, personal tools. Mistakes are annoying but recoverable."
+      },
+      "normal": {
+        "label": "Normal",
+        "color": "#2563eb",
+        "bg": "#eff6ff",
+        "border": "#93c5fd",
+        "desc": "Mistake stops your service for your users. Production systems with real users, but bounded blast radius."
+      },
+      "hardcore": {
+        "label": "Hardcore",
+        "color": "#dc2626",
+        "bg": "#fef2f2",
+        "border": "#fca5a5",
+        "desc": "Mistake stops client services too. Your failure cascades to downstream systems and customers."
+      },
+      "impossible": {
+        "label": "Impossible",
+        "color": "#7c3aed",
+        "bg": "#f5f3ff",
+        "border": "#c4b5fd",
+        "desc": "Mistake costs lives. Medical devices, autonomous vehicles, critical infrastructure. The highest stakes."
+      }
+    }
+  }
+}
