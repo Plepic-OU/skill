@@ -30,9 +30,10 @@ Single-page application, no server-side rendering.
 ```
 
 - **Frontend:** React + Vite + TypeScript, deployed to GitHub Pages
+- **SPA Routing:** GitHub Pages serves static files only — use the 404.html trick (copy `index.html` to `404.html`) so that direct navigation to routes like `/profile/{userId}` loads the SPA instead of returning a 404
 - **Backend:** Firebase (Auth + Firestore), no custom API layer
-- **Styling:** Plepic design system (CSS), mobile-first with desktop support
-- **Infrastructure:** Terraform for Firebase provisioning
+- **Styling:** [Plepic design system](https://github.com/Plepic-OU/public-web/raw/refs/heads/main/design-system.html) ([CSS](https://github.com/Plepic-OU/public-web/raw/refs/heads/main/design-system.css)), mobile-first with desktop support
+- **Infrastructure:** Terraform for Firebase provisioning (project, Auth providers, Firestore database). Terraform state stored remotely. Firebase Security Rules and indexes deployed via Firebase CLI (`firebase.json`, `firestore.rules`, `firestore.indexes.json` checked into repo) — not managed by Terraform to avoid drift.
 
 ## Skill Tree Content
 
@@ -55,7 +56,7 @@ The core experience is an RPG talent tree:
 - 3 visual paths (one per axis), each showing connected level nodes
 - **Level 1 starts unlocked** on all axes
 - Higher levels are visible but **locked/dimmed** — users can peek ahead
-- Users click a node to expand details (description, obstacles, growth path)
+- Users click a node to expand details (description, obstacles, growth path). Expansion style (inline within the tree vs. modal overlay) to be decided by UX designer.
 - **"I've reached this level"** unlocks the node — this IS the assessment
 - Users can also **level down** if they reassess
 - Unlocked/claimed nodes get visual distinction (glow, badge, color)
@@ -68,7 +69,7 @@ Separate selector alongside the skill tree — like choosing your "difficulty mo
 ### Screens
 
 1. **Skill Map (Landing + Profile)** — The full skill tree is the single main view. For unauthenticated users it's the browseable landing page. For authenticated users it shows their progress — same screen, same URL. Share button appears when progress exists.
-2. **Node Detail** — Expanded view of a skill level: description, obstacles, how to progress. Inline or modal.
+2. **Node Detail** — Expanded view of a skill level: description, obstacles, how to progress. Presentation style (inline or modal) deferred to UX designer.
 3. **Shared Profile** — Public read-only view at `/profile/{userId}`. Same tree visualization with the user's progress, no edit controls. No auth required to view.
 
 ### Navigation
@@ -85,7 +86,7 @@ Minimal. The skill tree map is the landing page. Top bar with login/profile in t
 ### Auth for persistence and sharing
 
 - **Login button** in top-right corner (standard placement). Shows avatar/name when logged in
-- **"Share" button** near the profile/tree — prompts login if not authenticated (must persist to Firestore before generating shareable link)
+- **"Share" button** near the profile/tree — prompts login if not authenticated (must persist to Firestore before generating shareable link). Logging in and syncing to Firestore makes the profile publicly accessible — no separate sharing toggle for MVP.
 - **"Login to save"** button also available separately
 
 ### Data sync
@@ -103,7 +104,7 @@ Interact with tree → localStorage (immediate)
 ```
 
 - Once logged in, localStorage state syncs to Firestore automatically
-- On conflict (existing local + existing Firestore data), Firestore wins
+- On conflict (existing local + existing Firestore data), Firestore wins silently — no user notification
 - Experience stays snappy — no loading spinners for progression
 
 ## Data Model
@@ -118,7 +119,6 @@ Interact with tree → localStorage (immediate)
 users/{userId}
   ├── displayName: string
   ├── avatarUrl: string
-  ├── shareEnabled: boolean
   └── assessments/
         └── {assessmentId}    // "latest" for MVP, timestamped for history
               ├── timestamp: Date
@@ -137,7 +137,7 @@ users/{userId}
 
 - Safety zone is per-assessment (environment context, not skill)
 - Skills stored as level numbers — meaning comes from static skill-trees.json
-- `shareEnabled` controls public visibility
+- All synced profiles are publicly accessible at `/profile/{userId}` (no sharing toggle for MVP — a `shareEnabled` flag can be added later if users need to revoke visibility)
 - Assessments subcollection allows history; MVP uses "latest"
 
 ## Style
