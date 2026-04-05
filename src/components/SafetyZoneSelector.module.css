@@ -6,13 +6,22 @@
   padding: 0 var(--space-xl);
 }
 
-.label {
+.heading {
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 0.9rem;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--text-1);
+  text-align: center;
+  margin-bottom: var(--space-2xs);
+}
+
+.label {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 0.82rem;
   color: var(--text-3);
   text-align: center;
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--space-md);
 }
 
 .options {
@@ -23,15 +32,20 @@
 }
 
 .btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
   font-family: var(--font-mono);
   font-size: 0.72rem;
   font-weight: 600;
-  padding: 0.35rem 0.8rem;
-  border-radius: 20px;
+  padding: 0.55rem 0.7rem 0.45rem;
+  border-radius: 12px;
   border: 2px solid;
   cursor: pointer;
   transition: all var(--transition-fast);
   background: transparent;
+  min-width: 5.5rem;
 }
 .btn:hover {
   transform: translateY(-2px) !important;
@@ -42,12 +56,30 @@
   outline-offset: 2px;
 }
 
+.btnIcon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.btnLabel {
+  font-size: 0.72rem;
+  line-height: 1.2;
+}
+
+.btnHint {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 400;
+  opacity: 0.8;
+  line-height: 1.2;
+}
+
 .desc {
   text-align: center;
   font-size: 0.78rem;
   color: var(--text-3);
   margin-top: var(--space-sm);
-  min-height: 1.6em;
+  min-height: 3em;
   font-style: italic;
 }
 
@@ -57,6 +89,10 @@
   }
   .btn {
     font-size: 0.65rem;
-    padding: 0.3rem 0.6rem;
+    padding: 0.4rem 0.5rem 0.35rem;
+    min-width: 4.5rem;
+  }
+  .btnHint {
+    font-size: 0.55rem;
   }
 }

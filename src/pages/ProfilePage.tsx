@@ -18,6 +18,7 @@ function SafetyBadge({ zoneId }: { zoneId: SafetyZoneId }) {
   const zone = skillTreeData.safety.zones[zoneId]
   return (
     <div className={styles.safetyBadge}>
+      <span className={styles.safetyBadgeTitle}>Stakes</span>
       <span className={styles.safetyDot} style={{ background: zone.color }} />
       <span className={styles.safetyLabel}>{zone.label}</span>
       <span className={styles.safetyDesc}>{zone.desc}</span>

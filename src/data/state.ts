@@ -4,13 +4,13 @@ import type { AxisId, SafetyZoneId, SkillState } from '../types/skill-tree'
 const STORAGE_KEY = 'plepic-skill-state'
 
 const AXIS_IDS: AxisId[] = ['autonomy', 'parallelExecution', 'skillUsage']
-const SAFETY_ZONE_IDS: SafetyZoneId[] = ['safe-zone', 'normal', 'hardcore', 'impossible']
+const SAFETY_ZONE_IDS: SafetyZoneId[] = ['sandbox', 'normal', 'hardcore', 'impossible']
 
 export const DEFAULT_STATE: SkillState = {
   autonomy: 1,
   parallelExecution: 1,
   skillUsage: 1,
-  safetyZone: 'safe-zone',
+  safetyZone: 'sandbox',
 }
 
 function isValidState(data: unknown): data is SkillState {

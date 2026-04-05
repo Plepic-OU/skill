@@ -84,6 +84,13 @@
   flex-wrap: wrap;
 }
 
+.safetyBadgeTitle {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--ink);
+}
+
 .safetyDot {
   width: 10px;
   height: 10px;

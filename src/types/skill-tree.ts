@@ -1,4 +1,4 @@
-export type SafetyZoneId = 'safe-zone' | 'normal' | 'hardcore' | 'impossible'
+export type SafetyZoneId = 'sandbox' | 'normal' | 'hardcore' | 'impossible'
 export type AxisId = 'autonomy' | 'parallelExecution' | 'skillUsage'
 
 export interface Level {
@@ -21,6 +21,8 @@ export interface Axis {
 
 export interface SafetyZone {
   label: string
+  icon: string
+  hint: string
   color: string
   bg: string
   border: string

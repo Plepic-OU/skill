@@ -33,7 +33,7 @@ Given('the test user has autonomy level {int} in Firestore', async ({ page }, le
   await setFirestoreAssessment(
     userId,
     { autonomy: level, parallelExecution: 1, skillUsage: 1 },
-    'safe-zone',
+    'sandbox',
   )
 })
 

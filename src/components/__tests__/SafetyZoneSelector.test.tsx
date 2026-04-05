@@ -3,7 +3,7 @@ import SafetyZoneSelector from '../SafetyZoneSelector'
 
 describe('SafetyZoneSelector', () => {
   const defaultProps = {
-    selected: 'safe-zone' as const,
+    selected: 'sandbox' as const,
     onSelect: vi.fn(),
   }
 
@@ -13,7 +13,7 @@ describe('SafetyZoneSelector', () => {
 
   it('renders all four zone buttons', () => {
     render(<SafetyZoneSelector {...defaultProps} />)
-    expect(screen.getByText('Safe-zone')).toBeInTheDocument()
+    expect(screen.getByText('Sandbox')).toBeInTheDocument()
     expect(screen.getByText('Normal')).toBeInTheDocument()
     expect(screen.getByText('Hardcore')).toBeInTheDocument()
     expect(screen.getByText('Impossible')).toBeInTheDocument()
@@ -21,7 +21,7 @@ describe('SafetyZoneSelector', () => {
 
   it('marks the selected zone as aria-checked', () => {
     render(<SafetyZoneSelector {...defaultProps} />)
-    expect(screen.getByText('Safe-zone').closest('[role="radio"]')).toHaveAttribute(
+    expect(screen.getByText('Sandbox').closest('[role="radio"]')).toHaveAttribute(
       'aria-checked',
       'true',
     )

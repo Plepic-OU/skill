@@ -38,7 +38,7 @@ describe('loadState', () => {
         autonomy: 99,
         parallelExecution: 1,
         skillUsage: 1,
-        safetyZone: 'safe-zone',
+        safetyZone: 'sandbox',
       }),
     )
     expect(loadState()).toEqual(DEFAULT_STATE)
@@ -51,7 +51,7 @@ describe('loadState', () => {
         autonomy: -1,
         parallelExecution: 1,
         skillUsage: 1,
-        safetyZone: 'safe-zone',
+        safetyZone: 'sandbox',
       }),
     )
     expect(loadState()).toEqual(DEFAULT_STATE)
@@ -75,7 +75,7 @@ describe('loadState', () => {
       autonomy: 0,
       parallelExecution: 0,
       skillUsage: 0,
-      safetyZone: 'safe-zone',
+      safetyZone: 'sandbox',
     }
     localStorage.setItem('plepic-skill-state', JSON.stringify(state))
     expect(loadState()).toEqual(state)

@@ -71,7 +71,7 @@ describe('syncOnLogin', () => {
       exists: () => true,
       data: () => ({
         skills: { autonomy: 1, parallelExecution: 1, skillUsage: 1 },
-        safetyZone: 'safe-zone',
+        safetyZone: 'sandbox',
       }),
     } as never)
     mockSetDoc.mockResolvedValue(undefined)
@@ -134,7 +134,7 @@ describe('writeAssessment', () => {
       autonomy: 1,
       parallelExecution: 1,
       skillUsage: 1,
-      safetyZone: 'safe-zone',
+      safetyZone: 'sandbox',
     })
 
     const written = mockSetDoc.mock.calls[0][1] as Record<string, unknown>
@@ -180,7 +180,7 @@ describe('readPublicProfile', () => {
       exists: () => true,
       data: () => ({
         skills: { autonomy: 1, parallelExecution: 1, skillUsage: 1 },
-        safetyZone: 'safe-zone',
+        safetyZone: 'sandbox',
       }),
     } as never)
 
@@ -194,7 +194,7 @@ describe('readPublicProfile', () => {
       exists: () => true,
       data: () => ({
         skills: { autonomy: 1, parallelExecution: 1, skillUsage: 1 },
-        safetyZone: 'safe-zone',
+        safetyZone: 'sandbox',
         displayName: 'Eve',
         avatarUrl: 'javascript:alert(1)',
       }),
@@ -209,7 +209,7 @@ describe('readPublicProfile', () => {
       exists: () => true,
       data: () => ({
         skills: { autonomy: 1, parallelExecution: 1, skillUsage: 1 },
-        safetyZone: 'safe-zone',
+        safetyZone: 'sandbox',
         displayName: 'Bob',
         avatarUrl: 'http://example.com/bob.jpg',
       }),

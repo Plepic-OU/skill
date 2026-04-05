@@ -319,12 +319,14 @@
     }
   },
   "safety": {
-    "name": "Safety Zone",
+    "name": "Stakes",
     "description": "The consequence level of your environment. This is not a progression — it's where you operate. It determines how much verification infrastructure you need at each autonomy level.",
     "icon": "🛡️",
     "zones": {
-      "safe-zone": {
-        "label": "Safe-zone",
+      "sandbox": {
+        "label": "Sandbox",
+        "icon": "potted_plant",
+        "hint": "hobby projects",
         "color": "#16a34a",
         "bg": "#f0fdf4",
         "border": "#86efac",
@@ -332,6 +334,8 @@
       },
       "normal": {
         "label": "Normal",
+        "icon": "groups",
+        "hint": "production systems",
         "color": "#2563eb",
         "bg": "#eff6ff",
         "border": "#93c5fd",
@@ -339,6 +343,8 @@
       },
       "hardcore": {
         "label": "Hardcore",
+        "icon": "bolt",
+        "hint": "cascading failures",
         "color": "#dc2626",
         "bg": "#fef2f2",
         "border": "#fca5a5",
@@ -346,6 +352,8 @@
       },
       "impossible": {
         "label": "Impossible",
+        "icon": "skull",
+        "hint": "lives at stake",
         "color": "#7c3aed",
         "bg": "#f5f3ff",
         "border": "#c4b5fd",
