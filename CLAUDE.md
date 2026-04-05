@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Gamified web app where developers self-assess agentic coding skills via an RPG-style skill tree. Hosted at skill.plepic.com. **Chunk 2 (Foundation) complete** — project scaffolded with full tooling and quality gates.
+Gamified web app where developers self-assess agentic coding skills via an RPG-style skill tree. Hosted at skill.plepic.com. **Chunk 3 (Component UI) complete** — fully interactive skill tree with localStorage persistence.
 
 ## Tech Stack
 
@@ -21,14 +21,15 @@ pnpm install          # install dependencies
 pnpm dev              # local dev server (Vite)
 pnpm build            # production build (typecheck + vite build → web/)
 pnpm test             # run unit tests in watch mode (Vitest)
-pnpm test:run         # run unit tests once
+pnpm test:run         # run unit tests once (28 tests)
 pnpm test <file>      # run a single test file
+pnpm test:e2e         # run E2E tests (Playwright + playwright-bdd, 13 scenarios)
 pnpm lint             # ESLint
 pnpm format           # Prettier
 pnpm typecheck        # tsc --noEmit
 ```
 
-Pre-commit hooks (Husky + lint-staged) enforce: ESLint, Prettier, and type-check on staged files. Vitest is not in the pre-commit hook yet (added in Chunk 3 when there are real tests).
+Pre-commit hooks (Husky + lint-staged) enforce: ESLint, Prettier, type-check, unit tests, and E2E tests on every commit.
 
 ## Key Directories
 
@@ -36,7 +37,11 @@ Pre-commit hooks (Husky + lint-staged) enforce: ESLint, Prettier, and type-check
 - `docs/prototypes/prototype-c2.html` — **The reference prototype** (Quest Paths "Scrollwork"). Use this as the visual/interaction reference when building React components.
 - `docs/` — Requirements, design specs, skill tree content
 - `docs/superpowers/specs/` — Detailed design specifications
-- `docs/skill-trees.json` — Static skill tree data (3 axes: autonomy, parallel execution, skill usage)
+- `docs/skill-trees.json` — Static skill tree data (3 axes: autonomy, parallel execution, skill usage) with Material Symbols icons
+- `src/components/` — React components: Header, Hero, SafetyZoneSelector, SkillTree, QuestPath, SkillNode, CelebrationEffect
+- `src/types/skill-tree.ts` — TypeScript interfaces for skill tree data and app state
+- `src/data/` — Data module (skill-trees.ts) and state persistence (state.ts)
+- `e2e/` — Playwright + playwright-bdd E2E tests (Gherkin features + step definitions)
 - `.impeccable.md` — Design context (brand personality, aesthetic direction, design principles)
 - `.claude/skills/` — Custom Claude Code skills (validate-design, brainstorming, impeccable design suite)
 
@@ -55,8 +60,8 @@ The design spec defines 6 ordered chunks. See `docs/superpowers/specs/2026-04-04
 
 1. ~~Visual Prototype~~ ✅ (Chunk 1)
 2. ~~Foundation~~ ✅ (Chunk 2) — `docs/superpowers/specs/2026-04-05-chunk2-foundation.md`
-3. Component UI (Chunk 3) — next
-4. Firebase Local (Chunk 4)
+3. ~~Component UI~~ ✅ (Chunk 3) — `docs/superpowers/specs/2026-04-05-chunk3-component-ui.md`
+4. Firebase Local (Chunk 4) — next
 5. Shareable Results (Chunk 5)
 6. Terraform & Deploy (Chunk 6)
 

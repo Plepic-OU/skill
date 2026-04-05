@@ -599,14 +599,19 @@ Chunk 3 is done when:
 
 Suggested order for incremental delivery within this chunk:
 
-1. **Data & Types** — Enrich `skill-trees.json`, create TypeScript interfaces, create data module
-2. **Scrollwork Tokens & Global Styles** — Update `index.css` with tokens and parchment texture
-3. **Header + Hero** — Static components, progress chips wired to state
-4. **SafetyZoneSelector** — Interactive, wired to state
-5. **SkillTree + QuestPath** — Grid layout, ribbon banners, trail connectors
-6. **SkillNode** — Three states, expand/collapse, claim/unclaim
-7. **CelebrationEffect** — Particle burst, ripple, seal stamp
-8. **localStorage Persistence** — Read on mount, write on change, validation
-9. **Unit Tests** — State logic, component interaction tests
-10. **E2E Tests** — Playwright + playwright-bdd setup, Gherkin features, step definitions
-11. **Pre-commit Hook Update** — Add test:run and test:e2e to hook
+1. **Data & Types** — Enrich `skill-trees.json`, create TypeScript interfaces, create data module ✅
+2. **Scrollwork Tokens & Global Styles** — Update `index.css` with tokens and parchment texture ✅
+3. **Header + Hero + SafetyZoneSelector** — Components wired to state ✅
+4. **SkillTree + QuestPath + SkillNode** — Grid layout, ribbons, connectors, three states, expand/collapse, claim/unclaim ✅
+5. **CelebrationEffect + App Integration + localStorage** — Wire everything together with state management and persistence ✅
+6. **Unit Tests** — 28 tests: state logic, SkillNode, SafetyZoneSelector, App ✅
+7. **E2E Tests + Pre-commit** — 13 Gherkin scenarios with Playwright + playwright-bdd, pre-commit hook updated ✅
+
+## Implementation Notes
+
+- **max-height for detail expand** uses 1200px (spec said 900px) to accommodate long content on narrow mobile viewports
+- **E2E "This is me" click** requires `force: true` and scoping to the expanded node because hidden detail panels' buttons are still in the DOM
+- **Vitest exclude** added for `.features-gen/` and `e2e/` directories to prevent Vitest from picking up Playwright-generated test files
+- **bddgen** step prepended to `test:e2e` script — Playwright-BDD generates spec files from Gherkin features before running
+- **Security review**: CelebrationEffect.ts uses inline `color` parameter in style assignments — safe because color values come from static bundled JSON data, never from user input
+- **Dependencies added**: `@playwright/test` ^1.59.1, `playwright-bdd` ^8.5.0
