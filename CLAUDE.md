@@ -42,7 +42,7 @@ Pre-commit hooks (Husky + lint-staged) enforce: ESLint, Prettier, type-check, un
 - `docs/skill-trees.json` — Static skill tree data (3 axes: autonomy, parallel execution, skill usage) with Material Symbols icons
 - `src/firebase.ts` — Firebase app init, emulator detection
 - `src/contexts/AuthContext.tsx` — Auth state context + `useAuth()` hook
-- `src/components/` — React components: Header, Hero, SafetyZoneSelector, SkillTree, QuestPath, SkillNode, CelebrationEffect, SignInModal
+- `src/components/` — React components: Header, Hero, SafetyZoneSelector, SkillTree, QuestPath, SkillNode, CelebrationEffect, SignInModal, ConfirmDialog, Toast
 - `src/types/skill-tree.ts` — TypeScript interfaces for skill tree data and app state
 - `src/data/` — Data module (skill-trees.ts), state persistence (state.ts), auth helpers (auth.ts), Firestore sync (sync.ts)
 - `e2e/` — Playwright + playwright-bdd E2E tests (Gherkin features + step definitions)

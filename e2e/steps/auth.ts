@@ -5,7 +5,7 @@ import { createTestUser, TEST_EMAIL, TEST_PASSWORD } from '../helpers/emulator'
 const { Given, When, Then } = createBdd()
 
 When('I click the login button', async ({ page }) => {
-  await page.getByRole('button', { name: 'Log in to save' }).click()
+  await page.getByRole('button', { name: 'Sign in to save' }).click()
 })
 
 Given('I sign in as a test user', async ({ page }) => {
@@ -27,8 +27,10 @@ Given('I sign in as a test user', async ({ page }) => {
 })
 
 When('I sign out', async ({ page }) => {
-  await page.getByRole('button', { name: 'Sign out' }).click()
-  await expect(page.getByText('Log in to save')).toBeVisible({ timeout: 5000 })
+  await page.getByRole('button', { name: 'Sign out' }).first().click()
+  // Confirm in the custom sign-out dialog
+  await page.getByRole('button', { name: 'Sign out' }).last().click()
+  await expect(page.getByText('Sign in to save')).toBeVisible({ timeout: 5000 })
 })
 
 Then('I should see the sign-in modal with Google and GitHub options', async ({ page }) => {

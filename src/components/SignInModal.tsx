@@ -55,8 +55,15 @@ export default function SignInModal({ open, onClose }: SignInModalProps) {
   return (
     <dialog ref={dialogRef} className={styles.dialog}>
       <div className={styles.content}>
+        <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
+          &times;
+        </button>
         <h2 className={styles.title}>Sign in</h2>
-        <p className={styles.subtitle}>Save your progress across devices</p>
+        <p className={styles.subtitle}>
+          Save your progress across devices.
+          <br />
+          <span className={styles.privacy}>We only store your skill levels and display name.</span>
+        </p>
         <div className={styles.buttons}>
           <button
             className={styles.providerBtn}
@@ -81,7 +88,7 @@ export default function SignInModal({ open, onClose }: SignInModalProps) {
                 fill="#EA4335"
               />
             </svg>
-            Sign in with Google
+            {signing ? 'Signing in\u2026' : 'Sign in with Google'}
           </button>
           <button
             className={styles.providerBtn}
@@ -94,7 +101,7 @@ export default function SignInModal({ open, onClose }: SignInModalProps) {
                 fill="currentColor"
               />
             </svg>
-            Sign in with GitHub
+            {signing ? 'Signing in\u2026' : 'Sign in with GitHub'}
           </button>
         </div>
         {error && <p className={styles.error}>{error}</p>}

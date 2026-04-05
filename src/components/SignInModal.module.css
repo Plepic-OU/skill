@@ -16,8 +16,34 @@
 }
 
 .content {
+  position: relative;
   padding: var(--space-xl) var(--space-xl) var(--space-lg);
   text-align: center;
+}
+
+.closeBtn {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: var(--ink-muted);
+  cursor: pointer;
+  border-radius: 6px;
+  line-height: 1;
+  transition: color var(--transition-fast);
+}
+.closeBtn:hover {
+  color: var(--ink);
+}
+.closeBtn:focus-visible {
+  outline: 2px solid var(--green-vivid);
+  outline-offset: 2px;
 }
 
 .title {
@@ -32,6 +58,12 @@
   font-size: 0.85rem;
   color: var(--ink-muted);
   margin: 0 0 var(--space-lg);
+  line-height: 1.5;
+}
+
+.privacy {
+  font-size: 0.75rem;
+  opacity: 0.7;
 }
 
 .buttons {

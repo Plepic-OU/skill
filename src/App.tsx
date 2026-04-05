@@ -8,36 +8,52 @@ import Header from './components/Header'
 import Hero from './components/Hero'
 import SafetyZoneSelector from './components/SafetyZoneSelector'
 import SkillTree from './components/SkillTree'
+import Toast, { showToast } from './components/Toast'
 import { celebrate } from './components/CelebrationEffect'
 import styles from './App.module.css'
+
+type SyncStatus = 'idle' | 'syncing' | 'saved' | 'error'
 
 export default function App() {
   const { user } = useAuth()
   const [state, setState] = useState<SkillState>(loadState)
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle')
   const pendingClaim = useRef<{ axisId: AxisId; level: number } | null>(null)
   const prevUser = useRef<string | null>(null)
   const syncing = useRef(false)
+  const savedTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
+
+  function showSaved() {
+    setSyncStatus('saved')
+    clearTimeout(savedTimer.current)
+    savedTimer.current = setTimeout(() => setSyncStatus('idle'), 3000)
+  }
 
   // Sync on login
   useEffect(() => {
     if (user && prevUser.current !== user.uid) {
       prevUser.current = user.uid
       syncing.current = true
+      setSyncStatus('syncing')
       syncOnLogin(user)
         .then((synced) => {
           setState(synced)
+          showToast('Progress saved', 'success')
+          showSaved()
         })
         .catch((err) => {
           console.error('Sync failed, keeping local state:', err)
+          showToast('Couldn\u2019t sync \u2014 working offline', 'error')
+          setSyncStatus('error')
         })
         .finally(() => {
           syncing.current = false
         })
     }
     if (!user && prevUser.current) {
-      // Sign-out: reset to defaults, clear localStorage
       prevUser.current = null
       setState({ ...DEFAULT_STATE })
+      setSyncStatus('idle')
     }
   }, [user])
 
@@ -45,9 +61,15 @@ export default function App() {
   useEffect(() => {
     saveState(state)
     if (user && !syncing.current) {
-      writeAssessment(user.uid, state).catch((err) => {
-        console.error('Failed to write assessment:', err)
-      })
+      writeAssessment(user.uid, state)
+        .then(() => {
+          showSaved()
+        })
+        .catch((err) => {
+          console.error('Failed to write assessment:', err)
+          showToast('Couldn\u2019t save changes', 'error')
+          setSyncStatus('error')
+        })
     }
   }, [state, user])
 
@@ -64,7 +86,6 @@ export default function App() {
     if (!path) return
 
     const nodes = path.querySelectorAll('[data-indicator]')
-    // The indicator for the claimed level (0-indexed: level-1)
     const indicator = nodes[level - 1] as HTMLElement | undefined
     if (indicator) {
       indicator.classList.add('just-claimed')
@@ -73,7 +94,6 @@ export default function App() {
   })
 
   const handleClaim = useCallback((axisId: AxisId, level: number) => {
-    // Fire celebration on the clicked node's indicator
     const axisIndex = (['autonomy', 'parallelExecution', 'skillUsage'] as AxisId[]).indexOf(axisId)
     const questPaths = document.querySelectorAll('#questMap > *')
     const path = questPaths[axisIndex]
@@ -102,13 +122,14 @@ export default function App() {
       <a href="#questMap" className="skip-link">
         Skip to skill tree
       </a>
-      <Header />
+      <Header syncStatus={syncStatus} />
       <Hero state={state} />
       <SafetyZoneSelector selected={state.safetyZone} onSelect={handleSafetyZone} />
       <SkillTree state={state} onClaim={handleClaim} onUnclaim={handleUnclaim} />
       <footer className={styles.footer}>
         Built by <strong>Plepic</strong> &mdash; helping developers level up with AI
       </footer>
+      <Toast />
     </div>
   )
 }
