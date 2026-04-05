@@ -34,7 +34,7 @@ export default function QuestPath({
     const isFrontier = currentLevel === claimedLevel + 1
 
     if (currentClaimed && prevClaimed) return 'solid'
-    if (isFrontier) return 'dashed'
+    if (isFrontier && !readonly) return 'dashed'
     return 'faded'
   }
 
@@ -56,7 +56,7 @@ export default function QuestPath({
         {axis.levels.map((level, i) => {
           const isClaimed = level.level <= claimedLevel
           const isFrontier = level.level === claimedLevel + 1
-          const nodeState = isClaimed ? 'claimed' : isFrontier ? 'frontier' : 'future'
+          const nodeState = isClaimed ? 'claimed' : isFrontier && !readonly ? 'frontier' : 'future'
 
           return (
             <div key={level.level} className={styles.nodeWrapper}>
