@@ -1,28 +1,16 @@
-.container {
-  max-width: 600px;
-  margin: 4rem auto;
-  padding: 2rem;
+.app {
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+.footer {
+  position: relative;
+  z-index: 1;
   text-align: center;
-}
-
-.heading {
-  font-family: var(--font-display);
-  font-size: 2.5rem;
-  color: var(--green-brand);
-  margin-bottom: 1rem;
-}
-
-.body {
-  font-size: 1.125rem;
-  margin-bottom: 2rem;
-}
-
-.accent {
-  display: inline-block;
-  padding: 0.5rem 1.5rem;
-  background: var(--green-surface);
-  color: var(--green-brand);
-  border-radius: 0.5rem;
-  font-family: var(--font-mono);
-  font-weight: 600;
+  padding: var(--space-2xl) var(--space-xl);
+  color: var(--text-3);
+  font-size: 0.78rem;
+  font-style: italic;
+  border-top: 1px solid var(--border);
 }
