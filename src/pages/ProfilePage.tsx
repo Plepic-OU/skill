@@ -52,15 +52,16 @@ export default function ProfilePage() {
     savedTimer.current = setTimeout(() => setSyncStatus('idle'), 3000)
   }
 
-  // Redirect to landing when owner signs out
+  // Redirect to landing when owner signs out, resetting state first
   useEffect(() => {
     if (isOwner) {
       wasOwner.current = true
     } else if (wasOwner.current && !loading) {
       wasOwner.current = false
+      setState({ ...DEFAULT_STATE })
       navigate('/', { replace: true })
     }
-  }, [isOwner, loading, navigate])
+  }, [isOwner, loading, navigate, setState])
 
   // Sync on login (owner mode)
   useEffect(() => {
