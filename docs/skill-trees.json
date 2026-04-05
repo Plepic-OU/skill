@@ -3,13 +3,14 @@
     "autonomy": {
       "name": "Autonomy",
       "description": "How much you delegate to AI and what verification strategy replaces human review at each level.",
-      "icon": "🎯",
+      "icon": "swap_horiz",
       "color": "#6366f1",
       "levels": [
         {
           "level": 1,
           "name": "Autocomplete",
           "desc": "AI suggests completions, you accept or reject inline. You write the code, AI accelerates typing.",
+          "levelIcon": "keyboard",
           "verification": "Human verifies inline as they type.",
           "obstacles": [
             "Feels like 'just autocomplete' — hard to see it as the first step of a progression",
@@ -26,6 +27,7 @@
           "level": 2,
           "name": "Review Every Edit",
           "desc": "AI generates code blocks or diffs. You review and approve every single change before it lands.",
+          "levelIcon": "rate_review",
           "verification": "Human is the full verification layer. Every diff gets eyes.",
           "obstacles": [
             "Review fatigue — rubber-stamping after the 20th diff",
@@ -43,6 +45,7 @@
           "level": 3,
           "name": "Review Per Session",
           "desc": "You let the AI work on a task without human approval, then review the full session output holistically. You use some sort of YOLO mode for that.",
+          "levelIcon": "checklist",
           "verification": "Human reviews holistically. Linter, formatter, and basic tests support the review.",
           "obstacles": [
             "Missing subtle errors buried in a larger changeset",
@@ -60,6 +63,7 @@
           "level": 4,
           "name": "Review Critical Only",
           "desc": "You only review architecture decisions, security-sensitive code, and critical business logic. Everything else is covered by automated verification.",
+          "levelIcon": "shield",
           "verification": "Automated code review, agentic verification loops, CI/test suites cover non-critical code. Human focuses on what matters.",
           "obstacles": [
             "Defining what's 'critical' vs. 'non-critical' is harder than it sounds",
@@ -79,6 +83,7 @@
           "level": 5,
           "name": "Review the Result",
           "desc": "You don't look at code. You review the outcome — does the feature work, does the test pass, does the deploy succeed.",
+          "levelIcon": "verified",
           "verification": "Full CI/test pipeline, automated quality gates, staging environment validation. Code is a black box.",
           "obstacles": [
             "Technical debt accumulates invisibly when nobody reads the code",
@@ -97,6 +102,7 @@
           "level": 6,
           "name": "Fully Automated",
           "desc": "No human review. Tasks flow in, code ships out. End-to-end automated verification, monitoring, and rollback handle quality.",
+          "levelIcon": "rocket_launch",
           "verification": "End-to-end automated verification pipeline, production monitoring, automatic rollback on anomalies. Human intervention is the exception, not the rule.",
           "obstacles": [
             "Requires extremely mature testing, monitoring, and rollback infrastructure",
@@ -116,13 +122,14 @@
     "parallelExecution": {
       "name": "Parallel Execution",
       "description": "How many concurrent AI tasks you manage and how they're coordinated.",
-      "icon": "⚡",
+      "icon": "bolt",
       "color": "#0891b2",
       "levels": [
         {
           "level": 1,
           "name": "Single Task",
           "desc": "One agent, one task, one branch. You wait for it to finish before starting the next thing.",
+          "levelIcon": "looks_one",
           "obstacles": [
             "Waiting feels natural — hard to see idle time as waste",
             "No concept of task independence — everything feels sequential",
@@ -138,6 +145,7 @@
           "level": 2,
           "name": "Manual Parallel",
           "desc": "You run 2-5 agents in parallel on separate tasks. You launch them manually and track their progress yourself.",
+          "levelIcon": "splitscreen",
           "obstacles": [
             "Context switching between agents is cognitively expensive",
             "Parallel tasks that step on each other (same files, merge conflicts)",
@@ -154,6 +162,7 @@
           "level": 3,
           "name": "Task Queue",
           "desc": "You have an AI task orchestrator. You write tasks, the orchestrator picks them up and assigns them to agents automatically.",
+          "levelIcon": "queue",
           "obstacles": [
             "Task specification must be precise enough for autonomous execution",
             "Queue management overhead — stale tasks, priority inversion",
@@ -169,6 +178,7 @@
           "level": 4,
           "name": "Directed Orchestration",
           "desc": "You give high-level direction. AI proposes a task breakdown, you review and approve it, then the orchestrator executes.",
+          "levelIcon": "account_tree",
           "obstacles": [
             "AI task decomposition may miss dependencies or create wrong abstractions",
             "Reviewing proposed tasks requires understanding the full scope",
@@ -185,6 +195,7 @@
           "level": 5,
           "name": "Autonomous Orchestration",
           "desc": "You give direction, AI creates tasks and executes them. You define goals and constraints, the system handles decomposition and execution.",
+          "levelIcon": "hub",
           "obstacles": [
             "Wrong decomposition propagates errors across all spawned tasks",
             "Cost explosion without governance — autonomous agents burn tokens freely",
@@ -203,13 +214,14 @@
     "skillUsage": {
       "name": "Skill Usage",
       "description": "How sophisticated your AI tooling is — from using what's built in to creating self-improving tool chains.",
-      "icon": "🔧",
+      "icon": "build",
       "color": "#059669",
       "levels": [
         {
           "level": 1,
           "name": "Built-in Only",
           "desc": "You use the AI tool's default capabilities. No custom configuration, no extensions, no plugins.",
+          "levelIcon": "inventory_2",
           "obstacles": [
             "Don't know what extensions exist or why you'd want them",
             "Built-in capabilities feel sufficient for current tasks",
@@ -225,6 +237,7 @@
           "level": 2,
           "name": "Third-Party Skills",
           "desc": "You install and use third-party plugins, extensions, or skill packs that extend your AI's capabilities.",
+          "levelIcon": "extension",
           "obstacles": [
             "Evaluating quality — many plugins are poorly maintained",
             "Configuration overhead for each new tool",
@@ -240,6 +253,7 @@
           "level": 3,
           "name": "MCP Services",
           "desc": "You connect AI to external services via MCP (Model Context Protocol) — databases, APIs, monitoring tools. The AI can query and act on real systems.",
+          "levelIcon": "cable",
           "obstacles": [
             "MCP setup and configuration can be fiddly",
             "Security implications of giving AI access to external systems",
@@ -255,6 +269,7 @@
           "level": 4,
           "name": "Create Skills Manually",
           "desc": "You write custom skills, commands, or workflows that extend your AI's capabilities for your specific needs.",
+          "levelIcon": "construction",
           "obstacles": [
             "Learning the skill/extension authoring format",
             "Scoping: writing skills that are too broad or too narrow",
@@ -270,6 +285,7 @@
           "level": 5,
           "name": "Create Skills with AI",
           "desc": "You use AI to generate and iterate on custom skills. The AI helps build its own tooling.",
+          "levelIcon": "auto_fix_high",
           "obstacles": [
             "AI-generated skills may have subtle bugs in edge cases",
             "Prompt engineering for skill generation is its own skill",
@@ -285,6 +301,7 @@
           "level": 6,
           "name": "Self-Improving Loop",
           "desc": "Skills improve themselves. AI evaluates skill effectiveness, identifies weaknesses, and generates improved versions — a recursive self-improvement cycle.",
+          "levelIcon": "all_inclusive",
           "obstacles": [
             "Improvement loops can drift from the original intent",
             "Evaluating whether an 'improvement' is actually better requires clear metrics",
