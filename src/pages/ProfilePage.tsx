@@ -73,8 +73,7 @@ export default function ProfilePage() {
       syncOnLogin(user)
         .then((synced) => {
           setState(synced)
-          showToast('Progress saved', 'success')
-          showSaved()
+          setSyncStatus('idle')
         })
         .catch((err) => {
           console.error('Sync failed, keeping local state:', err)
