@@ -248,3 +248,10 @@ All items implemented as specified:
 - Added `packageManager: "pnpm@10.18.3"` and `engines.node: ">=22"` to `package.json` — required by `pnpm/action-setup` and `actions/setup-node` to auto-detect versions
 - Added `pnpm exec playwright install --with-deps chromium` step in CI — Playwright browsers aren't cached and must be installed before E2E tests
 - Used Java 21 (temurin) instead of 11 — 21 is the current LTS, Firebase emulators work with any 11+
+- Firestore rules deployed via Terraform (`google_firebaserules_ruleset` + `google_firebaserules_release`) instead of Firebase CLI — keeps all infra in one tool, avoids separate Firebase CLI auth
+- Google Auth sign-in provider configured via Terraform (`google_iap_brand` + `google_iap_client` + `google_identity_platform_default_supported_idp_config`) instead of manual Firebase Console setup
+- Added `.env.development` and `.env.test` for CI compatibility — Vite dev server and Vitest need fake Firebase API keys when no `.env.local` is present
+- Playwright timeouts tightened to 15s test / 5s action for faster CI failure detection
+- Terraform requires `GOOGLE_OAUTH_ACCESS_TOKEN` and `GOOGLE_CLOUD_QUOTA_PROJECT` env vars due to RAPT policy on the Google Workspace account
+
+**Deployment verified:** CI pipeline green, app live at skill.plepic.com (2026-04-05)
