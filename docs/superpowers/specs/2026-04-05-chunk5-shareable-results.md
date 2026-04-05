@@ -356,6 +356,17 @@ Existing E2E scenarios that operate on `/` continue to work — they test the un
 - 8 new unit tests: readPublicProfile (null, mapping, fallbacks, XSS rejection), SkillNode readonly (hide claim, hide unclaim, allow toggle)
 - All 24 E2E tests pass (20 existing + 4 new)
 - All 42 unit tests pass (34 existing + 8 new)
+
+### Post-critique polish ✅
+
+- Hero shows "[Name]'s Agentic Skills" for visitors instead of owner-directed "Map Your Agentic Skills"
+- Safety zone badge shows colored dot + zone label + description (not bare jargon)
+- Header visitor mode: "Assess your own skills" is primary CTA, "Sign in" is secondary
+- Landing page header: "Share" button prompts sign-in for unauthenticated users
+- Frontier nodes render as muted/future in readonly visitor view (no pulsing "Up next")
+- Sign-out resets localStorage to defaults before redirecting to landing page
+- New E2E scenario: "Sign-out resets skill tree to defaults"
+- Final counts: 25 E2E scenarios, 42 unit tests
 - Typecheck, lint, build all clean
 
 ## Risks and Mitigations

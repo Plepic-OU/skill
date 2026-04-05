@@ -25,7 +25,7 @@ pnpm test:run         # run unit tests once (42 tests)
 pnpm test <file>      # run a single test file
 pnpm emulators        # start Firebase Auth + Firestore emulators (requires Java 11+)
 pnpm test:e2e         # run E2E tests (assumes emulators running)
-pnpm test:e2e:emulator # run E2E tests with auto-managed emulators (24 scenarios)
+pnpm test:e2e:emulator # run E2E tests with auto-managed emulators (25 scenarios)
 pnpm lint             # ESLint
 pnpm format           # Prettier
 pnpm typecheck        # tsc --noEmit
