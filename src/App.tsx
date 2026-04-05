@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useAuth } from './contexts/AuthContext'
 import { skillTreeData } from './data/skill-trees'
 import { loadState, saveState } from './data/state'
+import { syncOnLogin, writeAssessment } from './data/sync'
 import type { AxisId, SafetyZoneId, SkillState } from './types/skill-tree'
 import Header from './components/Header'
 import Hero from './components/Hero'
@@ -10,12 +12,42 @@ import { celebrate } from './components/CelebrationEffect'
 import styles from './App.module.css'
 
 export default function App() {
+  const { user } = useAuth()
   const [state, setState] = useState<SkillState>(loadState)
   const pendingClaim = useRef<{ axisId: AxisId; level: number } | null>(null)
+  const prevUser = useRef<string | null>(null)
+  const syncing = useRef(false)
 
+  // Sync on login
+  useEffect(() => {
+    if (user && prevUser.current !== user.uid) {
+      prevUser.current = user.uid
+      syncing.current = true
+      syncOnLogin(user)
+        .then((synced) => {
+          setState(synced)
+        })
+        .catch((err) => {
+          console.error('Sync failed, keeping local state:', err)
+        })
+        .finally(() => {
+          syncing.current = false
+        })
+    }
+    if (!user) {
+      prevUser.current = null
+    }
+  }, [user])
+
+  // Persist on state change
   useEffect(() => {
     saveState(state)
-  }, [state])
+    if (user && !syncing.current) {
+      writeAssessment(user.uid, state).catch((err) => {
+        console.error('Failed to write assessment:', err)
+      })
+    }
+  }, [state, user])
 
   // After render, animate the seal stamp on newly claimed node
   useEffect(() => {

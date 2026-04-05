@@ -23,3 +23,7 @@ Thumbs.db
 .features-gen/
 test-results/
 playwright-report/
+
+# Firebase emulator logs
+firestore-debug.log
+ui-debug.log

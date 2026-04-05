@@ -1,0 +1,18 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{userId} {
+      // Owner-only reads for now — opened to public in Chunk 5 when shared profiles ship
+      allow read: if request.auth != null && request.auth.uid == userId;
+      // Only the user can create/update their own document (no delete)
+      allow create, update: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Deny everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
