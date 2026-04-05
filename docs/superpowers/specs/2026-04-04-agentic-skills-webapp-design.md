@@ -177,7 +177,7 @@ Deterministic, non-negotiable checks enforced on every commit:
 
 Ordered for incremental delivery:
 
-1. **Visual Prototype** ✅ — Static HTML/CSS prototype at `web/prototypes/prototype-c2.html`. Quest Paths "Scrollwork" style: top-to-bottom winding trails, parchment aesthetic, wax-seal indicators, vine connectors. Includes all 3 axes, safety zone selector, expand/collapse details, claim/unclaim with celebration effects, progress summary. Polished through 5 critique-fix iterations + clarify + bolder + delight passes. Design context captured in `.impeccable.md`.
+1. **Visual Prototype** ✅ — Static HTML/CSS prototype at `docs/prototypes/prototype-c2.html`. Quest Paths "Scrollwork" style: top-to-bottom winding trails, parchment aesthetic, wax-seal indicators, vine connectors. Includes all 3 axes, safety zone selector, expand/collapse details, claim/unclaim with celebration effects, progress summary. Polished through 5 critique-fix iterations + clarify + bolder + delight passes. Design context captured in `.impeccable.md`.
 2. **Foundation** — Project scaffold: React + Vite + TypeScript, pnpm, ESLint, Prettier, Husky pre-commit hooks, Plepic design system wired in.
 3. **Component UI** — Turn prototype into React components with routing and local state (localStorage). Interactive skill tree works entirely client-side.
 4. **Firebase Local** — Firebase emulator setup, auth (social login), Firestore persistence. Sync logic (localStorage ↔ Firestore). Full E2E/BDD tests against emulator.
