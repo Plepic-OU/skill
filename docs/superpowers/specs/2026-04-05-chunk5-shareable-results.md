@@ -350,6 +350,14 @@ Existing E2E scenarios that operate on `/` continue to work — they test the un
 - Firestore rules: public reads (`allow read: if true`), field-level write validation including HTTPS-only avatarUrl
 - Security: avatarUrl validated at both Firestore rules level (regex) and client level (`isHttpUrl`)
 
+### Steps 11–13: E2E + unit tests ✅
+
+- 4 new E2E scenarios: login redirect, share button, visitor profile, non-existent profile
+- 8 new unit tests: readPublicProfile (null, mapping, fallbacks, XSS rejection), SkillNode readonly (hide claim, hide unclaim, allow toggle)
+- All 24 E2E tests pass (20 existing + 4 new)
+- All 42 unit tests pass (34 existing + 8 new)
+- Typecheck, lint, build all clean
+
 ## Risks and Mitigations
 
 | Risk                                               | Mitigation                                                                                                                                                            |

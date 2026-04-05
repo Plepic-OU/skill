@@ -98,6 +98,30 @@ describe('SkillNode', () => {
     expect(screen.queryByText('Not here yet')).not.toBeInTheDocument()
   })
 
+  it('hides claim button when readonly', () => {
+    render(<SkillNode {...defaultProps} isExpanded={true} readonly />)
+    expect(screen.queryByText('This is me')).not.toBeInTheDocument()
+  })
+
+  it('hides unclaim button when readonly', () => {
+    render(
+      <SkillNode
+        {...defaultProps}
+        nodeState="claimed"
+        isHighestClaimed={true}
+        isExpanded={true}
+        readonly
+      />,
+    )
+    expect(screen.queryByText('Not here yet')).not.toBeInTheDocument()
+  })
+
+  it('still allows toggling in readonly mode', () => {
+    render(<SkillNode {...defaultProps} readonly />)
+    fireEvent.click(getNode())
+    expect(defaultProps.onToggle).toHaveBeenCalledTimes(1)
+  })
+
   it('has correct aria-expanded attribute', () => {
     const { rerender } = render(<SkillNode {...defaultProps} isExpanded={false} />)
     expect(getNode()).toHaveAttribute('aria-expanded', 'false')

@@ -23,7 +23,7 @@ vi.mock('firebase/app', () => ({
 
 import { getDoc, setDoc } from 'firebase/firestore'
 import type { User } from 'firebase/auth'
-import { syncOnLogin, writeAssessment } from '../../data/sync'
+import { readPublicProfile, syncOnLogin, writeAssessment } from '../../data/sync'
 import { DEFAULT_STATE } from '../../data/state'
 
 const mockGetDoc = vi.mocked(getDoc)
@@ -127,7 +127,7 @@ describe('writeAssessment', () => {
     )
   })
 
-  it('writes without profile fields when no user provided', async () => {
+  it('omits profile fields when no user provided', async () => {
     mockSetDoc.mockResolvedValue(undefined)
 
     await writeAssessment('uid-123', {
@@ -140,5 +140,82 @@ describe('writeAssessment', () => {
     const written = mockSetDoc.mock.calls[0][1] as Record<string, unknown>
     expect(written).not.toHaveProperty('displayName')
     expect(written).not.toHaveProperty('avatarUrl')
+  })
+})
+
+describe('readPublicProfile', () => {
+  it('returns null when document does not exist', async () => {
+    mockGetDoc.mockResolvedValue({
+      exists: () => false,
+    } as never)
+
+    const result = await readPublicProfile('nonexistent-uid')
+    expect(result).toBeNull()
+  })
+
+  it('returns profile with correct field mapping', async () => {
+    mockGetDoc.mockResolvedValue({
+      exists: () => true,
+      data: () => ({
+        skills: { autonomy: 4, parallelExecution: 3, skillUsage: 2 },
+        safetyZone: 'hardcore',
+        displayName: 'Alice',
+        avatarUrl: 'https://example.com/alice.jpg',
+      }),
+    } as never)
+
+    const result = await readPublicProfile('alice-uid')
+    expect(result).toEqual({
+      autonomy: 4,
+      parallelExecution: 3,
+      skillUsage: 2,
+      safetyZone: 'hardcore',
+      displayName: 'Alice',
+      avatarUrl: 'https://example.com/alice.jpg',
+    })
+  })
+
+  it('falls back to Anonymous when displayName is missing', async () => {
+    mockGetDoc.mockResolvedValue({
+      exists: () => true,
+      data: () => ({
+        skills: { autonomy: 1, parallelExecution: 1, skillUsage: 1 },
+        safetyZone: 'safe-zone',
+      }),
+    } as never)
+
+    const result = await readPublicProfile('uid')
+    expect(result?.displayName).toBe('Anonymous')
+    expect(result?.avatarUrl).toBe('')
+  })
+
+  it('rejects non-HTTPS avatar URLs', async () => {
+    mockGetDoc.mockResolvedValue({
+      exists: () => true,
+      data: () => ({
+        skills: { autonomy: 1, parallelExecution: 1, skillUsage: 1 },
+        safetyZone: 'safe-zone',
+        displayName: 'Eve',
+        avatarUrl: 'javascript:alert(1)',
+      }),
+    } as never)
+
+    const result = await readPublicProfile('uid')
+    expect(result?.avatarUrl).toBe('')
+  })
+
+  it('accepts HTTP avatar URLs', async () => {
+    mockGetDoc.mockResolvedValue({
+      exists: () => true,
+      data: () => ({
+        skills: { autonomy: 1, parallelExecution: 1, skillUsage: 1 },
+        safetyZone: 'safe-zone',
+        displayName: 'Bob',
+        avatarUrl: 'http://example.com/bob.jpg',
+      }),
+    } as never)
+
+    const result = await readPublicProfile('uid')
+    expect(result?.avatarUrl).toBe('http://example.com/bob.jpg')
   })
 })
