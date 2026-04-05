@@ -8,7 +8,9 @@ terraform {
 }
 
 provider "google-beta" {
-  project = var.project_id
+  project                     = var.project_id
+  user_project_override       = true
+  billing_project             = var.project_id
 }
 
 resource "google_firebase_project" "default" {
@@ -52,26 +54,22 @@ resource "google_firebaserules_release" "firestore" {
 }
 
 # --- Google Auth sign-in provider ---
+#
+# MANUAL STEP (one-time): Create an OAuth 2.0 Web Client in GCP Console:
+#   1. Go to APIs & Credentials → OAuth consent screen → configure
+#   2. Credentials → Create OAuth 2.0 Client ID (Web application)
+#   3. Authorized JS origins: https://skill.plepic.com, https://skill-plepic-com.firebaseapp.com
+#   4. Authorized redirect URI: https://skill-plepic-com.firebaseapp.com/__/auth/handler
+#
+# Why manual: google_iap_client (deprecated Jan 2025) creates locked OAuth clients
+# that don't support redirect URIs. No Terraform resource exists for standard
+# OAuth2 clients. This is the approach recommended by the Firebase Terraform codelab.
+# The client secret is stored in GCP Secret Manager (oauth-client-secret).
 
-resource "google_project_service" "iap" {
+data "google_secret_manager_secret_version" "oauth_client_secret" {
   provider = google-beta
   project  = var.project_id
-  service  = "iap.googleapis.com"
-}
-
-resource "google_iap_brand" "default" {
-  provider          = google-beta
-  project           = var.project_id
-  support_email     = var.support_email
-  application_title = "Plepic Skill Tree"
-
-  depends_on = [google_project_service.iap]
-}
-
-resource "google_iap_client" "default" {
-  provider     = google-beta
-  display_name = "Web client (created by Terraform)"
-  brand        = google_iap_brand.default.name
+  secret   = "oauth-client-secret"
 }
 
 resource "google_identity_platform_default_supported_idp_config" "google" {
@@ -79,8 +77,8 @@ resource "google_identity_platform_default_supported_idp_config" "google" {
   project       = var.project_id
   enabled       = true
   idp_id        = "google.com"
-  client_id     = google_iap_client.default.client_id
-  client_secret = google_iap_client.default.secret
+  client_id     = var.oauth_client_id
+  client_secret = data.google_secret_manager_secret_version.oauth_client_secret.secret_data
 }
 
 resource "google_identity_platform_config" "default" {

@@ -3,7 +3,7 @@ Feature: Authentication
   Scenario: Sign in button opens sign-in modal
     Given I open the skill tree page
     When I click the login button
-    Then I should see the sign-in modal with Google and GitHub options
+    Then I should see the sign-in modal with Google option
 
   Scenario: Sign in updates the header
     Given I open the skill tree page

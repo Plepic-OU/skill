@@ -15,3 +15,9 @@ variable "support_email" {
   type        = string
   default     = "joosep@plepic.com"
 }
+
+variable "oauth_client_id" {
+  description = "OAuth 2.0 client ID for Google sign-in (created manually in GCP Console)"
+  type        = string
+  default     = "152087843840-ahc6uahoirq1vgibrk7esm5jerdcq8ro.apps.googleusercontent.com"
+}

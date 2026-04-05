@@ -11,7 +11,7 @@ Gamified web app where developers self-assess agentic coding skills via an RPG-s
 - **Frontend:** React + React Router v7 + Vite + TypeScript SPA, deployed to GitHub Pages from `web/`
 - **Backend:** Firebase (Auth with Google/GitHub, Firestore for user data) — no custom API
 - **Styling:** Plepic design system ([HTML](https://github.com/Plepic-OU/public-web/raw/refs/heads/main/design-system.html), [CSS](https://github.com/Plepic-OU/public-web/raw/refs/heads/main/design-system.css)). Main color is green; orange used sparingly only
-- **Infra:** Terraform for Firebase provisioning; Firebase CLI for security rules/indexes
+- **Infra:** Terraform for Firebase provisioning; Firebase CLI for security rules/indexes. Before running Terraform: `export GOOGLE_OAUTH_ACCESS_TOKEN=$(gcloud auth print-access-token)`
 - **Package manager:** pnpm (not npm)
 
 ## Build & Quality Commands

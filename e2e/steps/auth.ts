@@ -33,9 +33,8 @@ When('I sign out', async ({ page }) => {
   await expect(page.getByText('Sign in to save')).toBeVisible({ timeout: 5000 })
 })
 
-Then('I should see the sign-in modal with Google and GitHub options', async ({ page }) => {
+Then('I should see the sign-in modal with Google option', async ({ page }) => {
   await expect(page.getByText('Sign in with Google')).toBeVisible()
-  await expect(page.getByText('Sign in with GitHub')).toBeVisible()
 })
 
 Then('I should see the user avatar in the header', async ({ page }) => {

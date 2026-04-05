@@ -8,6 +8,7 @@
     0 2px 8px rgba(80, 50, 10, 0.08);
   max-width: 340px;
   width: 90vw;
+  margin: auto;
 }
 
 .dialog::backdrop {
@@ -31,11 +32,9 @@
   place-items: center;
   background: none;
   border: none;
-  font-size: 1.3rem;
   color: var(--ink-muted);
   cursor: pointer;
   border-radius: 6px;
-  line-height: 1;
   transition: color var(--transition-fast);
 }
 .closeBtn:hover {
@@ -59,11 +58,6 @@
   color: var(--ink-muted);
   margin: 0 0 var(--space-lg);
   line-height: 1.5;
-}
-
-.privacy {
-  font-size: 0.75rem;
-  opacity: 0.7;
 }
 
 .buttons {
