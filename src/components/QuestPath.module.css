@@ -1,0 +1,221 @@
+.questPath {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── Path Header with Ribbon ── */
+.pathHeader {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+  position: relative;
+}
+
+.pathIcon {
+  font-size: 2.2rem;
+  margin-bottom: 0.4rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+.pathIcon .material-symbols-rounded {
+  font-size: inherit;
+}
+
+.ribbonBanner {
+  position: relative;
+  display: inline-block;
+  padding: 0.55rem 2.5rem;
+  margin: 0 auto 0.4rem;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--node-color, var(--green-brand)) 85%, white) 0%,
+    var(--node-color, var(--green-brand)) 40%,
+    color-mix(in srgb, var(--node-color, var(--green-brand)) 90%, black) 100%
+  );
+  color: white;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  box-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.18),
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+}
+.ribbonBanner::before,
+.ribbonBanner::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+.ribbonBanner::before {
+  left: -14px;
+  border-width: 0 14px 50% 0;
+  border-color: transparent var(--node-color, var(--green-brand)) transparent transparent;
+}
+.ribbonBanner::after {
+  right: -14px;
+  border-width: 0 0 50% 14px;
+  border-color: transparent transparent transparent var(--node-color, var(--green-brand));
+}
+
+.ribbonFoldLeft,
+.ribbonFoldRight {
+  position: absolute;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+.ribbonFoldLeft {
+  left: -14px;
+  border-width: 50% 14px 0 0;
+  border-color: transparent color-mix(in srgb, var(--node-color, var(--green-brand)) 80%, black)
+    transparent transparent;
+}
+.ribbonFoldRight {
+  right: -14px;
+  border-width: 50% 0 0 14px;
+  border-color: transparent transparent transparent
+    color-mix(in srgb, var(--node-color, var(--green-brand)) 80%, black);
+}
+
+.pathSubtitle {
+  font-size: 0.75rem;
+  color: var(--text-3);
+  max-width: 220px;
+  line-height: 1.4;
+  margin: 0.3rem auto 0;
+}
+
+/* ── Node List ── */
+.nodeList {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 360px;
+  position: relative;
+}
+
+.nodeWrapper {
+  position: relative;
+}
+
+/* Meandering path on desktop */
+.nodeWrapper:nth-child(4n + 1) {
+  transform: translateX(3%);
+}
+.nodeWrapper:nth-child(4n + 3) {
+  transform: translateX(-3%);
+}
+@media (min-width: 820px) {
+  .nodeWrapper:nth-child(4n + 1) {
+    transform: translateX(4%);
+  }
+  .nodeWrapper:nth-child(4n + 3) {
+    transform: translateX(-4%);
+  }
+}
+
+/* ── Trail Connectors ── */
+.trailConnector {
+  width: 100%;
+  height: 28px;
+  position: relative;
+  z-index: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.vineLine {
+  position: absolute;
+  width: 7px;
+  height: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 4px;
+}
+
+.solid .vineLine {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--node-color) 65%, #8b7355) 0%,
+    color-mix(in srgb, var(--node-color) 45%, #6b5035) 100%
+  );
+  box-shadow:
+    -1px 0 0 color-mix(in srgb, var(--node-color) 30%, rgba(80, 50, 20, 0.3)),
+    1px 0 0 color-mix(in srgb, var(--node-color) 30%, rgba(80, 50, 20, 0.3)),
+    0 0 8px color-mix(in srgb, var(--node-color) 25%, transparent);
+  opacity: 0.85;
+}
+.solid .vineLine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent 0px,
+    transparent 3px,
+    rgba(255, 255, 255, 0.15) 3px,
+    rgba(255, 255, 255, 0.15) 5px
+  );
+  border-radius: 3px;
+}
+
+.dashed .vineLine {
+  background: repeating-linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--node-color) 55%, #8b7355) 0px,
+    color-mix(in srgb, var(--node-color) 55%, #8b7355) 8px,
+    transparent 8px,
+    transparent 14px
+  );
+  opacity: 0.6;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--node-color) 15%, transparent);
+}
+
+.faded .vineLine {
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--parchment-edge) 0px,
+    var(--parchment-edge) 4px,
+    transparent 4px,
+    transparent 10px
+  );
+  opacity: 0.3;
+}
+
+/* ── Responsive ── */
+@media (max-width: 819px) {
+  .ribbonBanner {
+    padding: 0.35rem 1.5rem;
+    font-size: 0.95rem;
+  }
+  .ribbonBanner::before {
+    left: -10px;
+    border-width: 0 10px 50% 0;
+  }
+  .ribbonBanner::after {
+    right: -10px;
+    border-width: 0 0 50% 10px;
+  }
+  .ribbonFoldLeft {
+    left: -10px;
+    border-width: 50% 10px 0 0;
+  }
+  .ribbonFoldRight {
+    right: -10px;
+    border-width: 50% 0 0 10px;
+  }
+  .nodeWrapper:nth-child(4n + 1) {
+    transform: none;
+  }
+  .nodeWrapper:nth-child(4n + 3) {
+    transform: none;
+  }
+}

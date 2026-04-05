@@ -1,0 +1,25 @@
+.questMap {
+  position: relative;
+  z-index: 1;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-md) var(--space-md) var(--space-3xl);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3xl);
+}
+
+@media (min-width: 820px) {
+  .questMap {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-xl);
+    padding: 0 var(--space-xl) var(--space-4xl);
+  }
+}
+
+@media (max-width: 819px) {
+  .questMap {
+    max-width: 440px;
+    margin: 0 auto;
+  }
+}
