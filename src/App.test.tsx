@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router'
 import App from './App'
 
 // Mock CelebrationEffect to avoid imperative DOM in jsdom
@@ -12,12 +13,20 @@ beforeEach(() => {
 
 describe('App', () => {
   it('renders without crashing', () => {
-    render(<App />)
+    render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    )
     expect(screen.getByRole('heading')).toBeInTheDocument()
   })
 
   it('loads default state when localStorage is empty', () => {
-    render(<App />)
+    render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    )
     expect(screen.getByText('Map Your Agentic Skills')).toBeInTheDocument()
     // Both Autonomy (6 levels) and Skill Usage (6 levels) show 1/6
     const chips = screen.getAllByText('1/6')

@@ -115,30 +115,24 @@ Interact with tree → localStorage (immediate)
 
 ### Firestore schema
 
+> **Updated in Chunk 4:** The original design used an `assessments` subcollection. The implementation simplified to a flat document — all fields live directly on `users/{userId}`. Notes and assessment history are deferred.
+
 ```
 users/{userId}
   ├── displayName: string
   ├── avatarUrl: string
-  └── assessments/
-        └── {assessmentId}    // "latest" for MVP, timestamped for history
-              ├── timestamp: Date
-              ├── safetyZone: "safe-zone" | "normal" | "hardcore" | "impossible"
-              ├── skills: {
-              │     autonomy: 1-6,
-              │     parallelExecution: 1-5,
-              │     skillUsage: 1-6
-              │   }
-              └── notes: {       // optional free-text per axis
-                    autonomy?: string,
-                    parallelExecution?: string,
-                    skillUsage?: string
-                  }
+  ├── updatedAt: Timestamp
+  ├── safetyZone: "safe-zone" | "normal" | "hardcore" | "impossible"
+  └── skills: {
+        autonomy: 0-6,
+        parallelExecution: 0-5,
+        skillUsage: 0-6
+      }
 ```
 
-- Safety zone is per-assessment (environment context, not skill)
+- Safety zone is per-user (environment context, not skill)
 - Skills stored as level numbers — meaning comes from static skill-trees.json
 - All synced profiles are publicly accessible at `/profile/{userId}` (no sharing toggle for MVP — a `shareEnabled` flag can be added later if users need to revoke visibility)
-- Assessments subcollection allows history; MVP uses "latest"
 
 ## Style
 

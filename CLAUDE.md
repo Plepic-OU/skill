@@ -8,7 +8,7 @@ Gamified web app where developers self-assess agentic coding skills via an RPG-s
 
 ## Tech Stack
 
-- **Frontend:** React + Vite + TypeScript SPA, deployed to GitHub Pages from `web/`
+- **Frontend:** React + React Router v7 + Vite + TypeScript SPA, deployed to GitHub Pages from `web/`
 - **Backend:** Firebase (Auth with Google/GitHub, Firestore for user data) — no custom API
 - **Styling:** Plepic design system ([HTML](https://github.com/Plepic-OU/public-web/raw/refs/heads/main/design-system.html), [CSS](https://github.com/Plepic-OU/public-web/raw/refs/heads/main/design-system.css)). Main color is green; orange used sparingly only
 - **Infra:** Terraform for Firebase provisioning; Firebase CLI for security rules/indexes
@@ -42,6 +42,8 @@ Pre-commit hooks (Husky + lint-staged) enforce: ESLint, Prettier, type-check, un
 - `docs/skill-trees.json` — Static skill tree data (3 axes: autonomy, parallel execution, skill usage) with Material Symbols icons
 - `src/firebase.ts` — Firebase app init, emulator detection
 - `src/contexts/AuthContext.tsx` — Auth state context + `useAuth()` hook
+- `src/pages/` — Page components: LandingPage (unauthenticated), ProfilePage (owner/visitor)
+- `src/hooks/` — Custom hooks: useSkillState (shared claim/unclaim/animation/safety-zone logic)
 - `src/components/` — React components: Header, Hero, SafetyZoneSelector, SkillTree, QuestPath, SkillNode, CelebrationEffect, SignInModal, ConfirmDialog, Toast
 - `src/types/skill-tree.ts` — TypeScript interfaces for skill tree data and app state
 - `src/data/` — Data module (skill-trees.ts), state persistence (state.ts), auth helpers (auth.ts), Firestore sync (sync.ts)
@@ -68,7 +70,7 @@ The design spec defines 6 ordered chunks. See `docs/superpowers/specs/2026-04-04
 2. ~~Foundation~~ ✅ (Chunk 2) — `docs/superpowers/specs/2026-04-05-chunk2-foundation.md`
 3. ~~Component UI~~ ✅ (Chunk 3) — `docs/superpowers/specs/2026-04-05-chunk3-component-ui.md`
 4. ~~Firebase Local~~ ✅ (Chunk 4) — `docs/superpowers/specs/2026-04-05-chunk4-firebase-local.md`
-5. Shareable Results (Chunk 5)
+5. Shareable Results (Chunk 5) — **in progress** `docs/superpowers/specs/2026-04-05-chunk5-shareable-results.md`
 6. Terraform & Deploy (Chunk 6)
 
 ## Development Practices
