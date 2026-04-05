@@ -1,0 +1,78 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(250, 247, 242, 0.94);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 8px rgba(80, 50, 10, 0.05);
+  padding: 0 var(--space-xl);
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--green-brand);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.logoIcon {
+  width: 26px;
+  height: 26px;
+  background: var(--green-brand);
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-size: 0.75rem;
+  font-family: var(--font-body);
+  font-weight: 700;
+}
+
+.loginWrap {
+  position: relative;
+}
+
+.btnLogin {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.82rem;
+  background: transparent;
+  border: 1.5px solid var(--green-brand);
+  color: var(--green-brand);
+  padding: 0.4rem 0.9rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+}
+.btnLogin:hover {
+  opacity: 0.8;
+}
+.btnLogin:focus-visible {
+  outline: 2px solid var(--green-vivid);
+  outline-offset: 2px;
+}
+
+.tooltip {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 6px;
+  padding: 0.35rem 0.7rem;
+  background: var(--ink);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 6px;
+  white-space: nowrap;
+}
