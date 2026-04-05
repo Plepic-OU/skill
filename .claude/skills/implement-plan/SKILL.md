@@ -127,9 +127,12 @@ Auto-fix P0 and P1 issues. Note P2/P3 in the commit message or a TODO if warrant
 After validation and fixes:
 
 1. Run build/lint/typecheck/tests one final time to confirm everything passes.
-2. Stage the relevant files (not `git add -A` — be specific).
-3. Commit with a clear message describing what the chunk accomplished.
-4. If the spec or other docs need updating based on implementation discoveries, update them in the same commit or a follow-up.
+2. **Update docs before committing.** This is mandatory, not optional:
+   - **Update the spec** with an "Implementation Notes" section (or append to an existing one): deviations from spec, actual versions installed, decisions made during implementation. Mark the chunk's status as complete.
+   - **Update `CLAUDE.md`** if the implementation changes project status, available commands, directory structure, or completion state of chunks.
+   - If no docs need updating (rare — at minimum the spec should be marked complete), explicitly note that in your summary.
+3. Stage the relevant files including doc updates (not `git add -A` — be specific).
+4. Commit with a clear message describing what the chunk accomplished.
 
 ## Validator Prompt Template
 
@@ -202,4 +205,4 @@ When all chunks are implemented and validated:
 - **No broken intermediate states.** Every commit should build, pass lint, and pass tests.
 - **Security is non-negotiable.** The security validator runs on every chunk that touches application code.
 - **Simplifier keeps you honest.** If you're writing something complex, there might be a simpler way.
-- **Update docs as you go.** Don't let the spec drift from reality.
+- **Docs are part of the deliverable.** Every chunk commit must include doc updates (spec notes + CLAUDE.md). This is not a nice-to-have — it's a mandatory step before committing. Don't wait for the user to ask.
