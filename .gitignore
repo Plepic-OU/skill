@@ -18,3 +18,8 @@ web/
 # OS
 .DS_Store
 Thumbs.db
+
+# Playwright
+.features-gen/
+test-results/
+playwright-report/
