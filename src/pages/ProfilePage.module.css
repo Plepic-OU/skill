@@ -69,7 +69,7 @@
   margin: 0;
 }
 
-.safetyBadge {
+.stakesBadge {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -84,25 +84,25 @@
   flex-wrap: wrap;
 }
 
-.safetyBadgeTitle {
+.stakesBadgeTitle {
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 0.85rem;
   color: var(--ink);
 }
 
-.safetyDot {
+.stakesDot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
-.safetyLabel {
+.stakesLabel {
   font-weight: 700;
   color: var(--ink);
 }
 
-.safetyDesc {
+.stakesDesc {
   color: var(--ink-muted);
 }

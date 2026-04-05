@@ -1,19 +1,19 @@
 import { skillTreeData } from '../data/skill-trees'
 import type { SafetyZoneId } from '../types/skill-tree'
-import styles from './SafetyZoneSelector.module.css'
+import styles from './StakesSelector.module.css'
 
 const ZONE_IDS: SafetyZoneId[] = ['sandbox', 'normal', 'hardcore', 'impossible']
 
-interface SafetyZoneSelectorProps {
+interface StakesSelectorProps {
   selected: SafetyZoneId
   onSelect: (zone: SafetyZoneId) => void
 }
 
-export default function SafetyZoneSelector({ selected, onSelect }: SafetyZoneSelectorProps) {
+export default function StakesSelector({ selected, onSelect }: StakesSelectorProps) {
   const zones = skillTreeData.safety.zones
 
   return (
-    <section className={styles.safetyZone}>
+    <section className={styles.stakes}>
       <div className={styles.heading}>Stakes</div>
       <div className={styles.label}>What's at stake in your environment?</div>
       <div className={styles.options} role="radiogroup" aria-label="Stakes selection">

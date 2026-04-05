@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react'
-import SafetyZoneSelector from '../SafetyZoneSelector'
+import StakesSelector from '../StakesSelector'
 
-describe('SafetyZoneSelector', () => {
+describe('StakesSelector', () => {
   const defaultProps = {
     selected: 'sandbox' as const,
     onSelect: vi.fn(),
@@ -12,7 +12,7 @@ describe('SafetyZoneSelector', () => {
   })
 
   it('renders all four zone buttons', () => {
-    render(<SafetyZoneSelector {...defaultProps} />)
+    render(<StakesSelector {...defaultProps} />)
     expect(screen.getByText('Sandbox')).toBeInTheDocument()
     expect(screen.getByText('Normal')).toBeInTheDocument()
     expect(screen.getByText('Hardcore')).toBeInTheDocument()
@@ -20,7 +20,7 @@ describe('SafetyZoneSelector', () => {
   })
 
   it('marks the selected zone as aria-checked', () => {
-    render(<SafetyZoneSelector {...defaultProps} />)
+    render(<StakesSelector {...defaultProps} />)
     expect(screen.getByText('Sandbox').closest('[role="radio"]')).toHaveAttribute(
       'aria-checked',
       'true',
@@ -32,19 +32,19 @@ describe('SafetyZoneSelector', () => {
   })
 
   it('calls onSelect when a zone is clicked', () => {
-    render(<SafetyZoneSelector {...defaultProps} />)
+    render(<StakesSelector {...defaultProps} />)
     fireEvent.click(screen.getByText('Hardcore'))
     expect(defaultProps.onSelect).toHaveBeenCalledWith('hardcore')
   })
 
   it('shows the description for the selected zone', () => {
-    render(<SafetyZoneSelector {...defaultProps} />)
+    render(<StakesSelector {...defaultProps} />)
     expect(screen.getByText(/Mistake shows incorrect information/)).toBeInTheDocument()
   })
 
   it('updates description when selection changes', () => {
-    const { rerender } = render(<SafetyZoneSelector {...defaultProps} />)
-    rerender(<SafetyZoneSelector {...defaultProps} selected="hardcore" />)
+    const { rerender } = render(<StakesSelector {...defaultProps} />)
+    rerender(<StakesSelector {...defaultProps} selected="hardcore" />)
     expect(screen.getByText(/Mistake stops client services too/)).toBeInTheDocument()
   })
 })

@@ -54,9 +54,9 @@ export function useSkillState() {
     setState((prev) => ({ ...prev, [axisId]: level - 1 }))
   }, [])
 
-  const handleSafetyZone = useCallback((zone: SafetyZoneId) => {
+  const handleStakes = useCallback((zone: SafetyZoneId) => {
     setState((prev) => ({ ...prev, safetyZone: zone }))
   }, [])
 
-  return { state, setState, handleClaim, handleUnclaim, handleSafetyZone }
+  return { state, setState, handleClaim, handleUnclaim, handleStakes }
 }

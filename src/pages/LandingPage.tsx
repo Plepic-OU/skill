@@ -4,13 +4,13 @@ import { useAuth } from '../contexts/AuthContext'
 import { useSkillState } from '../hooks/useSkillState'
 import Header from '../components/Header'
 import Hero from '../components/Hero'
-import SafetyZoneSelector from '../components/SafetyZoneSelector'
+import StakesSelector from '../components/StakesSelector'
 import SkillTree from '../components/SkillTree'
 
 export default function LandingPage() {
   const { user, loading } = useAuth()
   const navigate = useNavigate()
-  const { state, handleClaim, handleUnclaim, handleSafetyZone } = useSkillState()
+  const { state, handleClaim, handleUnclaim, handleStakes } = useSkillState()
 
   // Redirect to profile when logged in
   useEffect(() => {
@@ -26,7 +26,7 @@ export default function LandingPage() {
     <>
       <Header />
       <Hero state={state} />
-      <SafetyZoneSelector selected={state.safetyZone} onSelect={handleSafetyZone} />
+      <StakesSelector selected={state.safetyZone} onSelect={handleStakes} />
       <SkillTree state={state} onClaim={handleClaim} onUnclaim={handleUnclaim} />
     </>
   )

@@ -7,21 +7,21 @@ import { readPublicProfile, syncOnLogin, writeAssessment } from '../data/sync'
 import type { PublicProfile } from '../data/sync'
 import Header from '../components/Header'
 import Hero from '../components/Hero'
-import SafetyZoneSelector from '../components/SafetyZoneSelector'
+import StakesSelector from '../components/StakesSelector'
 import SkillTree from '../components/SkillTree'
 import { showToast } from '../components/Toast'
 import { skillTreeData } from '../data/skill-trees'
 import type { SafetyZoneId } from '../types/skill-tree'
 import styles from './ProfilePage.module.css'
 
-function SafetyBadge({ zoneId }: { zoneId: SafetyZoneId }) {
+function StakesBadge({ zoneId }: { zoneId: SafetyZoneId }) {
   const zone = skillTreeData.safety.zones[zoneId]
   return (
-    <div className={styles.safetyBadge}>
-      <span className={styles.safetyBadgeTitle}>Stakes</span>
-      <span className={styles.safetyDot} style={{ background: zone.color }} />
-      <span className={styles.safetyLabel}>{zone.label}</span>
-      <span className={styles.safetyDesc}>{zone.desc}</span>
+    <div className={styles.stakesBadge}>
+      <span className={styles.stakesBadgeTitle}>Stakes</span>
+      <span className={styles.stakesDot} style={{ background: zone.color }} />
+      <span className={styles.stakesLabel}>{zone.label}</span>
+      <span className={styles.stakesDesc}>{zone.desc}</span>
     </div>
   )
 }
@@ -36,7 +36,7 @@ export default function ProfilePage() {
   const wasOwner = useRef(false)
 
   // --- Owner mode state ---
-  const { state, setState, handleClaim, handleUnclaim, handleSafetyZone } = useSkillState()
+  const { state, setState, handleClaim, handleUnclaim, handleStakes } = useSkillState()
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle')
   const prevUser = useRef<string | null>(null)
   const syncing = useRef(false)
@@ -177,7 +177,7 @@ export default function ProfilePage() {
           <h2 className={styles.bannerName}>{visitorProfile.displayName}</h2>
         </div>
         <Hero state={visitorProfile} visitorName={visitorProfile.displayName} />
-        <SafetyBadge zoneId={visitorProfile.safetyZone} />
+        <StakesBadge zoneId={visitorProfile.safetyZone} />
         <SkillTree state={visitorProfile} readonly />
       </>
     )
@@ -188,7 +188,7 @@ export default function ProfilePage() {
     <>
       <Header syncStatus={syncStatus} mode="owner" />
       <Hero state={state} />
-      <SafetyZoneSelector selected={state.safetyZone} onSelect={handleSafetyZone} />
+      <StakesSelector selected={state.safetyZone} onSelect={handleStakes} />
       <SkillTree state={state} onClaim={handleClaim} onUnclaim={handleUnclaim} />
     </>
   )
