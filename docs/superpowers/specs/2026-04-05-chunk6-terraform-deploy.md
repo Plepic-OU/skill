@@ -9,7 +9,7 @@ Infrastructure as code for the Firebase backend and a CI pipeline that builds an
 - Terraform config to provision Firebase resources on an existing GCP project
 - GitHub Actions workflow updated to build before deploying
 - Production Firebase config committed as `.env.production`
-- Firestore rules deployed manually via Firebase CLI
+- Firestore rules and indexes deployed manually via Firebase CLI
 - One-time bootstrap instructions
 
 ## Out of Scope
@@ -27,23 +27,24 @@ Infrastructure as code for the Firebase backend and a CI pipeline that builds an
 
 ```
 infra/
-├── main.tf          # Provider, Firebase, Firestore, Auth
+├── main.tf          # Provider, Firebase, Firestore
 ├── backend.tf       # GCS remote state
 ├── variables.tf     # Input variables
-└── outputs.tf       # API key, auth domain, project ID
+└── outputs.tf       # Project ID, Firestore location (for reference)
 ```
 
 ### What Terraform Manages
 
-| Resource             | Details                                   |
-| -------------------- | ----------------------------------------- |
-| Firebase project     | Enable Firebase API on `skill-plepic-com` |
-| Firestore database   | Native mode, `eur3` (Europe multi-region) |
-| Google Auth provider | Enable Google sign-in                     |
-| API key restrictions | HTTP referrer: `skill.plepic.com/*`       |
+| Resource           | Details                                                            |
+| ------------------ | ------------------------------------------------------------------ |
+| Firebase project   | Enable Firebase API on `skill-plepic-com`                          |
+| Firestore database | Native mode, `eur3` (Europe multi-region), `(default)` database ID |
+
+**Note:** Google Auth sign-in provider cannot be provisioned via Terraform — it must be configured in the Firebase Console (see Bootstrap Step 3).
 
 ### What Terraform Does NOT Manage
 
+- **Auth providers** — configured manually in Firebase Console (no Terraform resource exists for Firebase Auth sign-in providers without Identity Platform upgrade).
 - **Firestore security rules and indexes** — deployed via Firebase CLI (`firebase deploy --only firestore`). Keeping rules in the repo and deploying manually avoids Terraform/CLI drift.
 - **GitHub Pages deployment** — handled by GitHub Actions.
 - **DNS** — already configured and pointing to GitHub Pages.
@@ -53,6 +54,7 @@ infra/
 - **Backend:** GCS bucket `gs://skill-plepic-com-tfstate`
 - **State file:** `terraform.tfstate`
 - **Bucket location:** EU
+- **Versioning:** Enabled on the bucket (allows state recovery)
 
 ### Provider
 
@@ -62,7 +64,9 @@ provider "google-beta" {
 }
 ```
 
-Uses `google-beta` provider since Firebase resources require it.
+Uses `google-beta` provider since Firebase resources require it. Each Firebase resource must include `provider = google-beta` explicitly.
+
+**Authentication:** Application Default Credentials. Run `gcloud auth application-default login` before `terraform init`.
 
 ### Variables
 
@@ -82,39 +86,57 @@ Uses `google-beta` provider since Firebase resources require it.
 Add build steps before the existing artifact upload:
 
 1. Checkout code
-2. Setup Node.js (match version from project)
-3. Install pnpm
-4. `pnpm install --frozen-lockfile`
-5. `pnpm build` (runs typecheck + Vite build → `web/`, postbuild copies `index.html` → `404.html`)
-6. Upload `web/` artifact (existing)
-7. Deploy to GitHub Pages (existing)
+2. Setup Node.js (use version from `.nvmrc` or `package.json` `engines` field)
+3. Setup Java 11+ (required for Firebase emulators)
+4. Install pnpm via `pnpm/action-setup` (version from `package.json` `packageManager` field)
+5. `pnpm install --frozen-lockfile` (with `HUSKY=0` to skip git hook installation in CI)
+6. `pnpm lint` — ESLint
+7. `pnpm typecheck` — TypeScript
+8. `pnpm test:run` — Unit tests
+9. `pnpm test:e2e:emulator` — E2E tests (starts Firebase emulators, runs Playwright)
+10. `pnpm build` (Vite build → `web/`, postbuild copies `index.html` → `404.html`)
+11. Upload `web/` artifact (existing step)
+12. Deploy to GitHub Pages (existing step)
 
-### No Tests in CI
+**Note:** `web/` is a build output directory, not tracked in git. CI generates it fresh on every deploy.
 
-Pre-commit hooks (Husky + lint-staged) already enforce ESLint, Prettier, typecheck, unit tests, and E2E tests before code reaches `main`. Running them again in CI would be redundant.
+### Tests in CI
+
+The full quality suite runs in CI as a deploy gate, mirroring what pre-commit hooks enforce locally. This prevents bypasses via `--no-verify`, GitHub UI edits, or direct pushes.
+
+Before the build step, the workflow runs:
+
+1. `pnpm lint` — ESLint
+2. `pnpm typecheck` — TypeScript
+3. `pnpm test:run` — Unit tests (Vitest)
+4. `pnpm test:e2e:emulator` — E2E tests (Playwright + Firebase emulators). Requires Java 11+ on the runner for Firebase emulators.
+
+If any step fails, the workflow stops and does not deploy.
 
 ---
 
 ## 3. Production Firebase Config
 
-### `.env.production` (committed)
+### `.env.production` (committed to repo)
 
 ```
-VITE_FIREBASE_API_KEY=<from terraform output or GCP console>
+VITE_FIREBASE_API_KEY=<from GCP console after bootstrap>
 VITE_FIREBASE_AUTH_DOMAIN=skill-plepic-com.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=skill-plepic-com
 ```
+
+Only these three `VITE_*` variables are used — `src/firebase.ts` does not reference `storageBucket`, `messagingSenderId`, or `appId`. This is intentional.
 
 ### How Environment Switching Works
 
 - **`pnpm build`** (production): Vite loads `.env.production` automatically when `NODE_ENV=production`
 - **`pnpm dev`** (local): Vite loads `.env.local` (gitignored) with fake emulator values
 - **`src/firebase.ts`**: Already reads `import.meta.env.VITE_*` — no code changes needed
-- **Emulator detection**: Existing logic connects to emulators only in dev mode — unchanged
+- **Emulator detection**: Existing logic connects to emulators when `import.meta.env.DEV` is true (Vite dev server only) — unchanged
 
 ### Why the API Key Is Safe to Commit
 
-Firebase client API keys are identifiers, not credentials. They're embedded in the JavaScript bundle served to every browser. Security is enforced by Firestore security rules and Firebase Auth, not by hiding the API key. The API key restriction (HTTP referrer to `skill.plepic.com/*`) prevents abuse from other domains.
+Firebase client API keys are identifiers, not credentials. They're embedded in the JavaScript bundle served to every browser. Security is enforced by Firestore security rules and Firebase Auth, not by hiding the API key. An API key HTTP referrer restriction (`skill.plepic.com/*`) can be set in the GCP console to reduce casual misuse, but the real security boundary is the Firestore rules.
 
 ---
 
@@ -138,20 +160,27 @@ Single project — emulators handle local development.
 firebase deploy --only firestore
 ```
 
-Manual, not automated. Rules changes are infrequent and should be reviewed before deploying to production.
+This deploys both `firestore.rules` and `firestore.indexes.json` (as configured in `firebase.json`). Manual, not automated. Rules changes are infrequent and should be reviewed before deploying to production.
 
 ---
 
 ## 5. Bootstrap (One-Time Setup)
 
-Run these steps once to set up the production infrastructure:
+### Step 0: Authenticate
+
+```bash
+gcloud auth login
+gcloud auth application-default login
+```
 
 ### Step 1: Create GCS Bucket for Terraform State
 
 ```bash
 gcloud storage buckets create gs://skill-plepic-com-tfstate \
   --project=skill-plepic-com \
-  --location=eu
+  --location=eu \
+  --uniform-bucket-level-access
+gcloud storage buckets update gs://skill-plepic-com-tfstate --versioning
 ```
 
 ### Step 2: Initialize and Apply Terraform
@@ -162,17 +191,26 @@ terraform init
 terraform apply
 ```
 
-### Step 3: Get Firebase API Key
+### Step 3: Enable Google Auth Provider
 
-After `terraform apply`, the API key is available from Terraform outputs or the GCP console. Update `.env.production` with the real value.
+In the Firebase Console (`console.firebase.google.com`), navigate to the `skill-plepic-com` project:
 
-### Step 4: Deploy Firestore Rules
+1. Go to **Authentication → Sign-in method**
+2. Enable **Google** as a sign-in provider
+3. Go to **Authentication → Settings → Authorized domains**
+4. Add `skill.plepic.com` as an authorized domain (required for OAuth redirect from the custom domain)
+
+### Step 4: Get Firebase API Key
+
+After `terraform apply`, get the API key from the GCP console (APIs & Services → Credentials). Update `.env.production` with the real value. Optionally set an HTTP referrer restriction to `skill.plepic.com/*` in the key's settings.
+
+### Step 5: Deploy Firestore Rules
 
 ```bash
 firebase deploy --only firestore
 ```
 
-### Step 5: Verify
+### Step 6: Verify
 
 Push a commit to `main` and confirm the GitHub Actions workflow builds and deploys successfully. Visit `skill.plepic.com` and verify the app loads and connects to production Firebase.
 
