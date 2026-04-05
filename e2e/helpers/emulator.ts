@@ -3,7 +3,7 @@ export const TEST_PASSWORD = 'testpassword123'
 
 const AUTH_EMULATOR = 'http://127.0.0.1:9099'
 const FIRESTORE_EMULATOR = 'http://127.0.0.1:8080'
-const PROJECT_ID = 'plepic-skill-dev'
+const PROJECT_ID = 'skill-plepic-com'
 
 export async function createTestUser(email: string, password: string) {
   const res = await fetch(

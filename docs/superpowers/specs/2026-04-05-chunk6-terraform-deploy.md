@@ -227,3 +227,24 @@ This spec is small enough to implement in one pass:
 5. Document bootstrap steps in the spec (this file)
 
 After implementation, the bootstrap steps (Section 5) are run manually to bring up the infrastructure.
+
+---
+
+## Implementation Notes
+
+**Status: Complete** (2026-04-05)
+
+All items implemented as specified:
+
+1. `infra/` — Terraform files with google-beta provider ~> 6.0, GCS remote state, Firebase project + Firestore resources
+2. `.env.production` — placeholder API key, real auth domain and project ID
+3. `.firebaserc` — updated to `skill-plepic-com`
+4. `.github/workflows/pages.yml` — full CI pipeline: pnpm install, lint, typecheck, unit tests, E2E tests (with Java + Playwright setup), build, then deploy
+5. `package.json` — added `packageManager` and `engines` fields for CI action compatibility
+6. `.gitignore` — added Terraform ignores (`.terraform/`, `*.tfstate*`); lock file NOT ignored (should be committed for provider pinning)
+
+**Deviations from spec:**
+
+- Added `packageManager: "pnpm@10.18.3"` and `engines.node: ">=22"` to `package.json` — required by `pnpm/action-setup` and `actions/setup-node` to auto-detect versions
+- Added `pnpm exec playwright install --with-deps chromium` step in CI — Playwright browsers aren't cached and must be installed before E2E tests
+- Used Java 21 (temurin) instead of 11 — 21 is the current LTS, Firebase emulators work with any 11+

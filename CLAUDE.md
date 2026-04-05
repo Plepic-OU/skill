@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Gamified web app where developers self-assess agentic coding skills via an RPG-style skill tree. Hosted at skill.plepic.com. **Chunk 5 (Shareable Results) complete** — client-side routing, shareable profile URLs, public Firestore reads, visitor mode.
+Gamified web app where developers self-assess agentic coding skills via an RPG-style skill tree. Hosted at skill.plepic.com. **Chunk 6 (Terraform & Deploy) complete** — all 6 chunks done. Terraform infra, CI pipeline with full quality gates, production Firebase config.
 
 ## Tech Stack
 
@@ -47,6 +47,7 @@ Pre-commit hooks (Husky + lint-staged) enforce: ESLint, Prettier, type-check, un
 - `src/components/` — React components: Header, Hero, SafetyZoneSelector, SkillTree, QuestPath, SkillNode, CelebrationEffect, SignInModal, ConfirmDialog, Toast, ShareButton
 - `src/types/skill-tree.ts` — TypeScript interfaces for skill tree data and app state
 - `src/data/` — Data module (skill-trees.ts), state persistence (state.ts), auth helpers (auth.ts), Firestore sync (sync.ts)
+- `infra/` — Terraform config (google-beta provider, Firebase project + Firestore, GCS remote state)
 - `e2e/` — Playwright + playwright-bdd E2E tests (Gherkin features + step definitions)
 - `e2e/helpers/emulator.ts` — Firebase emulator REST API helpers for E2E tests
 - `firestore.rules` — Firestore security rules (public read, owner-only write with schema validation)
@@ -71,7 +72,7 @@ The design spec defines 6 ordered chunks. See `docs/superpowers/specs/2026-04-04
 3. ~~Component UI~~ ✅ (Chunk 3) — `docs/superpowers/specs/2026-04-05-chunk3-component-ui.md`
 4. ~~Firebase Local~~ ✅ (Chunk 4) — `docs/superpowers/specs/2026-04-05-chunk4-firebase-local.md`
 5. ~~Shareable Results~~ ✅ (Chunk 5) — `docs/superpowers/specs/2026-04-05-chunk5-shareable-results.md`
-6. Terraform & Deploy (Chunk 6)
+6. ~~Terraform & Deploy~~ ✅ (Chunk 6) — `docs/superpowers/specs/2026-04-05-chunk6-terraform-deploy.md`
 
 ## Development Practices
 

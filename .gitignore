@@ -15,6 +15,10 @@ web/
 *.swp
 *.swo
 
+# Terraform
+infra/.terraform/
+infra/*.tfstate*
+
 # OS
 .DS_Store
 Thumbs.db
