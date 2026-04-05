@@ -32,10 +32,12 @@ Pre-commit hooks (Husky + lint-staged) enforce: ESLint, Prettier, type-check, an
 ## Key Directories
 
 - `web/` — SPA deployment target (GitHub Pages serves from here)
+- `web/prototypes/prototype-c2.html` — **The reference prototype** (Quest Paths "Scrollwork"). Use this as the visual/interaction reference when building React components.
 - `docs/` — Requirements, design specs, skill tree content
 - `docs/superpowers/specs/` — Detailed design specifications
 - `docs/skill-trees.json` — Static skill tree data (3 axes: autonomy, parallel execution, skill usage)
-- `.claude/skills/` — Custom Claude Code skills (validate-design, brainstorming)
+- `.impeccable.md` — Design context (brand personality, aesthetic direction, design principles)
+- `.claude/skills/` — Custom Claude Code skills (validate-design, brainstorming, impeccable design suite)
 
 ## Architecture Decisions
 
