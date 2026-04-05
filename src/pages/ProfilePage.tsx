@@ -10,7 +10,20 @@ import Hero from '../components/Hero'
 import SafetyZoneSelector from '../components/SafetyZoneSelector'
 import SkillTree from '../components/SkillTree'
 import { showToast } from '../components/Toast'
+import { skillTreeData } from '../data/skill-trees'
+import type { SafetyZoneId } from '../types/skill-tree'
 import styles from './ProfilePage.module.css'
+
+function SafetyBadge({ zoneId }: { zoneId: SafetyZoneId }) {
+  const zone = skillTreeData.safety.zones[zoneId]
+  return (
+    <div className={styles.safetyBadge}>
+      <span className={styles.safetyDot} style={{ background: zone.color }} />
+      <span className={styles.safetyLabel}>{zone.label}</span>
+      <span className={styles.safetyDesc}>{zone.desc}</span>
+    </div>
+  )
+}
 
 type SyncStatus = 'idle' | 'syncing' | 'saved' | 'error'
 
@@ -162,11 +175,8 @@ export default function ProfilePage() {
           )}
           <h2 className={styles.bannerName}>{visitorProfile.displayName}</h2>
         </div>
-        <Hero state={visitorProfile} />
-        <div className={styles.safetyBadge}>
-          <span className={styles.safetyLabel}>Safety Zone:</span>{' '}
-          {visitorProfile.safetyZone.replace('-', ' ')}
-        </div>
+        <Hero state={visitorProfile} visitorName={visitorProfile.displayName} />
+        <SafetyBadge zoneId={visitorProfile.safetyZone} />
         <SkillTree state={visitorProfile} readonly />
       </>
     )

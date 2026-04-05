@@ -54,6 +54,7 @@
   padding: 0.4rem 0.9rem;
   border-radius: 10px;
   cursor: pointer;
+  text-decoration: none;
   transition: opacity var(--transition-fast);
 }
 .btnLogin:hover {
@@ -156,6 +157,49 @@
   opacity: 0.8;
 }
 .btnViewProfile:focus-visible {
+  outline: 2px solid var(--green-vivid);
+  outline-offset: 2px;
+}
+
+.btnShare {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.78rem;
+  background: transparent;
+  border: none;
+  color: var(--ink-muted);
+  cursor: pointer;
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  transition: color var(--transition-fast);
+}
+.btnShare:hover {
+  color: var(--ink);
+}
+.btnShare:focus-visible {
+  outline: 2px solid var(--green-vivid);
+  outline-offset: 2px;
+}
+
+.btnSignInSecondary {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.78rem;
+  background: transparent;
+  border: none;
+  color: var(--ink-muted);
+  cursor: pointer;
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  transition: color var(--transition-fast);
+}
+.btnSignInSecondary:hover {
+  color: var(--ink);
+}
+.btnSignInSecondary:focus-visible {
   outline: 2px solid var(--green-vivid);
   outline-offset: 2px;
 }

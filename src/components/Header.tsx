@@ -83,12 +83,29 @@ export default function Header({ syncStatus = 'idle', mode = 'landing' }: Header
           </div>
         ) : (
           <>
+            {mode === 'landing' && (
+              <button className={styles.btnShare} onClick={() => setModalOpen(true)}>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path
+                    d="M6 10l4-4M10.5 3.5a2.12 2.12 0 113 3L11 9a2.12 2.12 0 01-3 0M5 7a2.12 2.12 0 010 3l-2.5 2.5a2.12 2.12 0 01-3-3L5 7z"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                Share
+              </button>
+            )}
             {mode === 'visitor' && (
-              <Link to="/" className={styles.btnViewProfile}>
+              <Link to="/" className={styles.btnLogin}>
                 Assess your own skills
               </Link>
             )}
-            <button className={styles.btnLogin} onClick={() => setModalOpen(true)}>
+            <button
+              className={mode === 'visitor' ? styles.btnSignInSecondary : styles.btnLogin}
+              onClick={() => setModalOpen(true)}
+            >
               {mode === 'landing' ? 'Sign in to save' : 'Sign in'}
             </button>
             <SignInModal open={modalOpen} onClose={() => setModalOpen(false)} />

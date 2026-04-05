@@ -6,16 +6,21 @@ const AXIS_IDS: AxisId[] = ['autonomy', 'parallelExecution', 'skillUsage']
 
 interface HeroProps {
   state: SkillState
+  visitorName?: string
 }
 
-export default function Hero({ state }: HeroProps) {
+export default function Hero({ state, visitorName }: HeroProps) {
   return (
     <section className={styles.hero}>
-      <h1 className={styles.title}>Map Your Agentic Skills</h1>
-      <p className={styles.subtitle}>
-        Where are you on the path to agentic development mastery? Claim the levels you've reached
-        and see what's next.
-      </p>
+      <h1 className={styles.title}>
+        {visitorName ? `${visitorName}\u2019s Agentic Skills` : 'Map Your Agentic Skills'}
+      </h1>
+      {!visitorName && (
+        <p className={styles.subtitle}>
+          Where are you on the path to agentic development mastery? Claim the levels you've reached
+          and see what's next.
+        </p>
+      )}
       <div className={styles.progressSummary} aria-live="polite">
         {AXIS_IDS.map((id) => {
           const axis = skillTreeData.axes[id]
