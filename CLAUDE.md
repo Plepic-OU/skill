@@ -4,9 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Gamified web app where developers self-assess agentic coding skills via an RPG-style skill tree. Hosted at skill.plepic.com. Currently in **early design phase** — no implementation code yet.
+Gamified web app where developers self-assess agentic coding skills via an RPG-style skill tree. Hosted at skill.plepic.com. **Chunk 2 (Foundation) complete** — project scaffolded with full tooling and quality gates.
 
-## Tech Stack (Planned)
+## Tech Stack
 
 - **Frontend:** React + Vite + TypeScript SPA, deployed to GitHub Pages from `web/`
 - **Backend:** Firebase (Auth with Google/GitHub, Firestore for user data) — no custom API
@@ -14,20 +14,21 @@ Gamified web app where developers self-assess agentic coding skills via an RPG-s
 - **Infra:** Terraform for Firebase provisioning; Firebase CLI for security rules/indexes
 - **Package manager:** pnpm (not npm)
 
-## Build & Quality Commands (Once Scaffolded)
+## Build & Quality Commands
 
 ```bash
 pnpm install          # install dependencies
 pnpm dev              # local dev server (Vite)
-pnpm build            # production build
-pnpm test             # run unit tests (Vitest)
+pnpm build            # production build (typecheck + vite build → web/)
+pnpm test             # run unit tests in watch mode (Vitest)
+pnpm test:run         # run unit tests once
 pnpm test <file>      # run a single test file
 pnpm lint             # ESLint
 pnpm format           # Prettier
 pnpm typecheck        # tsc --noEmit
 ```
 
-Pre-commit hooks (Husky + lint-staged) enforce: ESLint, Prettier, type-check, and unit tests on changed files.
+Pre-commit hooks (Husky + lint-staged) enforce: ESLint, Prettier, and type-check on staged files. Vitest is not in the pre-commit hook yet (added in Chunk 3 when there are real tests).
 
 ## Key Directories
 
@@ -50,7 +51,14 @@ Pre-commit hooks (Husky + lint-staged) enforce: ESLint, Prettier, type-check, an
 
 ## Implementation Order
 
-The design spec defines 6 ordered chunks: Visual Prototype → Foundation → Component UI → Firebase Local → Shareable Results → Terraform & Deploy. See `docs/superpowers/specs/2026-04-04-agentic-skills-webapp-design.md` for details.
+The design spec defines 6 ordered chunks. See `docs/superpowers/specs/2026-04-04-agentic-skills-webapp-design.md` for details.
+
+1. ~~Visual Prototype~~ ✅ (Chunk 1)
+2. ~~Foundation~~ ✅ (Chunk 2) — `docs/superpowers/specs/2026-04-05-chunk2-foundation.md`
+3. Component UI (Chunk 3) — next
+4. Firebase Local (Chunk 4)
+5. Shareable Results (Chunk 5)
+6. Terraform & Deploy (Chunk 6)
 
 ## Development Practices
 

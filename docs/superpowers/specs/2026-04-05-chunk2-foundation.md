@@ -43,7 +43,8 @@ skill/                          # repo root
 │   ├── App.module.css          # Smoke-test component styles (CSS Modules)
 │   ├── App.test.tsx            # Smoke test (renders without crashing)
 │   ├── index.css               # Minimal global styles (resets, body defaults)
-│   └── test-setup.ts           # Testing Library jest-dom setup
+│   ├── test-setup.ts           # Testing Library jest-dom setup
+│   └── vite-env.d.ts           # Vite client type declarations (CSS modules, env)
 ├── index.html                  # Vite entry HTML (loads src/main.tsx)
 ├── public/                     # Static assets (favicon, etc.)
 ├── web/                        # Build output (vite.config `outDir: 'web'`)
@@ -409,3 +410,19 @@ This chunk is done when:
 8. Set up Husky + lint-staged: `pnpm exec husky init`, configure `.lintstagedrc.json`, edit `.husky/pre-commit`
 9. Run all verification criteria
 10. Commit
+
+## Implementation Notes (2026-04-05)
+
+**Status: ✅ Complete** — commit `89d44ef`
+
+### Deviations from spec
+
+1. **Added `src/vite-env.d.ts`** — standard Vite scaffold file providing type declarations for CSS module imports and `import.meta.env`. Without it, `tsc --noEmit` fails on CSS module imports in TypeScript 6.
+2. **Added `"types": ["vitest/globals"]` to `tsconfig.json`** — necessary for `tsc --noEmit` to recognize `test()`, `expect()` etc. when `globals: true` is set in Vitest config. The spec's tsconfig omitted this.
+3. **Added SRI `integrity` attribute on CDN CSS link** — security improvement. The design system CSS is pinned to commit `1fbf2e0` and now also verified via `sha384` hash.
+4. **Used explicit react-hooks rules instead of `recommended.rules` spread** — `eslint-plugin-react-hooks` v7 includes 15+ React Compiler rules in `recommended`. Using explicit `rules-of-hooks` + `exhaustive-deps` avoids unexpected lint errors in Chunk 3.
+5. **Added `.env` to `.gitignore`** — the spec only covered `.env.local` and `.env*.local`, leaving a bare `.env` file unprotected.
+
+### Actual versions installed
+
+- React 19.2.4, Vite 8.0.3, TypeScript 6.0.2, Vitest 4.1.2, ESLint (via typescript-eslint 8.58.0), Prettier 3.8.1, Husky 9.1.7
