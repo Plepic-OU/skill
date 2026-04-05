@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Gamified web app where developers self-assess agentic coding skills via an RPG-style skill tree. Hosted at skill.plepic.com. **Chunk 4 (Firebase Local) complete** — Firebase Auth + Firestore sync with emulator support.
+Gamified web app where developers self-assess agentic coding skills via an RPG-style skill tree. Hosted at skill.plepic.com. **Chunk 5 (Shareable Results) complete** — client-side routing, shareable profile URLs, public Firestore reads, visitor mode.
 
 ## Tech Stack
 
@@ -70,7 +70,7 @@ The design spec defines 6 ordered chunks. See `docs/superpowers/specs/2026-04-04
 2. ~~Foundation~~ ✅ (Chunk 2) — `docs/superpowers/specs/2026-04-05-chunk2-foundation.md`
 3. ~~Component UI~~ ✅ (Chunk 3) — `docs/superpowers/specs/2026-04-05-chunk3-component-ui.md`
 4. ~~Firebase Local~~ ✅ (Chunk 4) — `docs/superpowers/specs/2026-04-05-chunk4-firebase-local.md`
-5. Shareable Results (Chunk 5) — **in progress** `docs/superpowers/specs/2026-04-05-chunk5-shareable-results.md`
+5. ~~Shareable Results~~ ✅ (Chunk 5) — `docs/superpowers/specs/2026-04-05-chunk5-shareable-results.md`
 6. Terraform & Deploy (Chunk 6)
 
 ## Development Practices

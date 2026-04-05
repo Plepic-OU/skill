@@ -22,6 +22,13 @@ Feature: Shareable profile
     And I do not see claim or unclaim buttons
     And I see an "Assess your own skills" link
 
+  Scenario: Sign-out resets skill tree to defaults
+    Given I open the skill tree page
+    And I sign in as a test user
+    And I claim the "Review Every Edit" level on my profile
+    When I sign out
+    Then the "Review Every Edit" node should not be claimed
+
   Scenario: View a non-existent profile
     When I navigate to "/profile/nonexistent-user-id-12345"
     Then I see a "Profile not found" message

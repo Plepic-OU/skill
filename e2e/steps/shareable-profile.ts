@@ -37,6 +37,20 @@ Then('I can still claim skills on my profile', async ({ page }) => {
   await expect(claimed).toBeVisible({ timeout: 5000 })
 })
 
+Given('I claim the {string} level on my profile', async ({ page }, name: string) => {
+  await page.waitForSelector('#questMap')
+  const node = page.getByLabel(new RegExp(name)).first()
+  await node.click()
+  await expect(node).toHaveAttribute('aria-expanded', 'true')
+  const btn = page
+    .locator('[aria-expanded="true"]')
+    .first()
+    .getByRole('button', { name: 'This is me' })
+  await btn.scrollIntoViewIfNeeded()
+  await btn.click({ force: true })
+  await page.waitForTimeout(300)
+})
+
 When('I click the share button', async ({ page }) => {
   // Grant clipboard permissions
   await page.context().grantPermissions(['clipboard-read', 'clipboard-write'])
