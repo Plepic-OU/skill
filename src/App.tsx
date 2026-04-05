@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useAuth } from './contexts/AuthContext'
 import { skillTreeData } from './data/skill-trees'
-import { loadState, saveState } from './data/state'
+import { DEFAULT_STATE, loadState, saveState } from './data/state'
 import { syncOnLogin, writeAssessment } from './data/sync'
 import type { AxisId, SafetyZoneId, SkillState } from './types/skill-tree'
 import Header from './components/Header'
@@ -34,8 +34,10 @@ export default function App() {
           syncing.current = false
         })
     }
-    if (!user) {
+    if (!user && prevUser.current) {
+      // Sign-out: reset to defaults, clear localStorage
       prevUser.current = null
+      setState({ ...DEFAULT_STATE })
     }
   }, [user])
 
