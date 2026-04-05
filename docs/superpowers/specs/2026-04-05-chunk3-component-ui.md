@@ -38,10 +38,40 @@ Turn the HTML prototype (`docs/prototypes/prototype-c2.html`) into React compone
 
 The canonical data file `docs/skill-trees.json` is enriched with fields from the prototype:
 
-- Each level gets a `levelIcon` field (Material Symbols name: `keyboard`, `rate_review`, `checklist`, `shield`, `verified`, `rocket_launch`, etc.)
-- Each axis `icon` field changes from emoji to Material Symbols name (`swap_horiz`, `bolt`, `build`)
+- Each axis `icon` field changes from emoji to Material Symbols name
+- Each level gets a `levelIcon` field (Material Symbols name)
+
+**Full icon mapping from the prototype:**
+
+| Axis               | Icon         |
+| ------------------ | ------------ |
+| Autonomy           | `swap_horiz` |
+| Parallel Execution | `bolt`       |
+| Skill Usage        | `build`      |
+
+| Axis               | Level                      | levelIcon       |
+| ------------------ | -------------------------- | --------------- |
+| Autonomy           | 1 Autocomplete             | `keyboard`      |
+| Autonomy           | 2 Review Every Edit        | `rate_review`   |
+| Autonomy           | 3 Review Per Session       | `checklist`     |
+| Autonomy           | 4 Review Critical Only     | `shield`        |
+| Autonomy           | 5 Review the Result        | `verified`      |
+| Autonomy           | 6 Fully Automated          | `rocket_launch` |
+| Parallel Execution | 1 Single Task              | `looks_one`     |
+| Parallel Execution | 2 Manual Parallel          | `splitscreen`   |
+| Parallel Execution | 3 Task Queue               | `queue`         |
+| Parallel Execution | 4 Directed Orchestration   | `account_tree`  |
+| Parallel Execution | 5 Autonomous Orchestration | `hub`           |
+| Skill Usage        | 1 Built-in Only            | `inventory_2`   |
+| Skill Usage        | 2 Third-Party Skills       | `extension`     |
+| Skill Usage        | 3 MCP Services             | `cable`         |
+| Skill Usage        | 4 Create Skills Manually   | `construction`  |
+| Skill Usage        | 5 Create Skills with AI    | `auto_fix_high` |
+| Skill Usage        | 6 Self-Improving Loop      | `all_inclusive` |
 
 The prototype's inline data copy becomes obsolete — the app imports from the canonical JSON.
+
+**Note:** Material Symbols Rounded font is already loaded in `index.html` from Chunk 2 (with params `opsz,wght,FILL,GRAD@24,400,1,0` — filled variant). No additional font setup needed.
 
 ### TypeScript Interfaces
 
@@ -117,14 +147,14 @@ The state is 4 fields. The component tree is 4 levels deep. No Context, no exter
 
 ```typescript
 const DEFAULT_STATE: SkillState = {
-  autonomy: 0,
-  parallelExecution: 0,
-  skillUsage: 0,
+  autonomy: 1,
+  parallelExecution: 1,
+  skillUsage: 1,
   safetyZone: 'safe-zone',
 }
 ```
 
-Level 0 means nothing claimed on that axis. All nodes start as frontier/future.
+Level 1 starts claimed on all axes (matching the parent design spec: "Level 1 starts unlocked on all axes"). On first visit, level 1 is claimed and level 2 is the frontier.
 
 ### localStorage Sync
 
@@ -135,8 +165,10 @@ Level 0 means nothing claimed on that axis. All nodes start as frontier/future.
 
 ### Claim/Unclaim Logic
 
-- `claimLevel(axisId, level)` — sets `state[axisId] = level`. Claiming level N implicitly claims all levels below (the state stores the highest claimed level, not individual flags).
-- `unclaimLevel(axisId, level)` — sets `state[axisId] = level - 1`.
+- `claimLevel(axisId, level)` — sets `state[axisId] = level`. Claiming level N implicitly claims all levels below (the state stores the highest claimed level, not individual flags). Celebration fires once, on the clicked node only.
+- `unclaimLevel(axisId, level)` — sets `state[axisId] = level - 1`. Only the highest claimed node shows the "Not here yet" button. Lower claimed nodes show no action button when expanded — this prevents confusing mid-stack unclaims.
+
+**Note on Firestore compatibility:** localStorage stores the highest claimed level (1-6). This matches the Firestore schema range (1-6). Default state is 1 on all axes. The sync logic in Chunk 4 maps directly.
 
 ### Derived Node State
 
@@ -201,14 +233,14 @@ e2e/                            # At project root, not inside src/
 Sticky top bar with glassmorphic backdrop blur (`rgba(250, 247, 242, 0.94)` + `backdrop-filter: blur(16px)`).
 
 - Left: "P" logo icon (green square with white P) + "Agentic Skills" text in Zilla Slab
-- Right: "Log in to save" button — **renders but does nothing** (Chunk 4 wires it up)
+- Right: "Log in to save" button — **shows a "Coming soon" tooltip on click** (Chunk 4 wires up actual auth). Tooltip is a brief, dismissible message or CSS-only tooltip.
 - Height: 56px, sticky top, z-index 100
 
 ### Hero
 
 - Title: "Map Your Agentic Skills" with gradient text effect (ink → green-dark) and decorative flourish underline
-- Subtitle: descriptive paragraph
-- Progress summary: row of chips, one per axis. Each chip shows colored dot + axis name + "level/max" in mono font. Chips update live on claim/unclaim.
+- Subtitle: "Where are you on the path to agentic development mastery? Claim the levels you've reached and see what's next."
+- Progress summary: row of chips, one per axis. Each chip shows colored dot + axis name + "level/max" in mono font (max derived from `axis.levels.length`). On first visit (default state), chips show "1/6", "1/5", "1/6". Chips update live on claim/unclaim.
 
 ### SafetyZoneSelector
 
@@ -260,24 +292,28 @@ The most complex component. Three visual states driven by props:
 - Plain parchment indicator, no description preview
 - Subtle rolled-scroll shadow at bottom
 
+**All node states are expandable** — including future nodes. Clicking a future node reveals its full description, obstacles, and a "This is me" button to claim it.
+
 **Expand/collapse behavior:**
 
-- Click or Enter/Space toggles expansion
-- Only one node expanded per QuestPath at a time (accordion)
-- Expanded view slides open via `max-height` transition (0 → 900px, cubic-bezier)
+- Click or Enter/Space toggles expansion. SkillNode renders as a `<div>` with `role="button"` and an explicit `keydown` handler for Enter/Space (not relying on browser click synthesis for divs).
+- Only one node expanded per QuestPath at a time (accordion). **Accordion state is local to QuestPath** (`useState` inside QuestPath), not part of App state — it's ephemeral UI state, not persisted.
+- Expanded view slides open via `max-height` transition (0 → 1200px, cubic-bezier). Using 1200px to accommodate long content on narrow mobile viewports.
 - Expanded content: full description, verification strategy (if exists), "What makes this hard" list, "How to get here" list, action button
 
 **Action buttons (inside expanded detail):**
 
-- If not claimed: "This is me" (gradient colored button) → calls `onClaim(axisId, level)`, triggers CelebrationEffect
-- If claimed: "Not here yet" (outline button) → calls `onUnclaim(axisId, level)`
+- **Frontier or future node (not claimed):** "This is me" (gradient colored button) → calls `onClaim(axisId, level)`, triggers CelebrationEffect
+- **Highest claimed node:** "Not here yet" (outline button) → calls `onUnclaim(axisId, level)`
+- **Lower claimed nodes (below highest):** no action button shown — prevents confusing mid-stack unclaims
 - Clicking action button does NOT toggle expansion (event propagation stopped)
 
 **Accessibility:**
 
-- `tabindex="0"`, `role="button"`, `aria-expanded`
+- `tabindex="0"`, `role="button"`, `aria-expanded`, explicit `keydown` handler for Enter/Space
 - `aria-label` includes level number, name, and state (reached/up next/not yet reached)
 - `focus-visible` outline in axis color
+- **Skip link:** an `<a href="#questMap">Skip to skill tree</a>` renders before the Header in the DOM (visually hidden until focused). Positioned absolutely, shown on `:focus`.
 
 ### CelebrationEffect
 
@@ -320,7 +356,27 @@ The `body::before` (aged parchment gradients) and `body::after` (linen grain) ps
 
 Every component gets a `.module.css` file. Styles are scoped automatically by Vite.
 
-Per-axis coloring flows through `--node-color` CSS custom property, set on `QuestPath` root element and inherited by all children. This enables `color-mix()` expressions in CSS without JavaScript.
+Per-axis coloring flows through `--node-color` CSS custom property, set on `QuestPath` root element and inherited by all children via DOM inheritance (CSS Modules do not create shadow DOM, so custom properties flow normally). This enables `color-mix()` expressions in CSS without JavaScript.
+
+### Global CSS (not in Modules)
+
+CelebrationEffect injects DOM elements imperatively and adds a `just-claimed` class to node indicators. These styles **cannot** go in CSS Modules (the hashed class names wouldn't match). Instead, celebration-related styles go in `src/index.css` as global CSS:
+
+- `.claim-celebration`, `.claim-particle`, `.claim-ripple`, `.claim-flash` — particle and effect styles
+- `.just-claimed` — seal stamp bounce animation (the `sealStamp` keyframe)
+- `@keyframes particleBurst`, `rippleExpand`, `flashGlow`, `sealStamp`
+- `@media (prefers-reduced-motion: reduce)` override for all celebration animations
+
+### Z-index Stack
+
+| Layer                 | Z-index | Elements                            |
+| --------------------- | ------- | ----------------------------------- |
+| Parchment texture     | 0       | `body::before`, `body::after`       |
+| Content               | 1       | Hero, SafetyZone, SkillTree, Footer |
+| Sticky header         | 100     | Header                              |
+| Celebration flash     | 998     | `.claim-flash`                      |
+| Celebration ripple    | 999     | `.claim-ripple`                     |
+| Celebration particles | 1000    | `.claim-celebration`                |
 
 ### Responsive Breakpoints
 
@@ -328,16 +384,23 @@ Per-axis coloring flows through `--node-color` CSS custom property, set on `Ques
 - `< 820px`: single column (max-width 440px centered), no meandering, smaller indicators/ribbons
 - `< 380px`: further reduced sizes for safety buttons, progress chips, node padding
 
+### Additional Global Styles
+
+Add to `src/index.css`:
+
+- `overflow-x: hidden` on `body` to prevent horizontal scrollbar from node meandering `translateX` offsets
+- Header background note: `rgba(250, 247, 242, 0.94)` is the alpha-modified form of `--bg: #faf7f2`. CSS cannot do `rgba(var(--bg), 0.94)`, so this value is hardcoded. If `--bg` changes in the design system, update the header background manually.
+
 ## Testing
 
 ### Unit Tests (Vitest)
 
-| Test file                     | What it verifies                                                                                                           |
-| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `App.test.tsx`                | Renders without crashing, loads default state when localStorage empty                                                      |
-| `SkillNode.test.tsx`          | Expand/collapse toggle, claim calls handler, unclaim calls handler, correct ARIA attributes per state                      |
-| `SafetyZoneSelector.test.tsx` | Zone selection calls handler, active zone has correct aria-checked, description updates                                    |
-| `skill-tree-state.test.ts`    | Pure logic: localStorage read/write/validation, default state fallback, invalid JSON handling, out-of-range values clamped |
+| Test file                     | What it verifies                                                                                                                                                                                                             |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `App.test.tsx`                | Renders without crashing, loads default state when localStorage empty                                                                                                                                                        |
+| `SkillNode.test.tsx`          | Expand/collapse toggle, claim calls handler, unclaim calls handler, correct ARIA attributes per state. Mock `CelebrationEffect.celebrate` to avoid imperative DOM in jsdom.                                                  |
+| `SafetyZoneSelector.test.tsx` | Zone selection calls handler, active zone has correct aria-checked, description updates                                                                                                                                      |
+| `skill-tree-state.test.ts`    | Pure logic: localStorage read/write/validation, default state fallback, invalid JSON handling, out-of-range values → default state. Also: claimLevel sets highest, unclaimLevel decrements, unclaiming level 1 → 0 boundary. |
 
 ### E2E Tests (Playwright + playwright-bdd)
 
@@ -457,11 +520,14 @@ Feature: Keyboard navigation
 
 ### E2E Setup
 
-- **`playwright.config.ts`** at project root
+- **`playwright.config.ts`** at project root (outside `src/` — not type-checked by the main `tsconfig.json`)
+- **`tsconfig.e2e.json`** — separate TypeScript config for E2E files, includes `e2e/` and `playwright.config.ts`
 - `webServer` option starts `pnpm dev` automatically
 - Tests in `e2e/` directory (outside `src/`)
 - Step definitions in `e2e/steps/` matching feature files
 - `pnpm test:e2e` script runs Playwright with playwright-bdd
+
+**Note on `resolveJsonModule`:** `tsconfig.json` already has `resolveJsonModule: true` from Chunk 2. The import `../../docs/skill-trees.json` from `src/data/skill-trees.ts` resolves correctly — Vite bundles the JSON into the JS output at build time, so the `docs/` directory does not need to be deployed.
 
 ### Pre-commit Hook
 

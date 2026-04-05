@@ -82,12 +82,9 @@ After all validators return:
 
 ## Output Format
 
+Present auto-fixes first, then decisions at the very end so the user sees them last (most visible position).
+
 ```markdown
-## Decisions for you (<count>)
-
-1. **<Decision title>** — <Option A> vs <Option B>. <Why it matters.>
-2. ...
-
 ## Auto-fixed (<count>)
 
 - <Brief description of what was fixed>
@@ -96,6 +93,11 @@ After all validators return:
 ## Verdict
 
 <Ready / Needs Decisions> — <one-line summary>
+
+## Decisions for you (<count>)
+
+1. **<Decision title>** — <Option A> vs <Option B>. <Why it matters.>
+2. ...
 ```
 
 If there are decisions, verdict is **Needs Decisions**. After the user resolves decisions, apply their choices and re-validate. If all decisions are resolved and auto-fixes applied, verdict is **Ready — spec is ready for implementation.**

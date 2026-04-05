@@ -164,7 +164,7 @@ Deterministic, non-negotiable checks enforced on every commit:
 ### Test layers
 
 - **Unit (Vitest):** Component logic, skill tree state management, level progression rules
-- **BDD/Gherkin (Cucumber):** Feature files covering core user flows:
+- **BDD/Gherkin (Playwright + playwright-bdd):** Feature files covering core user flows:
   - Browse skill tree without auth
   - Level up/down on an axis
   - Login and Firestore sync
@@ -179,7 +179,7 @@ Ordered for incremental delivery:
 
 1. **Visual Prototype** ✅ — Static HTML/CSS prototype at `docs/prototypes/prototype-c2.html`. Quest Paths "Scrollwork" style: top-to-bottom winding trails, parchment aesthetic, wax-seal indicators, vine connectors. Includes all 3 axes, safety zone selector, expand/collapse details, claim/unclaim with celebration effects, progress summary. Polished through 5 critique-fix iterations + clarify + bolder + delight passes. Design context captured in `.impeccable.md`.
 2. **Foundation** — Project scaffold: React + Vite + TypeScript, pnpm, ESLint, Prettier, Husky pre-commit hooks, Plepic design system wired in.
-3. **Component UI** — Turn prototype into React components with routing and local state (localStorage). Interactive skill tree works entirely client-side.
+3. **Component UI** — Turn prototype into React components with local state (localStorage). Interactive skill tree works entirely client-side. No routing — added in Chunk 5 when shared profiles need it.
 4. **Firebase Local** — Firebase emulator setup, auth (social login), Firestore persistence. Sync logic (localStorage ↔ Firestore). Full E2E/BDD tests against emulator.
 5. **Shareable Results** — Shareable profile links, public read-only views. Still running against emulator.
 6. **Terraform & Deploy** — Infrastructure as code for Firebase. Deploy SPA to GitHub Pages, connect to production Firebase.
