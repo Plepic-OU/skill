@@ -25,13 +25,42 @@ interface FirestoreUserWrite {
 
 interface FirestoreUserRead {
   updatedAt: Timestamp
-  displayName: string
-  avatarUrl: string
+  displayName?: string
+  avatarUrl?: string
   safetyZone: SkillState['safetyZone']
   skills: {
     autonomy: number
     parallelExecution: number
     skillUsage: number
+  }
+}
+
+function isHttpUrl(url: string): boolean {
+  try {
+    const u = new URL(url)
+    return u.protocol === 'http:' || u.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
+export interface PublicProfile extends SkillState {
+  displayName: string
+  avatarUrl: string
+}
+
+export async function readPublicProfile(userId: string): Promise<PublicProfile | null> {
+  const userRef = doc(db, 'users', userId)
+  const snapshot = await getDoc(userRef)
+  if (!snapshot.exists()) return null
+  const data = snapshot.data() as FirestoreUserRead
+  return {
+    autonomy: data.skills.autonomy,
+    parallelExecution: data.skills.parallelExecution,
+    skillUsage: data.skills.skillUsage,
+    safetyZone: data.safetyZone,
+    displayName: data.displayName ?? 'Anonymous',
+    avatarUrl: isHttpUrl(data.avatarUrl ?? '') ? (data.avatarUrl as string) : '',
   }
 }
 

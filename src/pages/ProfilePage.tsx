@@ -1,33 +1,53 @@
 import { useEffect, useRef, useState } from 'react'
-import { useParams } from 'react-router'
+import { Link, useNavigate, useParams } from 'react-router'
 import { useAuth } from '../contexts/AuthContext'
 import { useSkillState } from '../hooks/useSkillState'
 import { DEFAULT_STATE } from '../data/state'
-import { syncOnLogin, writeAssessment } from '../data/sync'
+import { readPublicProfile, syncOnLogin, writeAssessment } from '../data/sync'
+import type { PublicProfile } from '../data/sync'
 import Header from '../components/Header'
 import Hero from '../components/Hero'
 import SafetyZoneSelector from '../components/SafetyZoneSelector'
 import SkillTree from '../components/SkillTree'
 import { showToast } from '../components/Toast'
+import styles from './ProfilePage.module.css'
 
 type SyncStatus = 'idle' | 'syncing' | 'saved' | 'error'
 
 export default function ProfilePage() {
   const { userId } = useParams<{ userId: string }>()
   const { user, loading } = useAuth()
+  const navigate = useNavigate()
   const isOwner = user?.uid === userId
-  const { state, setState, handleClaim, handleUnclaim, handleSafetyZone } = useSkillState()
+  const wasOwner = useRef(false)
 
+  // --- Owner mode state ---
+  const { state, setState, handleClaim, handleUnclaim, handleSafetyZone } = useSkillState()
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle')
   const prevUser = useRef<string | null>(null)
   const syncing = useRef(false)
   const savedTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
+
+  // --- Visitor mode state ---
+  const [visitorProfile, setVisitorProfile] = useState<PublicProfile | null>(null)
+  const [visitorLoading, setVisitorLoading] = useState(true)
+  const [visitorError, setVisitorError] = useState(false)
 
   function showSaved() {
     setSyncStatus('saved')
     clearTimeout(savedTimer.current)
     savedTimer.current = setTimeout(() => setSyncStatus('idle'), 3000)
   }
+
+  // Redirect to landing when owner signs out
+  useEffect(() => {
+    if (isOwner) {
+      wasOwner.current = true
+    } else if (wasOwner.current && !loading) {
+      wasOwner.current = false
+      navigate('/', { replace: true })
+    }
+  }, [isOwner, loading, navigate])
 
   // Sync on login (owner mode)
   useEffect(() => {
@@ -72,25 +92,90 @@ export default function ProfilePage() {
       })
   }, [state, user, isOwner])
 
+  // Fetch public profile (visitor mode)
+  useEffect(() => {
+    if (isOwner || loading) return
+    if (!userId) {
+      setVisitorLoading(false)
+      setVisitorError(true)
+      return
+    }
+    setVisitorLoading(true)
+    setVisitorError(false)
+    readPublicProfile(userId)
+      .then((profile) => {
+        setVisitorProfile(profile)
+        setVisitorLoading(false)
+      })
+      .catch(() => {
+        setVisitorError(true)
+        setVisitorLoading(false)
+      })
+  }, [userId, isOwner, loading])
+
   // While auth is resolving, show nothing (avoid flash)
   if (loading) return null
 
-  // Visitor mode (fully implemented in Chunk 2)
+  // --- Visitor mode ---
   if (!isOwner) {
+    if (visitorLoading) {
+      return (
+        <>
+          <Header mode="visitor" />
+          <div className={styles.visitorMessage}>
+            <p>Loading profile...</p>
+          </div>
+        </>
+      )
+    }
+
+    if (visitorError || !visitorProfile) {
+      return (
+        <>
+          <Header mode="visitor" />
+          <div className={styles.visitorMessage}>
+            <h2>Profile not found</h2>
+            <p>This profile doesn't exist or couldn't be loaded.</p>
+            <Link to="/" className={styles.ctaLink}>
+              Assess your own skills
+            </Link>
+          </div>
+        </>
+      )
+    }
+
     return (
       <>
-        <Header />
-        <div style={{ textAlign: 'center', padding: '4rem 1rem' }}>
-          <p>Visitor mode coming soon.</p>
+        <Header mode="visitor" />
+        <div className={styles.profileBanner}>
+          {visitorProfile.avatarUrl ? (
+            <img
+              src={visitorProfile.avatarUrl}
+              alt=""
+              className={styles.bannerAvatar}
+              referrerPolicy="no-referrer"
+            />
+          ) : (
+            <div className={styles.bannerAvatarFallback}>
+              {visitorProfile.displayName[0]?.toUpperCase() ?? '?'}
+            </div>
+          )}
+          <h2 className={styles.bannerName}>{visitorProfile.displayName}</h2>
         </div>
+        <Hero state={visitorProfile} />
+        <div className={styles.safetyBadge}>
+          <span className={styles.safetyLabel}>Safety Zone:</span>{' '}
+          {visitorProfile.safetyZone.replace('-', ' ')}
+        </div>
+        <SkillTree state={visitorProfile} readonly />
       </>
     )
   }
 
-  // Owner mode
+  // --- Owner mode ---
   return (
     <>
-      <Header syncStatus={syncStatus} />
+      <Header syncStatus={syncStatus} mode="owner" />
       <Hero state={state} />
       <SafetyZoneSelector selected={state.safetyZone} onSelect={handleSafetyZone} />
       <SkillTree state={state} onClaim={handleClaim} onUnclaim={handleUnclaim} />

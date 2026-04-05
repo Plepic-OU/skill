@@ -9,6 +9,7 @@ interface QuestPathProps {
   claimedLevel: number
   onClaim: (axisId: AxisId, level: number) => void
   onUnclaim: (axisId: AxisId, level: number) => void
+  readonly?: boolean
 }
 
 export default function QuestPath({
@@ -17,6 +18,7 @@ export default function QuestPath({
   claimedLevel,
   onClaim,
   onUnclaim,
+  readonly,
 }: QuestPathProps) {
   const [expandedLevel, setExpandedLevel] = useState<number | null>(null)
 
@@ -72,6 +74,7 @@ export default function QuestPath({
                 onToggle={() => toggleNode(level.level)}
                 onClaim={onClaim}
                 onUnclaim={onUnclaim}
+                readonly={readonly}
               />
             </div>
           )

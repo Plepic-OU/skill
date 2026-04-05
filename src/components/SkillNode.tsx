@@ -12,6 +12,7 @@ interface SkillNodeProps {
   onToggle: () => void
   onClaim: (axisId: AxisId, level: number) => void
   onUnclaim: (axisId: AxisId, level: number) => void
+  readonly?: boolean
 }
 
 export default function SkillNode({
@@ -23,6 +24,7 @@ export default function SkillNode({
   onToggle,
   onClaim,
   onUnclaim,
+  readonly,
 }: SkillNodeProps) {
   const levelLabel =
     nodeState === 'claimed'
@@ -52,8 +54,8 @@ export default function SkillNode({
     }
   }
 
-  const showClaimBtn = nodeState !== 'claimed'
-  const showUnclaimBtn = nodeState === 'claimed' && isHighestClaimed
+  const showClaimBtn = !readonly && nodeState !== 'claimed'
+  const showUnclaimBtn = !readonly && nodeState === 'claimed' && isHighestClaimed
 
   return (
     <div

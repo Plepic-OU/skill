@@ -4,10 +4,29 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     match /users/{userId} {
-      // Owner-only reads for now — opened to public in Chunk 5 when shared profiles ship
-      allow read: if request.auth != null && request.auth.uid == userId;
-      // Only the user can create/update their own document (no delete)
-      allow create, update: if request.auth != null && request.auth.uid == userId;
+      // Anyone can view profiles (public read)
+      allow read: if true;
+
+      // Only the owner can create/update their own document, with schema validation
+      allow create, update: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.keys().hasOnly(['displayName', 'avatarUrl', 'updatedAt', 'safetyZone', 'skills'])
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() <= 200
+        && request.resource.data.avatarUrl is string
+        && request.resource.data.avatarUrl.size() <= 500
+        && (request.resource.data.avatarUrl == '' || request.resource.data.avatarUrl.matches('^https://.*'))
+        && request.resource.data.safetyZone in ['safe-zone', 'normal', 'hardcore', 'impossible']
+        && request.resource.data.skills is map
+        && request.resource.data.skills.keys().hasOnly(['autonomy', 'parallelExecution', 'skillUsage'])
+        && request.resource.data.skills.autonomy is int
+        && request.resource.data.skills.autonomy >= 0 && request.resource.data.skills.autonomy <= 6
+        && request.resource.data.skills.parallelExecution is int
+        && request.resource.data.skills.parallelExecution >= 0 && request.resource.data.skills.parallelExecution <= 5
+        && request.resource.data.skills.skillUsage is int
+        && request.resource.data.skills.skillUsage >= 0 && request.resource.data.skills.skillUsage <= 6;
+
+      // Delete is intentionally denied (implicit)
     }
 
     // Deny everything else

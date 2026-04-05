@@ -7,11 +7,14 @@ const AXIS_IDS: AxisId[] = ['autonomy', 'parallelExecution', 'skillUsage']
 
 interface SkillTreeProps {
   state: SkillState
-  onClaim: (axisId: AxisId, level: number) => void
-  onUnclaim: (axisId: AxisId, level: number) => void
+  onClaim?: (axisId: AxisId, level: number) => void
+  onUnclaim?: (axisId: AxisId, level: number) => void
+  readonly?: boolean
 }
 
-export default function SkillTree({ state, onClaim, onUnclaim }: SkillTreeProps) {
+const noop = () => {}
+
+export default function SkillTree({ state, onClaim, onUnclaim, readonly }: SkillTreeProps) {
   return (
     <main>
       <div id="questMap" className={styles.questMap} role="region" aria-label="Skill tree paths">
@@ -21,8 +24,9 @@ export default function SkillTree({ state, onClaim, onUnclaim }: SkillTreeProps)
             axis={skillTreeData.axes[id]}
             axisId={id}
             claimedLevel={state[id]}
-            onClaim={onClaim}
-            onUnclaim={onUnclaim}
+            onClaim={onClaim ?? noop}
+            onUnclaim={onUnclaim ?? noop}
+            readonly={readonly}
           />
         ))}
       </div>

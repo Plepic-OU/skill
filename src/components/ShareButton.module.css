@@ -1,0 +1,22 @@
+.shareBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.78rem;
+  background: transparent;
+  border: 1.5px solid var(--green-brand);
+  color: var(--green-brand);
+  padding: 0.3rem 0.7rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+}
+.shareBtn:hover {
+  opacity: 0.8;
+}
+.shareBtn:focus-visible {
+  outline: 2px solid var(--green-vivid);
+  outline-offset: 2px;
+}

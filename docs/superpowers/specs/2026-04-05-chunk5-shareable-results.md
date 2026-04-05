@@ -338,6 +338,18 @@ Existing E2E scenarios that operate on `/` continue to work — they test the un
 - `postbuild` script in `package.json` copies `index.html` to `404.html` for GitHub Pages SPA routing
 - All 34 unit tests pass, typecheck and lint clean
 
+### Steps 5–9: ProfilePage + readonly SkillTree + ShareButton ✅
+
+- Added `readonly` prop to SkillTree → QuestPath → SkillNode; hides claim/unclaim buttons
+- `readPublicProfile()` in sync.ts: reads public Firestore docs, validates avatarUrl is HTTPS
+- `FirestoreUserRead` interface marks displayName/avatarUrl as optional with fallbacks
+- ProfilePage: owner mode with full Firestore sync, visitor mode with loading/found/not-found states
+- Visitor mode shows profile banner (avatar + display name), read-only skill tree, safety zone badge
+- Header supports 3 modes: landing, owner (sync status + share), visitor (view your profile link)
+- ShareButton: copies current URL to clipboard via Clipboard API
+- Firestore rules: public reads (`allow read: if true`), field-level write validation including HTTPS-only avatarUrl
+- Security: avatarUrl validated at both Firestore rules level (regex) and client level (`isHttpUrl`)
+
 ## Risks and Mitigations
 
 | Risk                                               | Mitigation                                                                                                                                                            |

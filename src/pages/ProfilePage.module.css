@@ -1,0 +1,83 @@
+.visitorMessage {
+  text-align: center;
+  padding: var(--space-3xl) var(--space-xl);
+}
+
+.visitorMessage h2 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--ink);
+  margin: 0 0 var(--space-sm);
+}
+
+.visitorMessage p {
+  color: var(--text-3);
+  font-size: 0.95rem;
+  margin: 0 0 var(--space-lg);
+}
+
+.ctaLink {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--green-brand);
+  text-decoration: none;
+  border: 1.5px solid var(--green-brand);
+  padding: 0.5rem 1.2rem;
+  border-radius: 10px;
+  transition: opacity var(--transition-fast);
+}
+.ctaLink:hover {
+  opacity: 0.8;
+}
+
+.profileBanner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xl) var(--space-lg) var(--space-md);
+}
+
+.bannerAvatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--green-surface);
+}
+
+.bannerAvatarFallback {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--green-brand);
+  color: white;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.bannerName {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+}
+
+.safetyBadge {
+  text-align: center;
+  padding: 0 var(--space-lg) var(--space-md);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  text-transform: capitalize;
+}
+
+.safetyLabel {
+  font-weight: 600;
+}

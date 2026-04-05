@@ -44,12 +44,12 @@ Pre-commit hooks (Husky + lint-staged) enforce: ESLint, Prettier, type-check, un
 - `src/contexts/AuthContext.tsx` — Auth state context + `useAuth()` hook
 - `src/pages/` — Page components: LandingPage (unauthenticated), ProfilePage (owner/visitor)
 - `src/hooks/` — Custom hooks: useSkillState (shared claim/unclaim/animation/safety-zone logic)
-- `src/components/` — React components: Header, Hero, SafetyZoneSelector, SkillTree, QuestPath, SkillNode, CelebrationEffect, SignInModal, ConfirmDialog, Toast
+- `src/components/` — React components: Header, Hero, SafetyZoneSelector, SkillTree, QuestPath, SkillNode, CelebrationEffect, SignInModal, ConfirmDialog, Toast, ShareButton
 - `src/types/skill-tree.ts` — TypeScript interfaces for skill tree data and app state
 - `src/data/` — Data module (skill-trees.ts), state persistence (state.ts), auth helpers (auth.ts), Firestore sync (sync.ts)
 - `e2e/` — Playwright + playwright-bdd E2E tests (Gherkin features + step definitions)
 - `e2e/helpers/emulator.ts` — Firebase emulator REST API helpers for E2E tests
-- `firestore.rules` — Firestore security rules (owner-only read/write)
+- `firestore.rules` — Firestore security rules (public read, owner-only write with schema validation)
 - `.impeccable.md` — Design context (brand personality, aesthetic direction, design principles)
 - `.claude/skills/` — Custom Claude Code skills (validate-design, brainstorming, impeccable design suite)
 

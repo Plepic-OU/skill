@@ -134,6 +134,32 @@
   }
 }
 
+.logoLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  text-decoration: none;
+  color: inherit;
+}
+
+.btnViewProfile {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.78rem;
+  color: var(--green-brand);
+  text-decoration: none;
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  transition: opacity var(--transition-fast);
+}
+.btnViewProfile:hover {
+  opacity: 0.8;
+}
+.btnViewProfile:focus-visible {
+  outline: 2px solid var(--green-vivid);
+  outline-offset: 2px;
+}
+
 .btnSignOut {
   font-family: var(--font-body);
   font-weight: 600;
