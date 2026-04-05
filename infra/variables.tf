@@ -9,3 +9,9 @@ variable "region" {
   type        = string
   default     = "eur3"
 }
+
+variable "support_email" {
+  description = "Support email for OAuth consent screen"
+  type        = string
+  default     = "joosep@plepic.com"
+}
