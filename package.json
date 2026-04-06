@@ -21,8 +21,8 @@
     "test:e2e:emulator": "firebase emulators:exec 'pnpm test:e2e'",
     "typecheck": "tsc --noEmit",
     "prepare": "husky",
-    "dc:up": "devcontainer up --workspace-folder .",
-    "dc:rebuild": "devcontainer up --workspace-folder . --remove-existing-container --build-no-cache",
+    "dc:up": "[ -n \"$SKILL_GITHUB_API_TOKEN\" ] || { echo 'Error: SKILL_GITHUB_API_TOKEN not set'; exit 1; } && devcontainer up --workspace-folder .",
+    "dc:rebuild": "[ -n \"$SKILL_GITHUB_API_TOKEN\" ] || { echo 'Error: SKILL_GITHUB_API_TOKEN not set'; exit 1; } && devcontainer up --workspace-folder . --remove-existing-container --build-no-cache",
     "dc:enter": "devcontainer exec --workspace-folder . zsh"
   },
   "dependencies": {
