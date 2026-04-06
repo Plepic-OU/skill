@@ -13,7 +13,8 @@
   "remoteUser": "node",
   "mounts": [
     "source=plepic-skill-bashhistory-${devcontainerId},target=/commandhistory,type=volume",
-    "source=plepic-skill-claude-config-${devcontainerId},target=/home/node/.claude,type=volume"
+    "source=plepic-skill-claude-config-${devcontainerId},target=/home/node/.claude,type=volume",
+    "source=plepic-skill-node-modules-${devcontainerId},target=/workspace/node_modules,type=volume"
   ],
   "containerEnv": {
     "NODE_OPTIONS": "--max-old-space-size=4096",
@@ -24,7 +25,7 @@
   },
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
   "workspaceFolder": "/workspace",
-  "postCreateCommand": "git config --global credential.helper '!f() { echo username=x-access-token; echo password=$GITHUB_TOKEN; }; f' && pnpm config set store-dir /home/node/.pnpm-store && pnpm install && pnpm exec playwright install chromium",
+  "postCreateCommand": "sudo chown node:node /workspace/node_modules && git config --global credential.helper '!f() { echo username=x-access-token; echo password=$GITHUB_TOKEN; }; f' && pnpm config set store-dir /home/node/.pnpm-store && pnpm install && pnpm exec playwright install chromium",
   "postStartCommand": "sudo /usr/local/bin/init-firewall.sh",
   "waitFor": "postStartCommand"
 }
