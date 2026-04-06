@@ -68,11 +68,16 @@ When('I expand the {string} node', async ({ page }, name: string) => {
 When('I click {string}', async ({ page }, buttonText: string) => {
   // Find the button inside the currently expanded node to avoid clicking hidden buttons
   const expandedNode = page.locator('[aria-expanded="true"]').first()
+  const label = (await expandedNode.getAttribute('aria-label')) ?? ''
+  const nodeName = label.replace(/^Level \d+: /, '').replace(/ — .*$/, '')
   const btn = expandedNode.getByRole('button', { name: buttonText })
-  await btn.scrollIntoViewIfNeeded()
-  await btn.click({ force: true })
-  // Wait for React re-render after state change
-  await page.waitForTimeout(200)
+  await expect(btn).toBeVisible()
+  await btn.click()
+  // Wait for the aria-label to reflect the state change (claim → "reached", unclaim → "up next")
+  const expectedState = buttonText === 'This is me' ? 'reached' : 'up next'
+  await expect(
+    page.locator(`[aria-label*="${nodeName}"][aria-label*="${expectedState}"]`).first(),
+  ).toBeVisible({ timeout: 10000 })
 })
 
 Then('the {string} node should be claimed', async ({ page }, name: string) => {

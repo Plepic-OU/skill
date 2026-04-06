@@ -16,9 +16,12 @@ async function claimLevel(page: import('@playwright/test').Page, name: string) {
   await expect(node).toHaveAttribute('aria-expanded', 'true')
   const expandedNode = page.locator('[aria-expanded="true"]').first()
   const btn = expandedNode.getByRole('button', { name: 'This is me' })
-  await btn.scrollIntoViewIfNeeded()
-  await btn.click({ force: true })
-  await page.waitForTimeout(500)
+  await expect(btn).toBeVisible()
+  await btn.click()
+  // Wait for the claim to be reflected in the DOM
+  await expect(page.locator(`[aria-label*="${name}"][aria-label*="reached"]`).first()).toBeVisible({
+    timeout: 10000,
+  })
 }
 
 Given('I claim the {string} level', async ({ page }, name: string) => {
@@ -46,13 +49,13 @@ Then(
     })
     expect(uid).toBeTruthy()
 
-    // Wait for Firestore write to complete
-    await page.waitForTimeout(1000)
-
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const doc = await getFirestoreUser(uid!)
-    const autonomyField = doc.fields?.skills?.mapValue?.fields?.autonomy
-    const autonomy = autonomyField?.integerValue ?? autonomyField?.doubleValue
-    expect(Number(autonomy)).toBe(level)
+    // Poll Firestore until the write completes (avoids fixed-delay flakiness)
+    const userId = uid as string
+    await expect(async () => {
+      const doc = await getFirestoreUser(userId)
+      const autonomyField = doc.fields?.skills?.mapValue?.fields?.autonomy
+      const autonomy = autonomyField?.integerValue ?? autonomyField?.doubleValue
+      expect(Number(autonomy)).toBe(level)
+    }).toPass({ timeout: 10000, intervals: [500, 1000, 2000] })
   },
 )

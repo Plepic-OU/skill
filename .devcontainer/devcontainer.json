@@ -1,0 +1,30 @@
+{
+  "name": "Plepic Skill Dev",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "TZ": "${localEnv:TZ:Europe/Tallinn}",
+      "CLAUDE_CODE_VERSION": "latest",
+      "GIT_DELTA_VERSION": "0.18.2",
+      "ZSH_IN_DOCKER_VERSION": "1.2.0"
+    }
+  },
+  "runArgs": ["--cap-add=NET_ADMIN", "--cap-add=NET_RAW"],
+  "remoteUser": "node",
+  "mounts": [
+    "source=plepic-skill-bashhistory-${devcontainerId},target=/commandhistory,type=volume",
+    "source=plepic-skill-claude-config-${devcontainerId},target=/home/node/.claude,type=volume"
+  ],
+  "containerEnv": {
+    "NODE_OPTIONS": "--max-old-space-size=4096",
+    "CLAUDE_CONFIG_DIR": "/home/node/.claude",
+    "CI": "true",
+    "POWERLEVEL9K_DISABLE_GITSTATUS": "true",
+    "GITHUB_TOKEN": "${localEnv:SKILL_GITHUB_API_TOKEN}"
+  },
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
+  "workspaceFolder": "/workspace",
+  "postCreateCommand": "pnpm config set store-dir /home/node/.pnpm-store && pnpm install && pnpm exec playwright install chromium",
+  "postStartCommand": "sudo /usr/local/bin/init-firewall.sh",
+  "waitFor": "postStartCommand"
+}
