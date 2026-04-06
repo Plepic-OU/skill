@@ -24,7 +24,7 @@
   },
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
   "workspaceFolder": "/workspace",
-  "postCreateCommand": "pnpm config set store-dir /home/node/.pnpm-store && pnpm install && pnpm exec playwright install chromium",
+  "postCreateCommand": "git config --global credential.helper '!f() { echo username=x-access-token; echo password=$GITHUB_TOKEN; }; f' && pnpm config set store-dir /home/node/.pnpm-store && pnpm install && pnpm exec playwright install chromium",
   "postStartCommand": "sudo /usr/local/bin/init-firewall.sh",
   "waitFor": "postStartCommand"
 }
