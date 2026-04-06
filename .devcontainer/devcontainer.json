@@ -19,8 +19,9 @@
   "containerEnv": {
     "NODE_OPTIONS": "--max-old-space-size=4096",
     "CLAUDE_CONFIG_DIR": "/home/node/.claude",
-    "CI": "true",
     "POWERLEVEL9K_DISABLE_GITSTATUS": "true",
+    "POWERLEVEL9K_INSTANT_PROMPT": "off",
+    "POWERLEVEL9K_MODE": "ascii",
     "GITHUB_TOKEN": "${localEnv:SKILL_GITHUB_API_TOKEN}"
   },
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
