@@ -10,12 +10,12 @@
 
 ### Tools & Config Audit
 
-| Area                   | Status         | Finding                                                             |
-| ---------------------- | -------------- | ------------------------------------------------------------------- |
-| TypeScript strict      | Maxed out      | All strict flags on, `noUnusedLocals`, `noUnusedParameters`         |
-| ESLint                 | Lightweight    | React hooks + refresh only. No complexity, naming, or sonarjs rules |
-| knip (dead code)       | 1 real finding | `signInWithGitHub` in `src/data/auth.ts` — unused export            |
-| Unit coverage (Vitest) | 47.9% lines    | Data layer 96%+, UI components patchy, some pages 0%                |
+| Area                   | Status      | Finding                                                                                            |
+| ---------------------- | ----------- | -------------------------------------------------------------------------------------------------- |
+| TypeScript strict      | Maxed out   | All strict flags on, `noUnusedLocals`, `noUnusedParameters`                                        |
+| ESLint                 | ✅ Hardened | Added `eslint-plugin-sonarjs` (recommended preset) — complexity, duplication, cognitive complexity |
+| knip (dead code)       | ✅ Resolved | `signInWithGitHub` removed from `src/data/auth.ts`                                                 |
+| Unit coverage (Vitest) | 47.9% lines | Data layer 96%+, UI components patchy, some pages 0%                                               |
 
 ### E2E Qualitative Coverage Analysis
 
@@ -48,7 +48,7 @@ The 47.9% unit coverage number is misleading. The E2E suite (30 Gherkin scenario
 
 | Gap                         | Details                                                                                                                       | Severity                               |
 | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
-| GitHub sign-in              | Dead code: `signInWithGitHub` export exists, no UI entry point, no test                                                       | Remove (knip flagged)                  |
+| ~~GitHub sign-in~~          | ~~Removed~~                                                                                                                   | ✅ Done                                |
 | Celebration animation       | Always mocked in unit tests. E2E claims skills but never asserts animation renders                                            | Low — cosmetic                         |
 | Toast auto-dismiss          | [shareable-profile.feature](../../../e2e/features/shareable-profile.feature) checks toast appears, never checks it disappears | Low — timing behavior                  |
 | Unclaim confirmation dialog | Sign-out confirm is tested in E2E, but no scenario specifically tests the unclaim confirm flow                                | Low — similar path to sign-out confirm |
@@ -137,7 +137,7 @@ Start with the data layer only — these files have good unit tests, so mutation
 
 ### Identified gaps
 
-1. **GitHub sign-in** — code exists (`signInWithGitHub`), no tests, not wired up in UI. Candidate for removal (knip flagged it).
+1. ~~**GitHub sign-in** — removed (`signInWithGitHub` deleted).~~
 2. **Celebration animation** — always mocked in unit tests, E2E never asserts it. No test verifies it renders or triggers.
 3. **Toast lifecycle** — E2E checks appearance only. No test for auto-dismiss timing or action callbacks.
 4. **Error paths** — no test for network failure, malformed data, or unavailable services.
@@ -148,8 +148,9 @@ Start with the data layer only — these files have good unit tests, so mutation
 
 | Step | What                                                          | Effort            |
 | ---- | ------------------------------------------------------------- | ----------------- |
-| 1    | Remove dead `signInWithGitHub` export                         | 5 min             |
-| 2    | Set up Stryker on data layer, run, review surviving mutants   | 1-2 hrs           |
+| 1    | ~~Remove dead `signInWithGitHub` export~~                     | ✅ Done           |
+| 1b   | ~~Add `eslint-plugin-sonarjs` + fix all violations~~          | ✅ Done           |
+| 2    | Set up Stryker on data layer, run, review surviving mutants   | 1-2 hrs (future)  |
 | 3    | Add unit tests for surviving mutants                          | Based on findings |
 | 4    | Decide on celebration/toast/error-path gaps — accept or cover | Discussion        |
 
@@ -159,4 +160,4 @@ Start with the data layer only — these files have good unit tests, so mutation
 
 - [ ] Should Stryker run in CI? (slow — maybe only on data layer changes)
 - [ ] Are celebration/toast gaps worth unit-testing, or is E2E + visual QA enough?
-- [ ] Add `eslint-plugin-sonarjs` for ongoing complexity monitoring?
+- [x] ~~Add `eslint-plugin-sonarjs` for ongoing complexity monitoring~~ — done, recommended preset enabled
