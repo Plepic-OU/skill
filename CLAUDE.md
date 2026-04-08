@@ -26,12 +26,14 @@ pnpm test <file>      # run a single test file
 pnpm emulators        # start Firebase Auth + Firestore emulators (requires Java 11+)
 pnpm test:e2e         # run E2E tests (assumes emulators running)
 pnpm test:e2e:emulator # run E2E tests with auto-managed emulators (25 scenarios)
-pnpm lint             # ESLint
+pnpm lint             # ESLint (includes sonarjs complexity/duplication rules)
 pnpm format           # Prettier
 pnpm typecheck        # tsc --noEmit
+pnpm test:mutate      # Stryker mutation testing on data layer (~2 min, manual/CI only)
 ```
 
-Pre-commit hooks (Husky + lint-staged) enforce: ESLint, Prettier, type-check, unit tests, and E2E tests on every commit.
+Pre-commit hooks (Husky + lint-staged) enforce: ESLint, Prettier, type-check.
+Pre-push hooks run: unit tests + E2E tests (with smart emulator detection).
 
 ## Key Directories
 
@@ -39,7 +41,7 @@ Pre-commit hooks (Husky + lint-staged) enforce: ESLint, Prettier, type-check, un
 - `docs/prototypes/prototype-c2.html` — **The reference prototype** (Quest Paths "Scrollwork"). Use this as the visual/interaction reference when building React components.
 - `docs/` — Requirements, design specs, skill tree content
 - `docs/superpowers/specs/` — Detailed design specifications
-- `docs/skill-trees.json` — Static skill tree data (3 axes: autonomy, parallel execution, skill usage) with Material Symbols icons
+- `src/data/skill-trees.json` — Static skill tree data (3 axes: autonomy, parallel execution, skill usage) with Material Symbols icons
 - `src/firebase.ts` — Firebase app init, emulator detection
 - `src/contexts/AuthContext.tsx` — Auth state context + `useAuth()` hook
 - `src/pages/` — Page components: LandingPage (unauthenticated), ProfilePage (owner/visitor)
@@ -60,7 +62,7 @@ Pre-commit hooks (Husky + lint-staged) enforce: ESLint, Prettier, type-check, un
 - **localStorage-first** — users interact without auth; state syncs to Firestore on login
 - **Conflict resolution:** Firestore wins silently over localStorage
 - **All synced profiles are public** — no sharing toggle for MVP
-- **Skill tree data is static** — bundled from `docs/skill-trees.json`, not stored in Firestore
+- **Skill tree data is static** — bundled from `src/data/skill-trees.json`, not stored in Firestore
 - **Firestore schema:** flat `users/{userId}` document with skills map + safetyZone + profile info
 
 ## Implementation Order

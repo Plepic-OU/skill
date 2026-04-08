@@ -1,0 +1,11 @@
+{
+  "$schema": "https://raw.githubusercontent.com/stryker-mutator/stryker/master/packages/core/schema/stryker-core.schema.json",
+  "mutate": ["src/data/state.ts", "src/data/sync.ts"],
+  "testRunner": "vitest",
+  "plugins": ["@stryker-mutator/vitest-runner"],
+  "coverageAnalysis": "all",
+  "vitest": { "configFile": "vite.config.ts", "related": false, "dir": "src" },
+  "reporters": ["clear-text", "html"],
+  "concurrency": 2,
+  "ignorePatterns": [".claude", "coverage", "web", "infra", "docs", "e2e"]
+}
