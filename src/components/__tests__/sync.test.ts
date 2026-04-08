@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 // Mock firebase modules before importing sync
 vi.mock('firebase/firestore', () => ({
-  doc: vi.fn((_db, _collection, id) => ({ path: `users/${id}` })),
+  doc: vi.fn((_db, collection, id) => ({ path: `${collection}/${id}` })),
   getDoc: vi.fn(),
   setDoc: vi.fn(),
   serverTimestamp: vi.fn(() => 'SERVER_TIMESTAMP'),
@@ -21,11 +21,12 @@ vi.mock('firebase/app', () => ({
   initializeApp: vi.fn(() => ({})),
 }))
 
-import { getDoc, setDoc } from 'firebase/firestore'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
 import type { User } from 'firebase/auth'
 import { readPublicProfile, syncOnLogin, writeAssessment } from '../../data/sync'
 import { DEFAULT_STATE } from '../../data/state'
 
+const mockDoc = vi.mocked(doc)
 const mockGetDoc = vi.mocked(getDoc)
 const mockSetDoc = vi.mocked(setDoc)
 
@@ -97,6 +98,63 @@ describe('syncOnLogin', () => {
     expect(mockSetDoc).toHaveBeenCalled()
   })
 
+  it('uses the users collection', async () => {
+    mockGetDoc.mockResolvedValue({
+      exists: () => true,
+      data: () => ({
+        skills: { autonomy: 1, parallelExecution: 1, skillUsage: 1 },
+        safetyZone: 'sandbox',
+      }),
+    } as never)
+    mockSetDoc.mockResolvedValue(undefined)
+
+    await syncOnLogin(mockUser({ uid: 'uid-abc' }))
+
+    // syncOnLogin calls doc() for both getDoc and setDoc
+    expect(mockDoc).toHaveBeenCalledWith(undefined, 'users', 'uid-abc')
+    // Verify the ref path contains the collection name
+    const ref = mockDoc.mock.results[0].value as { path: string }
+    expect(ref.path).toBe('users/uid-abc')
+  })
+
+  it('falls back to Anonymous when displayName is null', async () => {
+    mockGetDoc.mockResolvedValue({
+      exists: () => true,
+      data: () => ({
+        skills: { autonomy: 1, parallelExecution: 1, skillUsage: 1 },
+        safetyZone: 'sandbox',
+      }),
+    } as never)
+    mockSetDoc.mockResolvedValue(undefined)
+
+    await syncOnLogin(mockUser({ displayName: null }))
+
+    expect(mockSetDoc).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ displayName: 'Anonymous' }),
+      { merge: true },
+    )
+  })
+
+  it('falls back to empty string when photoURL is null', async () => {
+    mockGetDoc.mockResolvedValue({
+      exists: () => true,
+      data: () => ({
+        skills: { autonomy: 1, parallelExecution: 1, skillUsage: 1 },
+        safetyZone: 'sandbox',
+      }),
+    } as never)
+    mockSetDoc.mockResolvedValue(undefined)
+
+    await syncOnLogin(mockUser({ photoURL: null }))
+
+    expect(mockSetDoc).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ avatarUrl: '' }),
+      { merge: true },
+    )
+  })
+
   it('propagates errors from getDoc', async () => {
     mockGetDoc.mockRejectedValue(new Error('Network error'))
 
@@ -141,9 +199,45 @@ describe('writeAssessment', () => {
     expect(written).not.toHaveProperty('displayName')
     expect(written).not.toHaveProperty('avatarUrl')
   })
+
+  it('uses the users collection', async () => {
+    mockSetDoc.mockResolvedValue(undefined)
+
+    await writeAssessment('uid-xyz', DEFAULT_STATE)
+
+    expect(mockDoc).toHaveBeenCalledWith(undefined, 'users', 'uid-xyz')
+  })
+
+  it('falls back to Anonymous when user displayName is null', async () => {
+    mockSetDoc.mockResolvedValue(undefined)
+
+    await writeAssessment('uid-123', DEFAULT_STATE, mockUser({ displayName: null }))
+
+    const written = mockSetDoc.mock.calls[0][1] as Record<string, unknown>
+    expect(written.displayName).toBe('Anonymous')
+  })
+
+  it('falls back to empty string when user photoURL is null', async () => {
+    mockSetDoc.mockResolvedValue(undefined)
+
+    await writeAssessment('uid-123', DEFAULT_STATE, mockUser({ photoURL: null }))
+
+    const written = mockSetDoc.mock.calls[0][1] as Record<string, unknown>
+    expect(written.avatarUrl).toBe('')
+  })
 })
 
 describe('readPublicProfile', () => {
+  it('uses the users collection', async () => {
+    mockGetDoc.mockResolvedValue({
+      exists: () => false,
+    } as never)
+
+    await readPublicProfile('uid-read')
+
+    expect(mockDoc).toHaveBeenCalledWith(undefined, 'users', 'uid-read')
+  })
+
   it('returns null when document does not exist', async () => {
     mockGetDoc.mockResolvedValue({
       exists: () => false,
@@ -197,6 +291,21 @@ describe('readPublicProfile', () => {
         safetyZone: 'sandbox',
         displayName: 'Eve',
         avatarUrl: 'javascript:alert(1)',
+      }),
+    } as never)
+
+    const result = await readPublicProfile('uid')
+    expect(result?.avatarUrl).toBe('')
+  })
+
+  it('rejects malformed avatar URLs', async () => {
+    mockGetDoc.mockResolvedValue({
+      exists: () => true,
+      data: () => ({
+        skills: { autonomy: 1, parallelExecution: 1, skillUsage: 1 },
+        safetyZone: 'sandbox',
+        displayName: 'Mallory',
+        avatarUrl: 'not-a-url-at-all',
       }),
     } as never)
 
