@@ -25,16 +25,14 @@ Then('I can still claim skills on my profile', async ({ page }) => {
   const node = page.getByLabel(/Review Every Edit/).first()
   await node.click()
   await expect(node).toHaveAttribute('aria-expanded', 'true')
-  const btn = page
-    .locator('[aria-expanded="true"]')
-    .first()
-    .getByRole('button', { name: 'This is me' })
-  await btn.scrollIntoViewIfNeeded()
-  await btn.click({ force: true })
-  await page.waitForTimeout(300)
-  // Verify claimed
-  const claimed = page.locator('[aria-label*="Review Every Edit"][aria-label*="reached"]').first()
-  await expect(claimed).toBeVisible({ timeout: 5000 })
+  const expandedNode = page.locator('[aria-expanded="true"]').first()
+  const btn = expandedNode.getByRole('button', { name: 'This is me' })
+  await expect(btn).toBeVisible()
+  await btn.click()
+  // Wait for the claim to be reflected in the DOM
+  await expect(
+    page.locator('[aria-label*="Review Every Edit"][aria-label*="reached"]').first(),
+  ).toBeVisible({ timeout: 10000 })
 })
 
 Given('I claim the {string} level on my profile', async ({ page }, name: string) => {
@@ -42,13 +40,14 @@ Given('I claim the {string} level on my profile', async ({ page }, name: string)
   const node = page.getByLabel(new RegExp(name)).first()
   await node.click()
   await expect(node).toHaveAttribute('aria-expanded', 'true')
-  const btn = page
-    .locator('[aria-expanded="true"]')
-    .first()
-    .getByRole('button', { name: 'This is me' })
-  await btn.scrollIntoViewIfNeeded()
-  await btn.click({ force: true })
-  await page.waitForTimeout(300)
+  const expandedNode = page.locator('[aria-expanded="true"]').first()
+  const btn = expandedNode.getByRole('button', { name: 'This is me' })
+  await expect(btn).toBeVisible()
+  await btn.click()
+  // Wait for the claim to be reflected in the DOM
+  await expect(page.locator(`[aria-label*="${name}"][aria-label*="reached"]`).first()).toBeVisible({
+    timeout: 10000,
+  })
 })
 
 When('I click the share button', async ({ page }) => {

@@ -76,6 +76,18 @@ The design spec defines 6 ordered chunks. See `docs/superpowers/specs/2026-04-04
 5. ~~Shareable Results~~ ✅ (Chunk 5) — `docs/superpowers/specs/2026-04-05-chunk5-shareable-results.md`
 6. ~~Terraform & Deploy~~ ✅ (Chunk 6) — `docs/superpowers/specs/2026-04-05-chunk6-terraform-deploy.md`
 
+## E2E Test Patterns
+
+This project does not cut corners on E2E tests. All Playwright steps must follow these rules:
+
+- **Never use `waitForTimeout`** — always wait for a real condition (`toBeVisible`, `toHaveAttribute`, `toPass`)
+- **Never use `force: true`** on clicks — if Playwright can't click it, the test has a timing bug to fix
+- **Wait for state changes after actions** — after a claim click, wait for the aria-label to reflect the new state (e.g. `[aria-label*="reached"]`) with a generous timeout (10000ms)
+- **Assert actionability before interacting** — use `expect(btn).toBeVisible()` before clicking buttons that may not be rendered yet
+- **Use `toPass()` with retry intervals** for polling external state (Firestore assertions) instead of fixed delays
+- **Use semantic selectors** — `getByRole`, `getByLabel`, `getByText`, aria attributes. No CSS class selectors
+- **Test isolation** — every scenario starts with cleared emulator data and localStorage (handled by the `Before` hook in `e2e/steps/common.ts`)
+
 ## Development Practices
 
 - Use context7 (`npx ctx7@latest`) when working with any third-party library for up-to-date docs
