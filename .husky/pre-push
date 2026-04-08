@@ -1,0 +1,8 @@
+pnpm test:run
+
+if curl -s http://127.0.0.1:9099 > /dev/null 2>&1; then
+  echo "Emulators already running, using them directly"
+  pnpm test:e2e
+else
+  pnpm test:e2e:emulator
+fi
