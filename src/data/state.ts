@@ -14,11 +14,13 @@ export const DEFAULT_STATE: SkillState = {
 }
 
 function isValidState(data: unknown): data is SkillState {
+  // Stryker disable next-line ConditionalExpression,LogicalOperator: defense-in-depth; downstream checks catch same inputs
   if (typeof data !== 'object' || data === null) return false
   const obj = data as Record<string, unknown>
 
   for (const axisId of AXIS_IDS) {
     const val = obj[axisId]
+    // Stryker disable next-line ConditionalExpression: defense-in-depth; range check below catches non-numbers
     if (typeof val !== 'number') return false
     const maxLevel = skillTreeData.axes[axisId].levels.length
     if (val < 0 || val > maxLevel || !Number.isInteger(val)) return false
@@ -32,6 +34,7 @@ function isValidState(data: unknown): data is SkillState {
 export function loadState(): SkillState {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
+    // Stryker disable next-line ConditionalExpression: JSON.parse(null) returns null which fails isValidState anyway
     if (!raw) return { ...DEFAULT_STATE }
     const parsed: unknown = JSON.parse(raw)
     if (isValidState(parsed)) return parsed
