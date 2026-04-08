@@ -113,7 +113,8 @@ describe('claim/unclaim logic', () => {
 
   it('unclaiming level 1 goes to 0', () => {
     const state = { ...DEFAULT_STATE, autonomy: 1 }
-    state.autonomy = 1 - 1
+    const currentLevel = 1
+    state.autonomy = currentLevel - 1
     expect(state.autonomy).toBe(0)
   })
 })

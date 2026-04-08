@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/pseudo-random -- confetti animation, not security-sensitive */
 export function celebrate(element: HTMLElement, color: string): void {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 

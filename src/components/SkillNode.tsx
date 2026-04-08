@@ -26,17 +26,19 @@ export default function SkillNode({
   onUnclaim,
   readonly,
 }: SkillNodeProps) {
-  const levelLabel =
-    nodeState === 'claimed'
-      ? isHighestClaimed
-        ? 'You are here'
-        : `Level ${level.level}`
-      : nodeState === 'frontier'
-        ? 'Up next'
-        : `Level ${level.level}`
+  const levelLabels: Record<NodeState, string> = {
+    claimed: isHighestClaimed ? 'You are here' : `Level ${level.level}`,
+    frontier: 'Up next',
+    future: `Level ${level.level}`,
+  }
+  const levelLabel = levelLabels[nodeState]
 
-  const ariaState =
-    nodeState === 'claimed' ? 'reached' : nodeState === 'frontier' ? 'up next' : 'not yet reached'
+  const ariaStates: Record<NodeState, string> = {
+    claimed: 'reached',
+    frontier: 'up next',
+    future: 'not yet reached',
+  }
+  const ariaState = ariaStates[nodeState]
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {

@@ -56,7 +56,9 @@ export default function QuestPath({
         {axis.levels.map((level, i) => {
           const isClaimed = level.level <= claimedLevel
           const isFrontier = level.level === claimedLevel + 1
-          const nodeState = isClaimed ? 'claimed' : isFrontier && !readonly ? 'frontier' : 'future'
+          let nodeState: 'claimed' | 'frontier' | 'future' = 'future'
+          if (isClaimed) nodeState = 'claimed'
+          else if (isFrontier && !readonly) nodeState = 'frontier'
 
           return (
             <div key={level.level} className={styles.nodeWrapper}>

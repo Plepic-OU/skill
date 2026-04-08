@@ -35,7 +35,7 @@ export default function Header({ syncStatus = 'idle', mode = 'landing' }: Header
         </Link>
       </div>
       <div className={styles.authArea}>
-        {loading ? null : user ? (
+        {!loading && user && (
           <div className={styles.userInfo}>
             {user.photoURL ? (
               <img
@@ -81,7 +81,8 @@ export default function Header({ syncStatus = 'idle', mode = 'landing' }: Header
               Sign out
             </button>
           </div>
-        ) : (
+        )}
+        {!loading && !user && (
           <>
             {mode === 'landing' && (
               <button className={styles.btnShare} onClick={() => setModalOpen(true)}>
