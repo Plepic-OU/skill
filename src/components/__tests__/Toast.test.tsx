@@ -24,14 +24,14 @@ describe('Toast', () => {
     act(() => showToast('Done'))
 
     const toast = screen.getByText('Done')
-    expect(toast.className).toMatch(/success/)
+    expect(toast).toHaveAttribute('data-type', 'success')
   })
 
   it('applies error type when specified', () => {
     act(() => showToast('Failed', 'error'))
 
     const toast = screen.getByText('Failed')
-    expect(toast.className).toMatch(/error/)
+    expect(toast).toHaveAttribute('data-type', 'error')
   })
 
   it('renders multiple toasts', () => {

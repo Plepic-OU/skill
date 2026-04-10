@@ -96,7 +96,7 @@ describe('syncOnLogin', () => {
     expect(mockSetDoc).toHaveBeenCalled()
   })
 
-  it('uses the users collection', async () => {
+  it("reads from the user's document path", async () => {
     mockGetDoc.mockResolvedValue(firestoreSnap())
     mockSetDoc.mockResolvedValue(undefined)
 
@@ -194,7 +194,7 @@ describe('writeAssessment', () => {
     expect(written).not.toHaveProperty('avatarUrl')
   })
 
-  it('uses the users collection', async () => {
+  it("writes to the user's document path", async () => {
     mockSetDoc.mockResolvedValue(undefined)
 
     await writeAssessment('uid-xyz', DEFAULT_STATE)
@@ -235,7 +235,7 @@ describe('writeAssessment', () => {
 })
 
 describe('readPublicProfile', () => {
-  it('uses the users collection', async () => {
+  it("reads from the user's document path", async () => {
     mockGetDoc.mockResolvedValue({ exists: () => false } as never)
 
     await readPublicProfile('uid-read')

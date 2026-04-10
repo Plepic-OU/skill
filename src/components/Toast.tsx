@@ -69,6 +69,7 @@ export default function Toast() {
         <div
           key={msg.id}
           className={`${styles.toast} ${styles[msg.type]}`}
+          data-type={msg.type}
           onAnimationEnd={() => handleAnimationEnd(msg.id)}
         >
           {msg.text}

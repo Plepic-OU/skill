@@ -71,6 +71,7 @@ describe('SkillNode', () => {
     expect(defaultProps.onToggle).toHaveBeenCalledTimes(1)
   })
 
+  // Tests both presence and click behavior — splitting would reduce diagnostic value
   it('shows claim button when expanded and not claimed', () => {
     render(<SkillNode {...defaultProps} isExpanded={true} />)
     const claimBtn = screen.getByText('This is me')
@@ -79,6 +80,7 @@ describe('SkillNode', () => {
     expect(defaultProps.onClaim).toHaveBeenCalledWith('autonomy', 2)
   })
 
+  // Tests both presence and click behavior — splitting would reduce diagnostic value
   it('shows unclaim button for highest claimed node', () => {
     render(
       <SkillNode {...defaultProps} nodeState="claimed" isHighestClaimed={true} isExpanded={true} />,
