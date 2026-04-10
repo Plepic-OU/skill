@@ -1,5 +1,7 @@
 export const TEST_EMAIL = 'test@example.com'
+// eslint-disable-next-line sonarjs/no-hardcoded-passwords -- test-only emulator credential
 export const TEST_PASSWORD = 'testpassword123'
+export const TEST_DISPLAY_NAME = 'Test User'
 
 const AUTH_EMULATOR = 'http://127.0.0.1:9099'
 const FIRESTORE_EMULATOR = 'http://127.0.0.1:8080'
@@ -39,7 +41,7 @@ export async function setFirestoreAssessment(
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer owner' },
       body: JSON.stringify({
         fields: {
-          displayName: { stringValue: 'Test User' },
+          displayName: { stringValue: TEST_DISPLAY_NAME },
           avatarUrl: { stringValue: '' },
           updatedAt: { timestampValue: new Date().toISOString() },
           safetyZone: { stringValue: safetyZone },

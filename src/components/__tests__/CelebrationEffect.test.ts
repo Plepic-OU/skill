@@ -1,4 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+
+vi.unmock('../CelebrationEffect')
+
 import { celebrate } from '../CelebrationEffect'
 
 function stubMatchMedia(matches: boolean) {

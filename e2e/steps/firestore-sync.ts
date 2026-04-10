@@ -15,7 +15,7 @@ Given('I claim the {string} level', async ({ page }, name: string) => {
   await claimLevel(page, name)
 })
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- playwright-bdd requires destructured fixtures
 Given('the test user has autonomy level {int} in Firestore', async ({ page }, level: number) => {
   const result = await createTestUser(TEST_EMAIL, TEST_PASSWORD)
   const userId = result.localId

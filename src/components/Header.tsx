@@ -45,7 +45,7 @@ export default function Header({ syncStatus = 'idle', mode = 'landing' }: Header
                 referrerPolicy="no-referrer"
               />
             ) : (
-              <div className={styles.avatarFallback}>
+              <div className={styles.avatarFallback} data-testid="user-avatar">
                 {user.displayName?.[0]?.toUpperCase() ?? '?'}
               </div>
             )}

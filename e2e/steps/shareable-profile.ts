@@ -5,6 +5,7 @@ import {
   setFirestoreAssessment,
   TEST_EMAIL,
   TEST_PASSWORD,
+  TEST_DISPLAY_NAME,
 } from '../helpers/emulator'
 import { claimLevel } from '../helpers/claim'
 
@@ -67,8 +68,10 @@ When('I navigate to {string}', async ({ page }, path: string) => {
 })
 
 Then('I see their display name', async ({ page }) => {
-  // The profile banner should show the user's name (Test User from emulator helper)
-  await expect(page.locator('h2').filter({ hasText: /Test User/ })).toBeVisible({ timeout: 5000 })
+  // The profile banner should show the user's name from emulator helper
+  await expect(page.locator('h2').filter({ hasText: TEST_DISPLAY_NAME })).toBeVisible({
+    timeout: 5000,
+  })
 })
 
 Then('I see their skill tree in read-only mode', async ({ page }) => {

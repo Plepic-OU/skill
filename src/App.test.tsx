@@ -2,11 +2,6 @@ import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import App from './App'
 
-// Mock CelebrationEffect to avoid imperative DOM in jsdom
-vi.mock('./components/CelebrationEffect', () => ({
-  celebrate: vi.fn(),
-}))
-
 beforeEach(() => {
   localStorage.clear()
 })
