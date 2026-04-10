@@ -19,9 +19,22 @@ export async function createTestUser(email: string, password: string) {
   if (!res.ok) {
     const body = await res.text()
     if (res.status === 400 && body.includes('EMAIL_EXISTS')) {
-      throw new Error(
-        'createTestUser failed: EMAIL_EXISTS — emulator data was not cleared between scenarios (broken test isolation)',
+      // User already exists (cleanup between scenarios is best-effort) — sign in instead
+      const signInRes = await fetch(
+        `${AUTH_EMULATOR}/identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=fake-api-key`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, returnSecureToken: true }),
+        },
       )
+      if (!signInRes.ok) {
+        const signInBody = await signInRes.text()
+        throw new Error(
+          `createTestUser sign-in fallback failed (${signInRes.status}): ${signInBody}`,
+        )
+      }
+      return signInRes.json()
     }
     throw new Error(`createTestUser failed (${res.status}): ${body}`)
   }
