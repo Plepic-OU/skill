@@ -1,5 +1,5 @@
 import { skillTreeData } from '../data/skill-trees'
-import type { SafetyZoneId } from '../types/skill-tree'
+import type { SafetyZone, SafetyZoneId } from '../types/skill-tree'
 import styles from './StakesSelector.module.css'
 
 const ZONE_IDS: SafetyZoneId[] = ['sandbox', 'normal', 'hardcore', 'impossible']
@@ -7,6 +7,18 @@ const ZONE_IDS: SafetyZoneId[] = ['sandbox', 'normal', 'hardcore', 'impossible']
 interface StakesSelectorProps {
   selected: SafetyZoneId
   onSelect: (zone: SafetyZoneId) => void
+}
+
+function getZoneStyle(isActive: boolean, zone: SafetyZone): React.CSSProperties {
+  return {
+    '--zone-color': zone.color,
+    borderColor: zone.color,
+    color: isActive ? 'white' : zone.color,
+    background: isActive ? zone.color : 'transparent',
+    boxShadow: isActive ? `0 3px 12px ${zone.color}4d` : 'none',
+    transform: isActive ? 'scale(1.05)' : 'none',
+    fontWeight: isActive ? 700 : 600,
+  } as React.CSSProperties
 }
 
 export default function StakesSelector({ selected, onSelect }: StakesSelectorProps) {
@@ -27,17 +39,7 @@ export default function StakesSelector({ selected, onSelect }: StakesSelectorPro
               role="radio"
               aria-checked={isActive}
               onClick={() => onSelect(id)}
-              style={
-                {
-                  '--zone-color': zone.color,
-                  borderColor: zone.color,
-                  color: isActive ? 'white' : zone.color,
-                  background: isActive ? zone.color : 'transparent',
-                  boxShadow: isActive ? `0 3px 12px ${zone.color}4d` : 'none',
-                  transform: isActive ? 'scale(1.05)' : 'none',
-                  fontWeight: isActive ? 700 : 600,
-                } as React.CSSProperties
-              }
+              style={getZoneStyle(isActive, zone)}
             >
               <span className={`material-symbols-rounded ${styles.btnIcon}`}>{zone.icon}</span>
               <span className={styles.btnLabel}>{zone.label}</span>

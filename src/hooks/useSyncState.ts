@@ -1,66 +1,100 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { syncOnLogin, writeAssessment } from '../data/sync'
-import { showToast } from '../components/Toast'
 import type { SkillState } from '../types/skill-tree'
 
 export type SyncStatus = 'idle' | 'syncing' | 'saved' | 'error'
 
-export function useSyncState(state: SkillState, setState: (state: SkillState) => void): SyncStatus {
+export interface SyncResult {
+  syncStatus: SyncStatus
+  syncError: string | null
+  clearSyncError: () => void
+}
+
+type SyncPhase =
+  | { phase: 'initial' }
+  | { phase: 'syncing'; userId: string }
+  | { phase: 'ready'; userId: string; skipNextWrite: boolean }
+
+export function useSyncState(
+  state: SkillState,
+  replaceState: (state: SkillState) => void,
+): SyncResult {
   const { user } = useAuth()
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle')
-  const syncPhase = useRef<'initial' | 'syncing' | 'ready'>('initial')
-  const prevUserId = useRef<string | null>(null)
+  const [syncError, setSyncError] = useState<string | null>(null)
+  const sync = useRef<SyncPhase>({ phase: 'initial' })
   const savedTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
-  const skipNextWrite = useRef(false)
+  const debounceTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
 
-  // Clean up the "saved" badge timer on unmount
+  // Clean up timers on unmount
   useEffect(() => {
-    return () => clearTimeout(savedTimer.current)
+    return () => {
+      clearTimeout(savedTimer.current)
+      clearTimeout(debounceTimer.current)
+    }
   }, [])
 
-  function showSaved() {
+  const showSaved = useCallback(() => {
     setSyncStatus('saved')
     clearTimeout(savedTimer.current)
     savedTimer.current = setTimeout(() => setSyncStatus('idle'), 3000)
-  }
+  }, [])
+
+  const clearSyncError = useCallback(() => {
+    setSyncError(null)
+  }, [])
 
   // Sync on login
   useEffect(() => {
-    if (!user || prevUserId.current === user.uid) return
-    prevUserId.current = user.uid
-    syncPhase.current = 'syncing'
+    if (!user) return
+    const s = sync.current
+    if (s.phase !== 'initial' && s.userId === user.uid) return
+    sync.current = { phase: 'syncing', userId: user.uid }
     setSyncStatus('syncing')
+    let stale = false
     syncOnLogin(user)
       .then((synced) => {
-        skipNextWrite.current = true
-        setState(synced)
-        syncPhase.current = 'ready'
+        if (stale) return
+        sync.current = { phase: 'ready', userId: user.uid, skipNextWrite: true }
+        replaceState(synced)
         setSyncStatus('idle')
       })
       .catch((err) => {
+        if (stale) return
         console.error('Sync failed, keeping local state:', err)
-        showToast('Couldn\u2019t sync \u2014 working offline', 'error')
-        syncPhase.current = 'ready'
+        sync.current = { phase: 'ready', userId: user.uid, skipNextWrite: false }
         setSyncStatus('error')
+        setSyncError('Couldn\u2019t sync \u2014 working offline')
       })
-  }, [user, setState])
+    return () => {
+      stale = true
+    }
+  }, [user, replaceState])
 
-  // Write to Firestore on state change
+  // Write to Firestore on state change (debounced)
   useEffect(() => {
-    if (syncPhase.current !== 'ready' || !user) return
-    if (skipNextWrite.current) {
-      skipNextWrite.current = false
+    const s = sync.current
+    if (s.phase !== 'ready' || !user) return
+    if (s.skipNextWrite) {
+      s.skipNextWrite = false
       return
     }
-    writeAssessment(user.uid, state)
-      .then(() => showSaved())
-      .catch((err) => {
-        console.error('Failed to write assessment:', err)
-        showToast('Couldn\u2019t save changes', 'error')
-        setSyncStatus('error')
-      })
-  }, [state, user])
+    const currentUser = user
+    clearTimeout(debounceTimer.current)
+    debounceTimer.current = setTimeout(() => {
+      writeAssessment(currentUser.uid, state)
+        .then(() => showSaved())
+        .catch((err) => {
+          console.error('Failed to write assessment:', err)
+          setSyncStatus('error')
+          setSyncError('Couldn\u2019t save changes')
+        })
+    }, 500)
+    return () => {
+      clearTimeout(debounceTimer.current)
+    }
+  }, [state, user, showSaved])
 
-  return syncStatus
+  return { syncStatus, syncError, clearSyncError }
 }

@@ -55,5 +55,5 @@ Then('I should see {string}', async ({ page }, text: string) => {
 })
 
 Then('I should not see the user avatar', async ({ page }) => {
-  await expect(page.getByRole('button', { name: 'Sign out' })).not.toBeVisible()
+  await expect(page.getByTestId('user-avatar')).not.toBeVisible()
 })

@@ -2,32 +2,30 @@ import { useEffect } from 'react'
 import { useNavigate } from 'react-router'
 import { useAuth } from '../contexts/AuthContext'
 import { useSkillState } from '../hooks/useSkillState'
-import Header from '../components/Header'
-import Hero from '../components/Hero'
-import StakesSelector from '../components/StakesSelector'
-import SkillTree from '../components/SkillTree'
+import SkillTreeLayout from '../components/SkillTreeLayout'
 
 export default function LandingPage() {
   const { user, loading } = useAuth()
   const navigate = useNavigate()
-  const { state, handleClaim, handleUnclaim, handleStakes } = useSkillState()
+  const { state, handleClaim, handleUnclaim, handleSafetyZone } = useSkillState()
 
   // Redirect to profile when logged in
   useEffect(() => {
-    if (!loading && user) {
+    if (user) {
       navigate(`/profile/${user.uid}`, { replace: true })
     }
-  }, [user, loading, navigate])
+  }, [user, navigate])
 
-  // Don't render landing content if we're about to redirect
-  if (!loading && user) return null
+  // Suppress landing content while auth is resolving or redirect is pending
+  if (loading || user) return null
 
   return (
-    <>
-      <Header />
-      <Hero state={state} />
-      <StakesSelector selected={state.safetyZone} onSelect={handleStakes} />
-      <SkillTree state={state} onClaim={handleClaim} onUnclaim={handleUnclaim} />
-    </>
+    <SkillTreeLayout
+      headerMode="landing"
+      state={state}
+      onClaim={handleClaim}
+      onUnclaim={handleUnclaim}
+      onSafetyZone={handleSafetyZone}
+    />
   )
 }

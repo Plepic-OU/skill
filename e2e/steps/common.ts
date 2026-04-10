@@ -1,5 +1,6 @@
 import { createBdd } from 'playwright-bdd'
 import { clearEmulatorData } from '../helpers/emulator'
+import { waitForQuestMap } from '../helpers/claim'
 
 const { Given, Before } = createBdd()
 
@@ -17,5 +18,5 @@ Before(async ({ page }) => {
 
 Given('I open the skill tree page', async ({ page }) => {
   await page.goto('/')
-  await page.waitForSelector('#questMap')
+  await waitForQuestMap(page)
 })

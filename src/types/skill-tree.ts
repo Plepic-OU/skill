@@ -1,5 +1,6 @@
 export type SafetyZoneId = 'sandbox' | 'normal' | 'hardcore' | 'impossible'
 export type AxisId = 'autonomy' | 'parallelExecution' | 'skillUsage'
+export type NodeState = 'claimed' | 'frontier' | 'future'
 
 export interface Level {
   level: number
@@ -38,6 +39,8 @@ export interface SkillTreeData {
     zones: Record<SafetyZoneId, SafetyZone>
   }
 }
+
+export type SkillLevels = Record<AxisId, number>
 
 export interface SkillState {
   autonomy: number

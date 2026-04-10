@@ -1,68 +1,40 @@
-import { useEffect, useRef, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router'
+import { useEffect } from 'react'
+import { Link, useParams } from 'react-router'
 import { useAuth } from '../contexts/AuthContext'
 import { useSkillState } from '../hooks/useSkillState'
 import { useSyncState } from '../hooks/useSyncState'
-import { DEFAULT_STATE, saveState } from '../data/state'
-import { readPublicProfile } from '../data/sync'
-import type { PublicProfile } from '../data/sync'
+import { useOwnerRedirect } from '../hooks/useOwnerRedirect'
+import { usePublicProfile } from '../hooks/usePublicProfile'
 import Header from '../components/Header'
-import Hero from '../components/Hero'
-import StakesSelector from '../components/StakesSelector'
-import SkillTree from '../components/SkillTree'
-import { skillTreeData } from '../data/skill-trees'
-import type { SafetyZoneId } from '../types/skill-tree'
+import SkillTreeLayout from '../components/SkillTreeLayout'
+import { showToast } from '../components/Toast'
 import styles from './ProfilePage.module.css'
 
-function StakesBadge({ zoneId }: { zoneId: SafetyZoneId }) {
-  const zone = skillTreeData.safety.zones[zoneId]
-  return (
-    <div className={styles.stakesBadge}>
-      <span className={styles.stakesBadgeTitle}>Stakes</span>
-      <span className={styles.stakesDot} style={{ background: zone.color }} />
-      <span className={styles.stakesLabel}>{zone.label}</span>
-      <span className={styles.stakesDesc}>{zone.desc}</span>
-    </div>
-  )
-}
-
 function OwnerProfile() {
-  const { state, setState, handleClaim, handleUnclaim, handleStakes } = useSkillState()
-  const syncStatus = useSyncState(state, setState)
+  const { state, replaceState, handleClaim, handleUnclaim, handleSafetyZone } = useSkillState()
+  const { syncStatus, syncError, clearSyncError } = useSyncState(state, replaceState)
+
+  useEffect(() => {
+    if (syncError) {
+      showToast(syncError, 'error')
+      clearSyncError()
+    }
+  }, [syncError, clearSyncError])
 
   return (
-    <>
-      <Header syncStatus={syncStatus} mode="owner" />
-      <Hero state={state} />
-      <StakesSelector selected={state.safetyZone} onSelect={handleStakes} />
-      <SkillTree state={state} onClaim={handleClaim} onUnclaim={handleUnclaim} />
-    </>
+    <SkillTreeLayout
+      headerMode="owner"
+      syncStatus={syncStatus}
+      state={state}
+      onClaim={handleClaim}
+      onUnclaim={handleUnclaim}
+      onSafetyZone={handleSafetyZone}
+    />
   )
 }
 
 function VisitorProfile({ userId }: { userId: string | undefined }) {
-  const [profile, setProfile] = useState<PublicProfile | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
-
-  useEffect(() => {
-    if (!userId) {
-      setLoading(false)
-      setError(true)
-      return
-    }
-    setLoading(true)
-    setError(false)
-    readPublicProfile(userId)
-      .then((p) => {
-        setProfile(p)
-        setLoading(false)
-      })
-      .catch(() => {
-        setError(true)
-        setLoading(false)
-      })
-  }, [userId])
+  const { profile, loading, error } = usePublicProfile(userId)
 
   if (loading) {
     return (
@@ -92,7 +64,6 @@ function VisitorProfile({ userId }: { userId: string | undefined }) {
 
   return (
     <>
-      <Header mode="visitor" />
       <div className={styles.profileBanner}>
         {profile.avatarUrl ? (
           <img
@@ -108,9 +79,12 @@ function VisitorProfile({ userId }: { userId: string | undefined }) {
         )}
         <h2 className={styles.bannerName}>{profile.displayName}</h2>
       </div>
-      <Hero state={profile} visitorName={profile.displayName} />
-      <StakesBadge zoneId={profile.safetyZone} />
-      <SkillTree state={profile} readonly />
+      <SkillTreeLayout
+        headerMode="visitor"
+        state={profile}
+        readOnly
+        visitorName={profile.displayName}
+      />
     </>
   )
 }
@@ -118,21 +92,11 @@ function VisitorProfile({ userId }: { userId: string | undefined }) {
 export default function ProfilePage() {
   const { userId } = useParams<{ userId: string }>()
   const { user, loading } = useAuth()
-  const navigate = useNavigate()
-  const wasOwner = useRef(false)
+  const { resetState } = useSkillState()
+
+  useOwnerRedirect(user, loading, userId, resetState)
 
   const isOwner = user?.uid === userId
-
-  // Redirect to landing when owner signs out
-  useEffect(() => {
-    if (isOwner) {
-      wasOwner.current = true
-    } else if (wasOwner.current && !loading) {
-      wasOwner.current = false
-      saveState({ ...DEFAULT_STATE })
-      navigate('/', { replace: true })
-    }
-  }, [isOwner, loading, navigate])
 
   if (loading) return null
   if (isOwner) return <OwnerProfile />

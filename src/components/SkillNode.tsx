@@ -1,14 +1,12 @@
-import { useEffect, useRef } from 'react'
-import { skillTreeData } from '../data/skill-trees'
-import { celebrate } from './CelebrationEffect'
-import type { AxisId, Level } from '../types/skill-tree'
+import { useRef } from 'react'
+import { useClaimAnimation } from '../hooks/useClaimAnimation'
+import type { AxisId, Level, NodeState } from '../types/skill-tree'
 import styles from './SkillNode.module.css'
-
-type NodeState = 'claimed' | 'frontier' | 'future'
 
 interface SkillNodeProps {
   level: Level
   axisId: AxisId
+  color: string
   nodeState: NodeState
   isHighestClaimed: boolean
   isExpanded: boolean
@@ -21,6 +19,7 @@ interface SkillNodeProps {
 export default function SkillNode({
   level,
   axisId,
+  color,
   nodeState,
   isHighestClaimed,
   isExpanded,
@@ -30,27 +29,8 @@ export default function SkillNode({
   readonly,
 }: SkillNodeProps) {
   const indicatorRef = useRef<HTMLDivElement>(null)
-  const prevNodeState = useRef(nodeState)
-  const claimTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
+  useClaimAnimation(indicatorRef, color, nodeState === 'claimed', styles.justClaimed)
 
-  // Clean up the claim animation timer on unmount
-  useEffect(() => {
-    return () => clearTimeout(claimTimer.current)
-  }, [])
-
-  // Animate when this node transitions to 'claimed'
-  useEffect(() => {
-    if (prevNodeState.current !== 'claimed' && nodeState === 'claimed') {
-      const el = indicatorRef.current
-      if (el) {
-        celebrate(el, skillTreeData.axes[axisId].color)
-        el.classList.add('just-claimed')
-        clearTimeout(claimTimer.current)
-        claimTimer.current = setTimeout(() => el.classList.remove('just-claimed'), 600)
-      }
-    }
-    prevNodeState.current = nodeState
-  }, [nodeState, axisId])
   const levelLabels: Record<NodeState, string> = {
     claimed: isHighestClaimed ? 'You are here' : `Level ${level.level}`,
     frontier: 'Up next',

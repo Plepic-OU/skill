@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { loadState, saveState } from '../data/state'
+import { DEFAULT_STATE, loadState, saveState } from '../data/state'
 import type { AxisId, SafetyZoneId, SkillState } from '../types/skill-tree'
 
 export function useSkillState() {
@@ -14,13 +14,17 @@ export function useSkillState() {
     setState((prev) => ({ ...prev, [axisId]: level }))
   }, [])
 
-  const handleUnclaim = useCallback((axisId: AxisId, level: number) => {
-    setState((prev) => ({ ...prev, [axisId]: level - 1 }))
+  const handleUnclaim = useCallback((axisId: AxisId, currentLevel: number) => {
+    setState((prev) => ({ ...prev, [axisId]: currentLevel - 1 }))
   }, [])
 
-  const handleStakes = useCallback((zone: SafetyZoneId) => {
+  const handleSafetyZone = useCallback((zone: SafetyZoneId) => {
     setState((prev) => ({ ...prev, safetyZone: zone }))
   }, [])
 
-  return { state, setState, handleClaim, handleUnclaim, handleStakes }
+  const resetState = useCallback(() => {
+    setState({ ...DEFAULT_STATE })
+  }, [])
+
+  return { state, replaceState: setState, handleClaim, handleUnclaim, handleSafetyZone, resetState }
 }

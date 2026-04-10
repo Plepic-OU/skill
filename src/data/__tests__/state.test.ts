@@ -124,8 +124,9 @@ describe('loadState', () => {
     expect(loadState()).toEqual(state)
   })
 
-  it('accepts all valid safety zones', () => {
-    for (const zone of ['sandbox', 'normal', 'hardcore', 'impossible'] as const) {
+  it.each(['sandbox', 'normal', 'hardcore', 'impossible'] as const)(
+    'accepts safety zone "%s"',
+    (zone) => {
       const state: SkillState = {
         autonomy: 1,
         parallelExecution: 1,
@@ -134,8 +135,8 @@ describe('loadState', () => {
       }
       localStorage.setItem('plepic-skill-state', JSON.stringify(state))
       expect(loadState()).toEqual(state)
-    }
-  })
+    },
+  )
 
   it('accepts level 0 (unclaimed)', () => {
     const state: SkillState = {

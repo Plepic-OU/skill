@@ -1,4 +1,5 @@
-import { useRef, useEffect, useState } from 'react'
+import { useState } from 'react'
+import { useDialog } from '../hooks/useDialog'
 import { signInWithGoogle } from '../data/auth'
 import styles from './SignInModal.module.css'
 
@@ -8,31 +9,13 @@ interface SignInModalProps {
 }
 
 export default function SignInModal({ open, onClose }: SignInModalProps) {
-  const dialogRef = useRef<HTMLDialogElement>(null)
+  const dialogRef = useDialog(open, onClose)
   const [error, setError] = useState<string | null>(null)
-  const [signing, setSigning] = useState(false)
-
-  useEffect(() => {
-    const dialog = dialogRef.current
-    if (!dialog) return
-    if (open && !dialog.open) {
-      dialog.showModal()
-    } else if (!open && dialog.open) {
-      dialog.close()
-    }
-  }, [open])
-
-  useEffect(() => {
-    const dialog = dialogRef.current
-    if (!dialog) return
-    const handleClose = () => onClose()
-    dialog.addEventListener('close', handleClose)
-    return () => dialog.removeEventListener('close', handleClose)
-  }, [onClose])
+  const [isSigningIn, setIsSigningIn] = useState(false)
 
   async function handleProvider(signIn: () => Promise<unknown>) {
     setError(null)
-    setSigning(true)
+    setIsSigningIn(true)
     try {
       await signIn()
       onClose()
@@ -48,7 +31,7 @@ export default function SignInModal({ open, onClose }: SignInModalProps) {
         setError('Sign-in failed. Please try again.')
       }
     } finally {
-      setSigning(false)
+      setIsSigningIn(false)
     }
   }
 
@@ -73,7 +56,7 @@ export default function SignInModal({ open, onClose }: SignInModalProps) {
           <button
             className={styles.providerBtn}
             onClick={() => handleProvider(signInWithGoogle)}
-            disabled={signing}
+            disabled={isSigningIn}
           >
             <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
               <path
@@ -93,7 +76,7 @@ export default function SignInModal({ open, onClose }: SignInModalProps) {
                 fill="#EA4335"
               />
             </svg>
-            {signing ? 'Signing in\u2026' : 'Sign in with Google'}
+            {isSigningIn ? 'Signing in\u2026' : 'Sign in with Google'}
           </button>
         </div>
         {error && <p className={styles.error}>{error}</p>}

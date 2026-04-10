@@ -1,6 +1,28 @@
 /* eslint-disable sonarjs/pseudo-random -- confetti animation, not security-sensitive */
+
+// Track the current celebration batch so concurrent calls clean up the previous one
+let activeBatch: { container: HTMLElement; ripple: HTMLElement; flash: HTMLElement } | null = null
+let activeTimer: ReturnType<typeof setTimeout> | null = null
+
+/** Remove any active celebration elements from the DOM and cancel pending cleanup timer. */
+export function cleanupCelebration(): void {
+  if (activeTimer !== null) {
+    clearTimeout(activeTimer)
+    activeTimer = null
+  }
+  if (activeBatch) {
+    activeBatch.container.remove()
+    activeBatch.ripple.remove()
+    activeBatch.flash.remove()
+    activeBatch = null
+  }
+}
+
 export function celebrate(element: HTMLElement, color: string): void {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+  // Remove any previous celebration before starting a new one
+  cleanupCelebration()
 
   const rect = element.getBoundingClientRect()
   const cx = rect.left + rect.width / 2
@@ -44,8 +66,16 @@ export function celebrate(element: HTMLElement, color: string): void {
   flash.style.top = cy + 'px'
   document.body.appendChild(flash)
 
+  // Store references for concurrent-call cleanup and external cleanup
+  activeBatch = { container, ripple, flash }
+
   // Cleanup after animations
-  setTimeout(() => {
+  activeTimer = setTimeout(() => {
+    // Only clean up if this batch is still the active one
+    if (activeBatch?.container === container) {
+      activeBatch = null
+      activeTimer = null
+    }
     container.remove()
     ripple.remove()
     flash.remove()

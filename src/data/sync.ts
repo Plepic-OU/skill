@@ -1,69 +1,52 @@
-import {
-  doc,
-  getDoc,
-  setDoc,
-  serverTimestamp,
-  type FieldValue,
-  type Timestamp,
-} from 'firebase/firestore'
+import { doc, getDoc, setDoc, serverTimestamp, type FieldValue } from 'firebase/firestore'
 import type { User } from 'firebase/auth'
 import { db } from '../firebase'
-import type { SkillState } from '../types/skill-tree'
+import type { SkillLevels, SkillState } from '../types/skill-tree'
 import { loadState } from './state'
 
 interface FirestoreUserWrite {
   updatedAt: FieldValue
   safetyZone: SkillState['safetyZone']
-  skills: {
-    autonomy: number
-    parallelExecution: number
-    skillUsage: number
-  }
+  skills: SkillLevels
   displayName?: string
   avatarUrl?: string
 }
 
-interface FirestoreUserRead {
-  updatedAt: Timestamp
+export interface FirestoreUserRead {
   displayName?: string
   avatarUrl?: string
   safetyZone: SkillState['safetyZone']
-  skills: {
-    autonomy: number
-    parallelExecution: number
-    skillUsage: number
-  }
+  skills: SkillLevels
 }
 
-// Stryker disable BlockStatement: catch returns false but undefined (falsy) has same effect in callers
-function isHttpUrl(url: string): boolean {
-  try {
-    const u = new URL(url)
-    return u.protocol === 'http:' || u.protocol === 'https:'
-  } catch {
-    return false
-  }
-}
-// Stryker restore BlockStatement
-
-export interface PublicProfile extends SkillState {
-  displayName: string
-  avatarUrl: string
+export function hasValidSkills(data: Record<string, unknown>): boolean {
+  const skills = data.skills
+  return (
+    typeof skills === 'object' &&
+    skills !== null &&
+    typeof (skills as Record<string, unknown>).autonomy === 'number' &&
+    typeof (skills as Record<string, unknown>).parallelExecution === 'number' &&
+    typeof (skills as Record<string, unknown>).skillUsage === 'number'
+  )
 }
 
-export async function readPublicProfile(userId: string): Promise<PublicProfile | null> {
-  const userRef = doc(db, 'users', userId)
-  const snapshot = await getDoc(userRef)
-  if (!snapshot.exists()) return null
-  const data = snapshot.data() as FirestoreUserRead
+export function toSkillState(data: {
+  skills: SkillLevels
+  safetyZone: SkillState['safetyZone']
+}): SkillState {
   return {
     autonomy: data.skills.autonomy,
     parallelExecution: data.skills.parallelExecution,
     skillUsage: data.skills.skillUsage,
     safetyZone: data.safetyZone,
-    displayName: data.displayName ?? 'Anonymous',
-    // Stryker disable next-line StringLiteral: any truthy fallback still fails isHttpUrl when avatarUrl is undefined
-    avatarUrl: isHttpUrl(data.avatarUrl ?? '') ? (data.avatarUrl as string) : '',
+  }
+}
+
+function toFirestoreSkills(state: SkillState): SkillLevels {
+  return {
+    autonomy: state.autonomy,
+    parallelExecution: state.parallelExecution,
+    skillUsage: state.skillUsage,
   }
 }
 
@@ -72,8 +55,9 @@ export async function syncOnLogin(user: User): Promise<SkillState> {
   const userRef = doc(db, 'users', user.uid)
   const snapshot = await getDoc(userRef)
 
-  if (snapshot.exists()) {
-    const data = snapshot.data() as FirestoreUserRead
+  const raw = snapshot.exists() ? (snapshot.data() as Record<string, unknown>) : null
+  if (raw && hasValidSkills(raw)) {
+    const data = raw as unknown as FirestoreUserRead
     // Update profile info (may have changed since last login)
     await setDoc(
       userRef,
@@ -83,12 +67,7 @@ export async function syncOnLogin(user: User): Promise<SkillState> {
       },
       { merge: true },
     )
-    return {
-      autonomy: data.skills.autonomy,
-      parallelExecution: data.skills.parallelExecution,
-      skillUsage: data.skills.skillUsage,
-      safetyZone: data.safetyZone,
-    }
+    return toSkillState(data)
   } else {
     const local = loadState()
     await writeAssessment(user.uid, local, user)
@@ -99,21 +78,17 @@ export async function syncOnLogin(user: User): Promise<SkillState> {
 export async function writeAssessment(
   userId: string,
   state: SkillState,
-  user?: User,
+  profile?: User,
 ): Promise<void> {
   const userRef = doc(db, 'users', userId)
   const data: FirestoreUserWrite = {
     updatedAt: serverTimestamp(),
     safetyZone: state.safetyZone,
-    skills: {
-      autonomy: state.autonomy,
-      parallelExecution: state.parallelExecution,
-      skillUsage: state.skillUsage,
-    },
-    ...(user
+    skills: toFirestoreSkills(state),
+    ...(profile
       ? {
-          displayName: user.displayName ?? 'Anonymous',
-          avatarUrl: user.photoURL ?? '',
+          displayName: profile.displayName ?? 'Anonymous',
+          avatarUrl: profile.photoURL ?? '',
         }
       : {}),
   }

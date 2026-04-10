@@ -1,8 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 
-vi.unmock('../CelebrationEffect')
-
-import { celebrate } from '../CelebrationEffect'
+import { celebrate, cleanupCelebration } from '../CelebrationEffect'
 
 function stubMatchMedia(matches: boolean) {
   window.matchMedia = vi.fn().mockReturnValue({ matches } as MediaQueryList)
@@ -20,6 +18,7 @@ describe('celebrate', () => {
   })
 
   afterEach(() => {
+    cleanupCelebration()
     vi.useRealTimers()
     document.body.innerHTML = ''
   })
@@ -75,5 +74,49 @@ describe('celebrate', () => {
     const particle = document.querySelector('.claim-particle') as HTMLElement
     expect(particle.style.getPropertyValue('--tx')).toMatch(/^-?\d+(\.\d+)?px$/)
     expect(particle.style.getPropertyValue('--ty')).toMatch(/^-?\d+(\.\d+)?px$/)
+  })
+
+  it('removes previous batch when celebrate is called concurrently', () => {
+    celebrate(element, '#ff0000')
+    expect(document.querySelectorAll('.claim-celebration')).toHaveLength(1)
+    expect(document.querySelectorAll('.claim-ripple')).toHaveLength(1)
+    expect(document.querySelectorAll('.claim-flash')).toHaveLength(1)
+
+    // Second call before timeout fires — previous batch should be removed
+    celebrate(element, '#00ff00')
+    expect(document.querySelectorAll('.claim-celebration')).toHaveLength(1)
+    expect(document.querySelectorAll('.claim-ripple')).toHaveLength(1)
+    expect(document.querySelectorAll('.claim-flash')).toHaveLength(1)
+  })
+
+  it('cleanupCelebration removes active elements immediately', () => {
+    celebrate(element, '#00ff00')
+    expect(document.querySelector('.claim-celebration')).not.toBeNull()
+
+    cleanupCelebration()
+
+    expect(document.querySelector('.claim-celebration')).toBeNull()
+    expect(document.querySelector('.claim-ripple')).toBeNull()
+    expect(document.querySelector('.claim-flash')).toBeNull()
+  })
+
+  it('cleanupCelebration cancels the pending timeout', () => {
+    celebrate(element, '#00ff00')
+    cleanupCelebration()
+
+    // Create new elements manually to verify the old timer does not fire
+    const sentinel = document.createElement('div')
+    sentinel.className = 'claim-celebration'
+    document.body.appendChild(sentinel)
+
+    vi.advanceTimersByTime(900)
+
+    // Sentinel should still be present — the old timer was cancelled
+    expect(document.querySelector('.claim-celebration')).not.toBeNull()
+    sentinel.remove()
+  })
+
+  it('cleanupCelebration is safe to call when no celebration is active', () => {
+    expect(() => cleanupCelebration()).not.toThrow()
   })
 })

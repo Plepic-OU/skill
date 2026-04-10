@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Axis, AxisId } from '../types/skill-tree'
+import type { Axis, AxisId, Level, NodeState } from '../types/skill-tree'
 import SkillNode from './SkillNode'
 import styles from './QuestPath.module.css'
 
@@ -10,6 +10,58 @@ interface QuestPathProps {
   onClaim: (axisId: AxisId, level: number) => void
   onUnclaim: (axisId: AxisId, level: number) => void
   readonly?: boolean
+}
+
+interface QuestPathNodeProps {
+  level: Level
+  index: number
+  axisId: AxisId
+  color: string
+  nodeState: NodeState
+  isHighestClaimed: boolean
+  isExpanded: boolean
+  connectorType?: 'solid' | 'dashed' | 'faded'
+  onToggle: () => void
+  onClaim: (axisId: AxisId, level: number) => void
+  onUnclaim: (axisId: AxisId, level: number) => void
+  readonly?: boolean
+}
+
+function QuestPathNode({
+  level,
+  index,
+  axisId,
+  color,
+  nodeState,
+  isHighestClaimed,
+  isExpanded,
+  connectorType,
+  onToggle,
+  onClaim,
+  onUnclaim,
+  readonly,
+}: QuestPathNodeProps) {
+  return (
+    <div className={styles.nodeWrapper}>
+      {index > 0 && connectorType && (
+        <div className={`${styles.trailConnector} ${styles[connectorType]}`}>
+          <div className={styles.vineLine} />
+        </div>
+      )}
+      <SkillNode
+        level={level}
+        axisId={axisId}
+        color={color}
+        nodeState={nodeState}
+        isHighestClaimed={isHighestClaimed}
+        isExpanded={isExpanded}
+        onToggle={onToggle}
+        onClaim={onClaim}
+        onUnclaim={onUnclaim}
+        readonly={readonly}
+      />
+    </div>
+  )
 }
 
 export default function QuestPath({
@@ -56,29 +108,26 @@ export default function QuestPath({
         {axis.levels.map((level, i) => {
           const isClaimed = level.level <= claimedLevel
           const isFrontier = level.level === claimedLevel + 1
-          let nodeState: 'claimed' | 'frontier' | 'future' = 'future'
+          let nodeState: NodeState = 'future'
           if (isClaimed) nodeState = 'claimed'
           else if (isFrontier && !readonly) nodeState = 'frontier'
 
           return (
-            <div key={level.level} className={styles.nodeWrapper}>
-              {i > 0 && (
-                <div className={`${styles.trailConnector} ${styles[getConnectorType(i)]}`}>
-                  <div className={styles.vineLine} />
-                </div>
-              )}
-              <SkillNode
-                level={level}
-                axisId={axisId}
-                nodeState={nodeState}
-                isHighestClaimed={isClaimed && level.level === claimedLevel}
-                isExpanded={expandedLevel === level.level}
-                onToggle={() => toggleNode(level.level)}
-                onClaim={onClaim}
-                onUnclaim={onUnclaim}
-                readonly={readonly}
-              />
-            </div>
+            <QuestPathNode
+              key={level.level}
+              level={level}
+              index={i}
+              axisId={axisId}
+              color={axis.color}
+              nodeState={nodeState}
+              isHighestClaimed={isClaimed && level.level === claimedLevel}
+              isExpanded={expandedLevel === level.level}
+              connectorType={i > 0 ? getConnectorType(i) : undefined}
+              onToggle={() => toggleNode(level.level)}
+              onClaim={onClaim}
+              onUnclaim={onUnclaim}
+              readonly={readonly}
+            />
           )
         })}
       </div>

@@ -2,6 +2,11 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import SkillNode from '../SkillNode'
 import type { Level } from '../../types/skill-tree'
 
+// Mock CelebrationEffect to avoid imperative DOM manipulation in jsdom
+vi.mock('../CelebrationEffect', () => ({
+  celebrate: vi.fn(),
+}))
+
 const mockLevel: Level = {
   level: 2,
   name: 'Review Every Edit',
@@ -20,6 +25,7 @@ describe('SkillNode', () => {
   const defaultProps = {
     level: mockLevel,
     axisId: 'autonomy' as const,
+    color: '#4a7c59',
     nodeState: 'frontier' as const,
     isHighestClaimed: false,
     isExpanded: false,

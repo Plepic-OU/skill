@@ -15,11 +15,10 @@ vi.mock('firebase/firestore', () => {
   }
 })
 
+// Only exports used by firebase.ts at module load time — none are asserted in tests
 vi.mock('firebase/auth', () => ({
   getAuth: vi.fn(),
   connectAuthEmulator: vi.fn(),
-  onAuthStateChanged: vi.fn(),
-  signInWithEmailAndPassword: vi.fn(),
 }))
 
 vi.mock('firebase/app', () => ({
@@ -27,7 +26,8 @@ vi.mock('firebase/app', () => ({
 }))
 
 import { doc, getDoc, setDoc } from 'firebase/firestore'
-import { readPublicProfile, syncOnLogin, writeAssessment } from '../../data/sync'
+import { syncOnLogin, writeAssessment } from '../../data/sync'
+import { readPublicProfile } from '../../data/profile'
 import { DEFAULT_STATE } from '../../data/state'
 import { mockUser } from './helpers'
 

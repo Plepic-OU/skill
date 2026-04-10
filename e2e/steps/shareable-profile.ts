@@ -7,9 +7,12 @@ import {
   TEST_PASSWORD,
   TEST_DISPLAY_NAME,
 } from '../helpers/emulator'
-import { claimLevel } from '../helpers/claim'
+import { claimLevel, questMap, waitForQuestMap } from '../helpers/claim'
 
 const { Given, When, Then } = createBdd()
+
+// Module-level variable to share userId between steps (survives page navigation, unlike window)
+let testUserId: string
 
 Then('the URL should contain {string}', async ({ page }, pattern: string) => {
   await page.waitForURL(`**${pattern}**`, { timeout: 5000 })
@@ -39,28 +42,21 @@ Then('I see a {string} toast', async ({ page }, text: string) => {
   await expect(page.getByText(text)).toBeVisible({ timeout: 3000 })
 })
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- playwright-bdd requires destructured fixtures
 Given('a user exists with skills claimed', async ({ page }) => {
   // Create user and set up profile in Firestore emulator
   const result = await createTestUser(TEST_EMAIL, TEST_PASSWORD)
-  const userId = result.localId
+  testUserId = result.localId
 
   await setFirestoreAssessment(
-    userId,
+    testUserId,
     { autonomy: 3, parallelExecution: 2, skillUsage: 1 },
     'normal',
   )
-
-  // Store userId for later steps
-  await page.evaluate((uid) => {
-    ;(window as Record<string, unknown>).__testUserId = uid
-  }, userId)
 })
 
 When('I navigate to their profile URL', async ({ page }) => {
-  const userId = await page.evaluate(() => {
-    return (window as Record<string, unknown>).__testUserId as string
-  })
-  await page.goto(`/profile/${userId}`)
+  await page.goto(`/profile/${testUserId}`)
 })
 
 When('I navigate to {string}', async ({ page }, path: string) => {
@@ -75,13 +71,14 @@ Then('I see their display name', async ({ page }) => {
 })
 
 Then('I see their skill tree in read-only mode', async ({ page }) => {
-  await page.waitForSelector('#questMap', { timeout: 5000 })
+  await waitForQuestMap(page)
   // Verify nodes are present (3 quest paths)
-  const paths = page.locator('#questMap > *')
+  const paths = questMap(page).locator('> *')
   await expect(paths).toHaveCount(3)
 })
 
 Then('I do not see claim or unclaim buttons', async ({ page }) => {
+  await waitForQuestMap(page)
   const claimBtns = page.getByRole('button', { name: 'This is me' })
   await expect(claimBtns).toHaveCount(0)
   const unclaimBtns = page.getByRole('button', { name: 'Not here yet' })

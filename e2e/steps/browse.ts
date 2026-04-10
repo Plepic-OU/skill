@@ -12,7 +12,9 @@ When('I click on the {string} node', async ({ page }, name: string) => {
 })
 
 When('I click on the {string} node again', async ({ page }, name: string) => {
-  await page.getByLabel(new RegExp(name)).first().click()
+  const node = page.getByLabel(new RegExp(name)).first()
+  await expect(node).toHaveAttribute('aria-expanded', 'true')
+  await node.click()
 })
 
 Then('I should see the node detail with {string}', async ({ page }, text: string) => {

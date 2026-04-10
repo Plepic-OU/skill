@@ -16,6 +16,10 @@ export async function createTestUser(email: string, password: string) {
       body: JSON.stringify({ email, password, returnSecureToken: true }),
     },
   )
+  if (!res.ok) {
+    const body = await res.text()
+    throw new Error(`createTestUser failed (${res.status}): ${body}`)
+  }
   return res.json()
 }
 
@@ -34,7 +38,7 @@ export async function setFirestoreAssessment(
   skills: { autonomy: number; parallelExecution: number; skillUsage: number },
   safetyZone: string,
 ) {
-  await fetch(
+  const res = await fetch(
     `${FIRESTORE_EMULATOR}/v1/projects/${PROJECT_ID}/databases/(default)/documents/users/${userId}`,
     {
       method: 'PATCH',
@@ -58,6 +62,10 @@ export async function setFirestoreAssessment(
       }),
     },
   )
+  if (!res.ok) {
+    const body = await res.text()
+    throw new Error(`setFirestoreAssessment failed (${res.status}): ${body}`)
+  }
 }
 
 export async function getFirestoreUser(userId: string) {
@@ -67,5 +75,9 @@ export async function getFirestoreUser(userId: string) {
       headers: { Authorization: 'Bearer owner' },
     },
   )
+  if (!res.ok) {
+    const body = await res.text()
+    throw new Error(`getFirestoreUser failed (${res.status}): ${body}`)
+  }
   return res.json()
 }
