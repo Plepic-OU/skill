@@ -7,7 +7,11 @@ export function useSkillState() {
 
   // Persist to localStorage on every change
   useEffect(() => {
-    saveState(state)
+    try {
+      saveState(state)
+    } catch (err) {
+      console.error('Failed to persist state to localStorage:', err)
+    }
   }, [state])
 
   const handleClaim = useCallback((axisId: AxisId, level: number) => {
@@ -26,5 +30,5 @@ export function useSkillState() {
     setState({ ...DEFAULT_STATE })
   }, [])
 
-  return { state, replaceState: setState, handleClaim, handleUnclaim, handleSafetyZone, resetState }
+  return { state, setFullState: setState, handleClaim, handleUnclaim, handleSafetyZone, resetState }
 }

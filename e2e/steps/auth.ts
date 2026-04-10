@@ -50,10 +50,6 @@ Then('I should not see {string}', async ({ page }, text: string) => {
   await expect(page.getByText(text, { exact: true })).not.toBeVisible()
 })
 
-Then('I should see {string}', async ({ page }, text: string) => {
-  await expect(page.getByText(text, { exact: true })).toBeVisible()
-})
-
 Then('I should not see the user avatar', async ({ page }) => {
   await expect(page.getByTestId('user-avatar')).not.toBeVisible()
 })

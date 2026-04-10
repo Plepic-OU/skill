@@ -15,10 +15,6 @@ export function useClaimAnimation(
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   useEffect(() => {
-    return () => clearTimeout(timerRef.current)
-  }, [])
-
-  useEffect(() => {
     if (!prevClaimed.current && claimed) {
       const el = indicatorRef.current
       if (el) {
@@ -29,5 +25,6 @@ export function useClaimAnimation(
       }
     }
     prevClaimed.current = claimed
+    return () => clearTimeout(timerRef.current)
   }, [claimed, color, indicatorRef, justClaimedClass])
 }

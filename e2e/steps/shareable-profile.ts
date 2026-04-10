@@ -7,7 +7,7 @@ import {
   TEST_PASSWORD,
   TEST_DISPLAY_NAME,
 } from '../helpers/emulator'
-import { claimLevel, questMap, waitForQuestMap } from '../helpers/claim'
+import { claimLevel, waitForQuestMap } from '../helpers/claim'
 
 const { Given, When, Then } = createBdd()
 
@@ -28,18 +28,10 @@ Then('I can still claim skills on my profile', async ({ page }) => {
   await claimLevel(page, 'Review Every Edit')
 })
 
-Given('I claim the {string} level on my profile', async ({ page }, name: string) => {
-  await claimLevel(page, name)
-})
-
 When('I click the share button', async ({ page }) => {
   // Grant clipboard permissions
   await page.context().grantPermissions(['clipboard-read', 'clipboard-write'])
   await page.getByRole('button', { name: 'Copy profile link' }).click()
-})
-
-Then('I see a {string} toast', async ({ page }, text: string) => {
-  await expect(page.getByText(text)).toBeVisible({ timeout: 3000 })
 })
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- playwright-bdd requires destructured fixtures
@@ -56,6 +48,7 @@ Given('a user exists with skills claimed', async ({ page }) => {
 })
 
 When('I navigate to their profile URL', async ({ page }) => {
+  if (!testUserId) throw new Error('testUserId not set — run the profile creation step first')
   await page.goto(`/profile/${testUserId}`)
 })
 
@@ -72,13 +65,18 @@ Then('I see their display name', async ({ page }) => {
 
 Then('I see their skill tree in read-only mode', async ({ page }) => {
   await waitForQuestMap(page)
-  // Verify nodes are present (3 quest paths)
-  const paths = questMap(page).locator('> *')
+  // Verify all 3 quest paths are present using semantic data attributes
+  const paths = page.locator('[data-quest-path]')
   await expect(paths).toHaveCount(3)
 })
 
 Then('I do not see claim or unclaim buttons', async ({ page }) => {
   await waitForQuestMap(page)
+  // Expand a node first — claim/unclaim buttons are only visible in expanded nodes
+  const firstNode = page.locator('[data-skill-name]').first()
+  await firstNode.click()
+  await expect(firstNode).toHaveAttribute('aria-expanded', 'true')
+  // Now assert that no claim/unclaim buttons are visible within the expanded view
   const claimBtns = page.getByRole('button', { name: 'This is me' })
   await expect(claimBtns).toHaveCount(0)
   const unclaimBtns = page.getByRole('button', { name: 'Not here yet' })
@@ -87,8 +85,4 @@ Then('I do not see claim or unclaim buttons', async ({ page }) => {
 
 Then('I see an {string} link', async ({ page }, text: string) => {
   await expect(page.getByRole('link', { name: text }).first()).toBeVisible({ timeout: 5000 })
-})
-
-Then('I see a {string} message', async ({ page }, text: string) => {
-  await expect(page.getByText(text)).toBeVisible({ timeout: 5000 })
 })

@@ -2,6 +2,8 @@ import { initializeApp } from 'firebase/app'
 import { getAuth, connectAuthEmulator } from 'firebase/auth'
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 
+// --- Env-var validation ---
+
 const requiredEnvVars = [
   'VITE_FIREBASE_API_KEY',
   'VITE_FIREBASE_AUTH_DOMAIN',
@@ -19,6 +21,8 @@ if (missing.length > 0) {
   )
 }
 
+// --- Firebase init ---
+
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -32,20 +36,28 @@ const app = initializeApp(firebaseConfig)
 export const auth = getAuth(app)
 export const db = getFirestore(app)
 
-const __emulatorsConnected = '__firebase_emulators_connected'
+// --- Emulator wiring + E2E test bridge ---
 
-if (import.meta.env.DEV && !(globalThis as Record<string, unknown>)[__emulatorsConnected]) {
-  ;(globalThis as Record<string, unknown>)[__emulatorsConnected] = true
+const EMULATORS_CONNECTED_KEY = '__firebase_emulators_connected'
+
+function shouldConnectEmulators(): boolean {
+  return import.meta.env.DEV && !(globalThis as Record<string, unknown>)[EMULATORS_CONNECTED_KEY]
+}
+
+if (shouldConnectEmulators()) {
+  ;(globalThis as Record<string, unknown>)[EMULATORS_CONNECTED_KEY] = true
   connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true })
   connectFirestoreEmulator(db, '127.0.0.1', 8080)
 
-  // Expose for E2E tests
-  import('firebase/auth')
-    .then(({ signInWithEmailAndPassword }) => {
-      Object.assign(window, {
-        __e2e_auth: auth,
-        __e2e_signInWithEmailAndPassword: signInWithEmailAndPassword,
+  // Expose auth helpers for E2E tests (dynamic import avoids test mock conflicts)
+  if (typeof window !== 'undefined') {
+    import('firebase/auth')
+      .then(({ signInWithEmailAndPassword }) => {
+        Object.assign(window, {
+          __e2e_auth: auth,
+          __e2e_signInWithEmailAndPassword: signInWithEmailAndPassword,
+        })
       })
-    })
-    .catch(console.error)
+      .catch(() => {})
+  }
 }

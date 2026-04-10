@@ -5,14 +5,15 @@ import { useSkillState } from '../hooks/useSkillState'
 import { useSyncState } from '../hooks/useSyncState'
 import { useOwnerRedirect } from '../hooks/useOwnerRedirect'
 import { usePublicProfile } from '../hooks/usePublicProfile'
+import { resetState } from '../data/state'
 import Header from '../components/Header'
 import SkillTreeLayout from '../components/SkillTreeLayout'
 import { showToast } from '../components/Toast'
 import styles from './ProfilePage.module.css'
 
 function OwnerProfile() {
-  const { state, replaceState, handleClaim, handleUnclaim, handleSafetyZone } = useSkillState()
-  const { syncStatus, syncError, clearSyncError } = useSyncState(state, replaceState)
+  const { state, setFullState, handleClaim, handleUnclaim, handleSafetyZone } = useSkillState()
+  const { syncStatus, syncError, clearSyncError } = useSyncState(state, setFullState)
 
   useEffect(() => {
     if (syncError) {
@@ -36,27 +37,22 @@ function OwnerProfile() {
 function VisitorProfile({ userId }: { userId: string | undefined }) {
   const { profile, loading, error } = usePublicProfile(userId)
 
-  if (loading) {
+  if (loading || error || !profile) {
     return (
       <>
         <Header mode="visitor" />
         <div className={styles.visitorMessage}>
-          <p>Loading profile...</p>
-        </div>
-      </>
-    )
-  }
-
-  if (error || !profile) {
-    return (
-      <>
-        <Header mode="visitor" />
-        <div className={styles.visitorMessage}>
-          <h2>Profile not found</h2>
-          <p>This profile doesn&apos;t exist or couldn&apos;t be loaded.</p>
-          <Link to="/" className={styles.ctaLink}>
-            Assess your own skills
-          </Link>
+          {loading ? (
+            <p>Loading profile...</p>
+          ) : (
+            <>
+              <h2>Profile not found</h2>
+              <p>This profile doesn&apos;t exist or couldn&apos;t be loaded.</p>
+              <Link to="/" className={styles.ctaLink}>
+                Assess your own skills
+              </Link>
+            </>
+          )}
         </div>
       </>
     )
@@ -74,7 +70,7 @@ function VisitorProfile({ userId }: { userId: string | undefined }) {
           />
         ) : (
           <div className={styles.bannerAvatarFallback}>
-            {profile.displayName[0]?.toUpperCase() ?? '?'}
+            {profile.displayName?.[0]?.toUpperCase() ?? '?'}
           </div>
         )}
         <h2 className={styles.bannerName}>{profile.displayName}</h2>
@@ -92,7 +88,6 @@ function VisitorProfile({ userId }: { userId: string | undefined }) {
 export default function ProfilePage() {
   const { userId } = useParams<{ userId: string }>()
   const { user, loading } = useAuth()
-  const { resetState } = useSkillState()
 
   useOwnerRedirect(user, loading, userId, resetState)
 

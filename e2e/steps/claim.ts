@@ -1,7 +1,12 @@
 import { expect } from '@playwright/test'
 import { createBdd } from 'playwright-bdd'
+import { claimLevel, claimedNodeLocator } from '../helpers/claim'
 
-const { When, Then } = createBdd()
+const { Given, When, Then } = createBdd()
+
+Given('I claim the {string} level', async ({ page }, name: string) => {
+  await claimLevel(page, name)
+})
 
 When('I expand the {string} node', async ({ page }, name: string) => {
   const node = page.getByLabel(new RegExp(name)).first()
@@ -12,28 +17,27 @@ When('I expand the {string} node', async ({ page }, name: string) => {
   }
 })
 
-When('I click {string}', async ({ page }, buttonText: string) => {
+When('I click the {string} action', async ({ page }, buttonText: string) => {
   // Find the button inside the currently expanded node to avoid clicking hidden buttons
   const expandedNode = page.locator('[aria-expanded="true"]').first()
-  const label = (await expandedNode.getAttribute('aria-label')) ?? ''
-  const nodeName = label.replace(/^Level \d+: /, '').replace(/ — .*$/, '')
+  const nodeName = await expandedNode.getAttribute('data-skill-name')
+  if (!nodeName) throw new Error('Expanded node has no data-skill-name attribute')
   const btn = expandedNode.getByRole('button', { name: buttonText })
   await expect(btn).toBeVisible()
   await btn.click()
-  // Wait for the aria-label to reflect the state change (claim → "reached", unclaim → "up next")
+  // Wait for the aria-label to reflect the state change (claim -> "reached", unclaim -> "up next")
   const expectedState = buttonText === 'This is me' ? 'reached' : 'up next'
   await expect(
-    page.locator(`[aria-label*="${nodeName}"][aria-label*="${expectedState}"]`).first(),
+    page.locator(`[data-skill-name="${nodeName}"][aria-label*="${expectedState}"]`).first(),
   ).toBeVisible({ timeout: 10000 })
 })
 
 Then('the {string} node should be claimed', async ({ page }, name: string) => {
-  const node = page.locator(`[aria-label*="${name}"][aria-label*="reached"]`).first()
-  await expect(node).toBeVisible({ timeout: 5000 })
+  await expect(claimedNodeLocator(page, name)).toBeVisible({ timeout: 5000 })
 })
 
 Then('the {string} node should not be claimed', async ({ page }, name: string) => {
-  const node = page.locator(`[aria-label*="${name}"][aria-label*="reached"]`)
+  const node = page.locator(`[data-skill-name="${name}"][aria-label*="reached"]`)
   await expect(node).toHaveCount(0)
 })
 

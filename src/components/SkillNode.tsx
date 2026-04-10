@@ -71,6 +71,7 @@ export default function SkillNode({
       role="button"
       aria-expanded={isExpanded}
       aria-label={`Level ${level.level}: ${level.name} — ${ariaState}`}
+      data-skill-name={level.name}
       onClick={onToggle}
       onKeyDown={handleKeyDown}
     >

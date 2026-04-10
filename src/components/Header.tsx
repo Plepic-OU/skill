@@ -1,14 +1,13 @@
-import { useState } from 'react'
-import { Link } from 'react-router'
 import type { User } from 'firebase/auth'
+import { Link } from 'react-router'
 import { useAuth } from '../contexts/AuthContext'
-import { signOut } from '../data/auth'
+import { useAuthActions } from '../hooks/useAuthActions'
 import SignInModal from './SignInModal'
 import ConfirmDialog from './ConfirmDialog'
-import ShareButton, { LinkIcon } from './ShareButton'
+import ShareButton from './ShareButton'
+import type { SyncStatus } from '../types/skill-tree'
+import { LinkIcon } from './icons'
 import styles from './Header.module.css'
-
-type SyncStatus = 'idle' | 'syncing' | 'saved' | 'error'
 
 interface HeaderProps {
   syncStatus?: SyncStatus
@@ -101,20 +100,40 @@ function LandingControls({ onSignIn }: LandingControlsProps) {
 
 export default function Header({ syncStatus = 'idle', mode = 'landing' }: HeaderProps) {
   const { user, loading } = useAuth()
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false)
+  const {
+    isModalOpen,
+    openModal,
+    closeModal,
+    isConfirmOpen,
+    handleSignOut,
+    confirmSignOut,
+    closeConfirm,
+  } = useAuthActions()
 
-  function handleSignOut() {
-    setIsConfirmOpen(true)
-  }
+  function renderAuthControls() {
+    if (loading) return null
 
-  function confirmSignOut() {
-    setIsConfirmOpen(false)
-    signOut()
-  }
-
-  function openModal() {
-    setIsModalOpen(true)
+    switch (mode) {
+      case 'owner':
+        return user ? <OwnerControls syncStatus={syncStatus} onSignOut={handleSignOut} /> : null
+      case 'visitor':
+        return <VisitorControls user={user} onSignOut={handleSignOut} onSignIn={openModal} />
+      case 'landing':
+        if (user) {
+          return (
+            <button className={styles.btnSignOut} onClick={handleSignOut}>
+              Sign out
+            </button>
+          )
+        }
+        return <LandingControls onSignIn={openModal} />
+      default:
+        return !user ? (
+          <button className={styles.btnLogin} onClick={openModal}>
+            Sign in
+          </button>
+        ) : null
+    }
   }
 
   return (
@@ -143,41 +162,18 @@ export default function Header({ syncStatus = 'idle', mode = 'landing' }: Header
             <span className={styles.displayName} title={user.displayName ?? undefined}>
               {user.displayName ?? 'Anonymous'}
             </span>
-            {mode === 'owner' && (
-              <OwnerControls syncStatus={syncStatus} onSignOut={handleSignOut} />
-            )}
-            {mode === 'visitor' && (
-              <VisitorControls user={user} onSignOut={handleSignOut} onSignIn={openModal} />
-            )}
-            {mode === 'landing' && (
-              <button className={styles.btnSignOut} onClick={handleSignOut}>
-                Sign out
-              </button>
-            )}
           </div>
         )}
-        {!loading && !user && (
-          <>
-            {mode === 'landing' && <LandingControls onSignIn={openModal} />}
-            {mode === 'visitor' && (
-              <VisitorControls user={null} onSignOut={handleSignOut} onSignIn={openModal} />
-            )}
-            {mode !== 'landing' && mode !== 'visitor' && (
-              <button className={styles.btnLogin} onClick={openModal}>
-                Sign in
-              </button>
-            )}
-            <SignInModal open={isModalOpen} onClose={() => setIsModalOpen(false)} />
-          </>
-        )}
+        {renderAuthControls()}
       </div>
+      <SignInModal open={isModalOpen} onClose={closeModal} />
       <ConfirmDialog
         open={isConfirmOpen}
         title="Sign out?"
         message="Your progress is saved and will be here when you return."
         confirmLabel="Sign out"
         onConfirm={confirmSignOut}
-        onCancel={() => setIsConfirmOpen(false)}
+        onCancel={closeConfirm}
       />
     </header>
   )

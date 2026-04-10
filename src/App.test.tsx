@@ -19,7 +19,7 @@ beforeEach(() => {
 })
 
 describe('App', () => {
-  it('renders without crashing', () => {
+  it('renders the app heading', () => {
     render(
       <MemoryRouter>
         <App />

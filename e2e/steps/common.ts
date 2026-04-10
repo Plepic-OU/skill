@@ -1,8 +1,13 @@
+import { expect } from '@playwright/test'
 import { createBdd } from 'playwright-bdd'
 import { clearEmulatorData } from '../helpers/emulator'
 import { waitForQuestMap } from '../helpers/claim'
 
-const { Given, Before } = createBdd()
+const { Given, Then, Before } = createBdd()
+
+Then('I should see {string}', async ({ page }, text: string) => {
+  await expect(page.getByText(text, { exact: true })).toBeVisible({ timeout: 5000 })
+})
 
 Before(async ({ page }) => {
   // Clear emulator data for test isolation

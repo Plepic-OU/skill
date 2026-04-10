@@ -47,3 +47,7 @@ export function loadState(): SkillState {
 export function saveState(state: SkillState): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
 }
+
+export function resetState(): void {
+  saveState(DEFAULT_STATE)
+}

@@ -48,3 +48,5 @@ export interface SkillState {
   skillUsage: number
   safetyZone: SafetyZoneId
 }
+
+export type SyncStatus = 'idle' | 'syncing' | 'saved' | 'error'

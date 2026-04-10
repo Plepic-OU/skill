@@ -11,7 +11,7 @@ interface ToastMessage {
 }
 
 // Singleton: exactly one <Toast /> must be mounted for showToast() to work.
-// Mounting a second instance while one is active throws in development.
+// StrictMode-safe: re-mounts overwrite (last mount wins) instead of throwing.
 let nextId = 0
 let addToastFn: ((text: string, type: 'success' | 'error') => void) | null = null
 
@@ -25,16 +25,7 @@ export default function Toast() {
   const timersRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map())
 
   useEffect(() => {
-    if (addToastFn !== null) {
-      if (import.meta.env.DEV) {
-        throw new Error('<Toast /> is a singleton — only one instance may be mounted at a time.')
-      } else {
-        console.warn('<Toast /> is a singleton — duplicate instance ignored.')
-        return
-      }
-    }
-
-    addToastFn = (text, type) => {
+    const setter = (text: string, type: 'success' | 'error') => {
       const id = nextId++
       setMessages((prev) => [...prev, { id, text, type }])
 
@@ -46,9 +37,16 @@ export default function Toast() {
       }, FADE_OUT_DELAY_MS)
       timersRef.current.set(id, timer)
     }
+
+    // Allow re-registration for StrictMode double-mount (last mount wins)
+    addToastFn = setter
+
     const timers = timersRef.current
     return () => {
-      addToastFn = null
+      // Only clear if this instance's setter is still the active one
+      if (addToastFn === setter) {
+        addToastFn = null
+      }
       for (const timer of timers.values()) clearTimeout(timer)
       timers.clear()
     }

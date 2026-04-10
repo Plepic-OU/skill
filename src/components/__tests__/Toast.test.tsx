@@ -1,5 +1,4 @@
 import { render, screen, act, cleanup } from '@testing-library/react'
-import { describe, it, expect, beforeEach } from 'vitest'
 import Toast, { showToast } from '../Toast'
 
 // Note: Toast auto-dismiss (via CSS fadeOut + onAnimationEnd) can't be unit-tested
@@ -51,16 +50,24 @@ describe('Toast', () => {
     expect(container).toHaveAttribute('aria-live', 'polite')
   })
 
-  it('throws when a second Toast instance mounts (singleton guard)', () => {
+  it('allows a second Toast instance to mount (last mount wins)', () => {
     // First instance is already mounted via beforeEach.
-    // Mounting a second should throw in dev mode.
+    // Mounting a second should NOT throw — last mount wins for StrictMode safety.
     expect(() => {
       render(<Toast />)
-    }).toThrow('singleton')
-  })
+    }).not.toThrow()
 
+    // showToast should still work, routed to the last mounted instance
+    act(() => showToast('works'))
+    expect(screen.getByText('works')).toBeInTheDocument()
+  })
+})
+
+describe('Toast unmount behavior', () => {
   it('resets addToastFn on unmount so showToast becomes a no-op', () => {
-    // Unmount the Toast rendered in beforeEach
+    render(<Toast />)
+
+    // Unmount the Toast
     cleanup()
 
     // showToast should silently no-op (not throw) when nothing is mounted
@@ -70,8 +77,5 @@ describe('Toast', () => {
 
     // Nothing rendered — query should find nothing
     expect(screen.queryByText('Ghost')).toBeNull()
-
-    // Re-mount for remaining test teardown consistency
-    render(<Toast />)
   })
 })

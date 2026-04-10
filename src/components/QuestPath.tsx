@@ -91,7 +91,11 @@ export default function QuestPath({
   }
 
   return (
-    <div className={styles.questPath} style={{ '--node-color': axis.color } as React.CSSProperties}>
+    <div
+      className={styles.questPath}
+      data-quest-path={axisId}
+      style={{ '--node-color': axis.color } as React.CSSProperties}
+    >
       <div className={styles.pathHeader}>
         <div className={styles.pathIcon} style={{ color: axis.color }}>
           <span className="material-symbols-rounded">{axis.icon}</span>

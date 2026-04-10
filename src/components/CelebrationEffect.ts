@@ -79,9 +79,9 @@ export function celebrate(element: HTMLElement, color: string): void {
     if (activeBatch?.container === container) {
       activeBatch = null
       activeTimer = null
+      container.remove()
+      ripple.remove()
+      flash.remove()
     }
-    container.remove()
-    ripple.remove()
-    flash.remove()
   }, 900)
 }

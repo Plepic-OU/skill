@@ -13,17 +13,23 @@ export function usePublicProfile(userId: string | undefined) {
       setError('No user ID provided')
       return
     }
+    let stale = false
     setLoading(true)
     setError(null)
     readPublicProfile(userId)
       .then((p) => {
+        if (stale) return
         setProfile(p)
         setLoading(false)
       })
       .catch(() => {
+        if (stale) return
         setError('Failed to load profile')
         setLoading(false)
       })
+    return () => {
+      stale = true
+    }
   }, [userId])
 
   return { profile, loading, error }

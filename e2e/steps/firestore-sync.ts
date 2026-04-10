@@ -7,13 +7,8 @@ import {
   TEST_EMAIL,
   TEST_PASSWORD,
 } from '../helpers/emulator'
-import { claimLevel } from '../helpers/claim'
 
 const { Given, Then } = createBdd()
-
-Given('I claim the {string} level', async ({ page }, name: string) => {
-  await claimLevel(page, name)
-})
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- playwright-bdd requires destructured fixtures
 Given('the test user has autonomy level {int} in Firestore', async ({ page }, level: number) => {

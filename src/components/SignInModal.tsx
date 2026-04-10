@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDialog } from '../hooks/useDialog'
 import { signInWithGoogle } from '../data/auth'
 import styles from './SignInModal.module.css'
@@ -12,6 +12,10 @@ export default function SignInModal({ open, onClose }: SignInModalProps) {
   const dialogRef = useDialog(open, onClose)
   const [error, setError] = useState<string | null>(null)
   const [isSigningIn, setIsSigningIn] = useState(false)
+
+  useEffect(() => {
+    if (open) setError(null)
+  }, [open])
 
   async function handleProvider(signIn: () => Promise<unknown>) {
     setError(null)

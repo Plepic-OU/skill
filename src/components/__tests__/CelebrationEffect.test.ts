@@ -1,5 +1,3 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-
 import { celebrate, cleanupCelebration } from '../CelebrationEffect'
 
 function stubMatchMedia(matches: boolean) {
@@ -76,7 +74,7 @@ describe('celebrate', () => {
     expect(particle.style.getPropertyValue('--ty')).toMatch(/^-?\d+(\.\d+)?px$/)
   })
 
-  it('removes previous batch when celebrate is called concurrently', () => {
+  it('removes previous batch when celebrate is called again before cleanup', () => {
     celebrate(element, '#ff0000')
     expect(document.querySelectorAll('[data-testid="celebration-container"]')).toHaveLength(1)
     expect(document.querySelectorAll('[data-testid="celebration-ripple"]')).toHaveLength(1)

@@ -1,8 +1,8 @@
 import { skillTreeData } from '../data/skill-trees'
 import type { SafetyZoneId } from '../types/skill-tree'
-import styles from './StakesBadge.module.css'
+import styles from './SafetyZoneBadge.module.css'
 
-export default function StakesBadge({ zoneId }: { zoneId: SafetyZoneId }) {
+export default function SafetyZoneBadge({ zoneId }: { zoneId: SafetyZoneId }) {
   const zone = skillTreeData.safety.zones[zoneId]
   return (
     <div className={styles.stakesBadge}>
