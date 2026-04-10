@@ -22,22 +22,13 @@ vi.mock('firebase/app', () => ({
 }))
 
 import { doc, getDoc, setDoc } from 'firebase/firestore'
-import type { User } from 'firebase/auth'
 import { readPublicProfile, syncOnLogin, writeAssessment } from '../../data/sync'
 import { DEFAULT_STATE } from '../../data/state'
+import { mockUser } from './helpers'
 
 const mockDoc = vi.mocked(doc)
 const mockGetDoc = vi.mocked(getDoc)
 const mockSetDoc = vi.mocked(setDoc)
-
-function mockUser(overrides: Partial<User> = {}): User {
-  return {
-    uid: 'test-uid',
-    displayName: 'Test User',
-    photoURL: 'https://example.com/photo.jpg',
-    ...overrides,
-  } as User
-}
 
 beforeEach(() => {
   vi.clearAllMocks()

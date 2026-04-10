@@ -14,6 +14,11 @@ export function useSyncState(state: SkillState, setState: (state: SkillState) =>
   const savedTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
   const skipNextWrite = useRef(false)
 
+  // Clean up the "saved" badge timer on unmount
+  useEffect(() => {
+    return () => clearTimeout(savedTimer.current)
+  }, [])
+
   function showSaved() {
     setSyncStatus('saved')
     clearTimeout(savedTimer.current)
