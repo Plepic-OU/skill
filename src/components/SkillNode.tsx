@@ -31,6 +31,12 @@ export default function SkillNode({
 }: SkillNodeProps) {
   const indicatorRef = useRef<HTMLDivElement>(null)
   const prevNodeState = useRef(nodeState)
+  const claimTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
+
+  // Clean up the claim animation timer on unmount
+  useEffect(() => {
+    return () => clearTimeout(claimTimer.current)
+  }, [])
 
   // Animate when this node transitions to 'claimed'
   useEffect(() => {
@@ -39,7 +45,8 @@ export default function SkillNode({
       if (el) {
         celebrate(el, skillTreeData.axes[axisId].color)
         el.classList.add('just-claimed')
-        setTimeout(() => el.classList.remove('just-claimed'), 600)
+        clearTimeout(claimTimer.current)
+        claimTimer.current = setTimeout(() => el.classList.remove('just-claimed'), 600)
       }
     }
     prevNodeState.current = nodeState
