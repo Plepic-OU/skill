@@ -1,4 +1,4 @@
-import { loadState, saveState, DEFAULT_STATE } from '../../data/state'
+import { loadState, saveState, DEFAULT_STATE } from '../state'
 import type { SkillState } from '../../types/skill-tree'
 
 beforeEach(() => {
@@ -172,27 +172,5 @@ describe('saveState', () => {
     }
     saveState(state)
     expect(loadState()).toEqual(state)
-  })
-})
-
-describe('claim/unclaim logic', () => {
-  it('claiming level N sets highest to N', () => {
-    // Simulates: state[axisId] = level
-    const state = { ...DEFAULT_STATE }
-    state.autonomy = 3
-    expect(state.autonomy).toBe(3)
-  })
-
-  it('unclaiming decrements by 1', () => {
-    const state = { ...DEFAULT_STATE, autonomy: 3 }
-    state.autonomy = 3 - 1
-    expect(state.autonomy).toBe(2)
-  })
-
-  it('unclaiming level 1 goes to 0', () => {
-    const state = { ...DEFAULT_STATE, autonomy: 1 }
-    const currentLevel = 1
-    state.autonomy = currentLevel - 1
-    expect(state.autonomy).toBe(0)
   })
 })

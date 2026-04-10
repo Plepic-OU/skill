@@ -7,22 +7,9 @@ import {
   TEST_EMAIL,
   TEST_PASSWORD,
 } from '../helpers/emulator'
+import { claimLevel } from '../helpers/claim'
 
 const { Given, Then } = createBdd()
-
-async function claimLevel(page: import('@playwright/test').Page, name: string) {
-  const node = page.getByLabel(new RegExp(name)).first()
-  await node.click()
-  await expect(node).toHaveAttribute('aria-expanded', 'true')
-  const expandedNode = page.locator('[aria-expanded="true"]').first()
-  const btn = expandedNode.getByRole('button', { name: 'This is me' })
-  await expect(btn).toBeVisible()
-  await btn.click()
-  // Wait for the claim to be reflected in the DOM
-  await expect(page.locator(`[aria-label*="${name}"][aria-label*="reached"]`).first()).toBeVisible({
-    timeout: 10000,
-  })
-}
 
 Given('I claim the {string} level', async ({ page }, name: string) => {
   await claimLevel(page, name)

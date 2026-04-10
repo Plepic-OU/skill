@@ -151,6 +151,28 @@ describe('syncOnLogin', () => {
 
     await expect(syncOnLogin(mockUser())).rejects.toThrow('Network error')
   })
+
+  it('propagates setDoc errors when updating profile', async () => {
+    mockGetDoc.mockResolvedValue({
+      exists: () => true,
+      data: () => ({
+        skills: { autonomy: 1, parallelExecution: 1, skillUsage: 1 },
+        safetyZone: 'sandbox',
+      }),
+    } as never)
+    mockSetDoc.mockRejectedValue(new Error('Write failed'))
+
+    await expect(syncOnLogin(mockUser())).rejects.toThrow('Write failed')
+  })
+
+  it('propagates setDoc errors when creating new document', async () => {
+    mockGetDoc.mockResolvedValue({
+      exists: () => false,
+    } as never)
+    mockSetDoc.mockRejectedValue(new Error('Quota exceeded'))
+
+    await expect(syncOnLogin(mockUser())).rejects.toThrow('Quota exceeded')
+  })
 })
 
 describe('writeAssessment', () => {
@@ -197,6 +219,19 @@ describe('writeAssessment', () => {
     await writeAssessment('uid-xyz', DEFAULT_STATE)
 
     expect(mockDoc).toHaveBeenCalledWith(undefined, 'users', 'uid-xyz')
+  })
+
+  it('propagates setDoc errors', async () => {
+    mockSetDoc.mockRejectedValue(new Error('Permission denied'))
+
+    await expect(
+      writeAssessment('uid-123', {
+        autonomy: 1,
+        parallelExecution: 1,
+        skillUsage: 1,
+        safetyZone: 'sandbox',
+      }),
+    ).rejects.toThrow('Permission denied')
   })
 
   it('falls back to Anonymous when user displayName is null', async () => {
@@ -302,6 +337,12 @@ describe('readPublicProfile', () => {
 
     const result = await readPublicProfile('uid')
     expect(result?.avatarUrl).toBe('')
+  })
+
+  it('propagates getDoc errors', async () => {
+    mockGetDoc.mockRejectedValue(new Error('Firestore unavailable'))
+
+    await expect(readPublicProfile('uid-123')).rejects.toThrow('Firestore unavailable')
   })
 
   it('accepts HTTP avatar URLs', async () => {
