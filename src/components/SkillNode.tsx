@@ -1,3 +1,6 @@
+import { useEffect, useRef } from 'react'
+import { skillTreeData } from '../data/skill-trees'
+import { celebrate } from './CelebrationEffect'
 import type { AxisId, Level } from '../types/skill-tree'
 import styles from './SkillNode.module.css'
 
@@ -26,6 +29,21 @@ export default function SkillNode({
   onUnclaim,
   readonly,
 }: SkillNodeProps) {
+  const indicatorRef = useRef<HTMLDivElement>(null)
+  const prevNodeState = useRef(nodeState)
+
+  // Animate when this node transitions to 'claimed'
+  useEffect(() => {
+    if (prevNodeState.current !== 'claimed' && nodeState === 'claimed') {
+      const el = indicatorRef.current
+      if (el) {
+        celebrate(el, skillTreeData.axes[axisId].color)
+        el.classList.add('just-claimed')
+        setTimeout(() => el.classList.remove('just-claimed'), 600)
+      }
+    }
+    prevNodeState.current = nodeState
+  }, [nodeState, axisId])
   const levelLabels: Record<NodeState, string> = {
     claimed: isHighestClaimed ? 'You are here' : `Level ${level.level}`,
     frontier: 'Up next',
@@ -70,7 +88,7 @@ export default function SkillNode({
       onKeyDown={handleKeyDown}
     >
       <div className={styles.nodeTop}>
-        <div className={styles.indicator} data-indicator>
+        <div className={styles.indicator} data-indicator ref={indicatorRef}>
           <span className="material-symbols-rounded" aria-hidden="true">
             {level.levelIcon}
           </span>
