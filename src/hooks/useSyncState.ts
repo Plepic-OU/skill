@@ -25,14 +25,10 @@ export function useSyncState(
   const [syncError, setSyncError] = useState<string | null>(null)
   const sync = useRef<SyncPhase>({ phase: 'initial' })
   const savedTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
-  const debounceTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   // Clean up timers on unmount
   useEffect(() => {
-    return () => {
-      clearTimeout(savedTimer.current)
-      clearTimeout(debounceTimer.current)
-    }
+    return () => clearTimeout(savedTimer.current)
   }, [])
 
   const showSaved = useCallback(() => {
@@ -69,10 +65,12 @@ export function useSyncState(
       })
     return () => {
       stale = true
+      // Reset phase so StrictMode's remount can retry the sync
+      sync.current = { phase: 'initial' }
     }
   }, [user, replaceState])
 
-  // Write to Firestore on state change (debounced)
+  // Write to Firestore on state change
   useEffect(() => {
     const s = sync.current
     if (s.phase !== 'ready' || !user) return
@@ -80,20 +78,13 @@ export function useSyncState(
       s.skipNextWrite = false
       return
     }
-    const currentUser = user
-    clearTimeout(debounceTimer.current)
-    debounceTimer.current = setTimeout(() => {
-      writeAssessment(currentUser.uid, state)
-        .then(() => showSaved())
-        .catch((err) => {
-          console.error('Failed to write assessment:', err)
-          setSyncStatus('error')
-          setSyncError('Couldn\u2019t save changes')
-        })
-    }, 500)
-    return () => {
-      clearTimeout(debounceTimer.current)
-    }
+    writeAssessment(user.uid, state)
+      .then(() => showSaved())
+      .catch((err) => {
+        console.error('Failed to write assessment:', err)
+        setSyncStatus('error')
+        setSyncError('Couldn\u2019t save changes')
+      })
   }, [state, user, showSaved])
 
   return { syncStatus, syncError, clearSyncError }
