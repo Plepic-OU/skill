@@ -7,6 +7,8 @@ interface ToastMessage {
   type: 'success' | 'error'
 }
 
+// Singleton: exactly one <Toast /> must be mounted for showToast() to work.
+// Calls before mount or with multiple instances will silently no-op / duplicate.
 let nextId = 0
 let addToastFn: ((text: string, type: 'success' | 'error') => void) | null = null
 

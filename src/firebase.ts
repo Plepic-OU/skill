@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import { getAuth, connectAuthEmulator, signInWithEmailAndPassword } from 'firebase/auth'
+import { getAuth, connectAuthEmulator } from 'firebase/auth'
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 
 const firebaseConfig = {
@@ -17,8 +17,10 @@ if (import.meta.env.DEV) {
   connectFirestoreEmulator(db, '127.0.0.1', 8080)
 
   // Expose for E2E tests
-  Object.assign(window, {
-    __e2e_auth: auth,
-    __e2e_signInWithEmailAndPassword: signInWithEmailAndPassword,
+  import('firebase/auth').then(({ signInWithEmailAndPassword }) => {
+    Object.assign(window, {
+      __e2e_auth: auth,
+      __e2e_signInWithEmailAndPassword: signInWithEmailAndPassword,
+    })
   })
 }
