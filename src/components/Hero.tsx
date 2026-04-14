@@ -2,7 +2,7 @@ import { skillTreeData } from '../data/skill-trees'
 import type { AxisId, SkillState } from '../types/skill-tree'
 import styles from './Hero.module.css'
 
-const AXIS_IDS: AxisId[] = ['autonomy', 'parallelExecution', 'skillUsage']
+const AXIS_IDS = Object.keys(skillTreeData.axes) as AxisId[]
 
 interface HeroProps {
   state: SkillState

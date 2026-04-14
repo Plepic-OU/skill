@@ -414,6 +414,34 @@
   color: var(--text-3);
 }
 
+/* ── Claim animation ── */
+@keyframes sealStamp {
+  0% {
+    transform: scale(1.8) rotate(-15deg);
+    opacity: 0;
+  }
+  40% {
+    transform: scale(0.9) rotate(2deg);
+    opacity: 1;
+  }
+  60% {
+    transform: scale(1.05) rotate(-1deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+.justClaimed {
+  animation: sealStamp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .justClaimed {
+    animation: none !important;
+  }
+}
+
 /* ── Responsive ── */
 @media (max-width: 819px) {
   .node {

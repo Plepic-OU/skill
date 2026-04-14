@@ -31,3 +31,11 @@ playwright-report/
 # Firebase emulator logs
 firestore-debug.log
 ui-debug.log
+firebase-debug.log
+
+# Stryker mutation testing
+.stryker-tmp/
+reports/mutation/
+
+# Coverage
+coverage/

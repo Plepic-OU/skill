@@ -1,4 +1,4 @@
-import { loadState, saveState, DEFAULT_STATE } from '../../data/state'
+import { loadState, saveState, DEFAULT_STATE } from '../state'
 import type { SkillState } from '../../types/skill-tree'
 
 beforeEach(() => {
@@ -70,6 +70,74 @@ describe('loadState', () => {
     expect(loadState()).toEqual(DEFAULT_STATE)
   })
 
+  it('returns default state when stored value is null', () => {
+    localStorage.setItem('plepic-skill-state', JSON.stringify(null))
+    expect(loadState()).toEqual(DEFAULT_STATE)
+  })
+
+  it('returns default state when stored value is a string', () => {
+    localStorage.setItem('plepic-skill-state', JSON.stringify('a string'))
+    expect(loadState()).toEqual(DEFAULT_STATE)
+  })
+
+  it('returns default state when stored value is a number', () => {
+    localStorage.setItem('plepic-skill-state', JSON.stringify(42))
+    expect(loadState()).toEqual(DEFAULT_STATE)
+  })
+
+  it('returns default state when axis value is not a number', () => {
+    localStorage.setItem(
+      'plepic-skill-state',
+      JSON.stringify({
+        autonomy: 'not-a-number',
+        parallelExecution: 1,
+        skillUsage: 1,
+        safetyZone: 'sandbox',
+      }),
+    )
+    expect(loadState()).toEqual(DEFAULT_STATE)
+  })
+
+  it('returns default state when axis value exceeds maxLevel', () => {
+    // autonomy has 6 levels, so 7 should be rejected
+    localStorage.setItem(
+      'plepic-skill-state',
+      JSON.stringify({
+        autonomy: 7,
+        parallelExecution: 1,
+        skillUsage: 1,
+        safetyZone: 'sandbox',
+      }),
+    )
+    expect(loadState()).toEqual(DEFAULT_STATE)
+  })
+
+  it('accepts value exactly at maxLevel', () => {
+    // parallelExecution has 5 levels, autonomy 6, skillUsage 6
+    const state: SkillState = {
+      autonomy: 6,
+      parallelExecution: 5,
+      skillUsage: 6,
+      safetyZone: 'sandbox',
+    }
+    localStorage.setItem('plepic-skill-state', JSON.stringify(state))
+    expect(loadState()).toEqual(state)
+  })
+
+  it.each(['sandbox', 'normal', 'hardcore', 'impossible'] as const)(
+    'accepts safety zone "%s"',
+    (zone) => {
+      const state: SkillState = {
+        autonomy: 1,
+        parallelExecution: 1,
+        skillUsage: 1,
+        safetyZone: zone,
+      }
+      localStorage.setItem('plepic-skill-state', JSON.stringify(state))
+      expect(loadState()).toEqual(state)
+    },
+  )
+
   it('accepts level 0 (unclaimed)', () => {
     const state: SkillState = {
       autonomy: 0,
@@ -95,25 +163,15 @@ describe('saveState', () => {
     expect(stored).not.toBeNull()
     expect(JSON.parse(stored as string)).toEqual(state)
   })
-})
 
-describe('claim/unclaim logic', () => {
-  it('claiming level N sets highest to N', () => {
-    // Simulates: state[axisId] = level
-    const state = { ...DEFAULT_STATE }
-    state.autonomy = 3
-    expect(state.autonomy).toBe(3)
-  })
-
-  it('unclaiming decrements by 1', () => {
-    const state = { ...DEFAULT_STATE, autonomy: 3 }
-    state.autonomy = 3 - 1
-    expect(state.autonomy).toBe(2)
-  })
-
-  it('unclaiming level 1 goes to 0', () => {
-    const state = { ...DEFAULT_STATE, autonomy: 1 }
-    state.autonomy = 1 - 1
-    expect(state.autonomy).toBe(0)
+  it('round-trips through loadState', () => {
+    const state: SkillState = {
+      autonomy: 4,
+      parallelExecution: 2,
+      skillUsage: 3,
+      safetyZone: 'impossible',
+    }
+    saveState(state)
+    expect(loadState()).toEqual(state)
   })
 })

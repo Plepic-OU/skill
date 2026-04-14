@@ -1,11 +1,12 @@
-import type { AxisId, Level } from '../types/skill-tree'
+import { useRef } from 'react'
+import { useClaimAnimation } from '../hooks/useClaimAnimation'
+import type { AxisId, Level, NodeState } from '../types/skill-tree'
 import styles from './SkillNode.module.css'
-
-type NodeState = 'claimed' | 'frontier' | 'future'
 
 interface SkillNodeProps {
   level: Level
   axisId: AxisId
+  color: string
   nodeState: NodeState
   isHighestClaimed: boolean
   isExpanded: boolean
@@ -18,6 +19,7 @@ interface SkillNodeProps {
 export default function SkillNode({
   level,
   axisId,
+  color,
   nodeState,
   isHighestClaimed,
   isExpanded,
@@ -26,17 +28,22 @@ export default function SkillNode({
   onUnclaim,
   readonly,
 }: SkillNodeProps) {
-  const levelLabel =
-    nodeState === 'claimed'
-      ? isHighestClaimed
-        ? 'You are here'
-        : `Level ${level.level}`
-      : nodeState === 'frontier'
-        ? 'Up next'
-        : `Level ${level.level}`
+  const indicatorRef = useRef<HTMLDivElement>(null)
+  useClaimAnimation(indicatorRef, color, nodeState === 'claimed', styles.justClaimed)
 
-  const ariaState =
-    nodeState === 'claimed' ? 'reached' : nodeState === 'frontier' ? 'up next' : 'not yet reached'
+  const levelLabels: Record<NodeState, string> = {
+    claimed: isHighestClaimed ? 'You are here' : `Level ${level.level}`,
+    frontier: 'Up next',
+    future: `Level ${level.level}`,
+  }
+  const levelLabel = levelLabels[nodeState]
+
+  const ariaStates: Record<NodeState, string> = {
+    claimed: 'reached',
+    frontier: 'up next',
+    future: 'not yet reached',
+  }
+  const ariaState = ariaStates[nodeState]
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -64,11 +71,12 @@ export default function SkillNode({
       role="button"
       aria-expanded={isExpanded}
       aria-label={`Level ${level.level}: ${level.name} — ${ariaState}`}
+      data-skill-name={level.name}
       onClick={onToggle}
       onKeyDown={handleKeyDown}
     >
       <div className={styles.nodeTop}>
-        <div className={styles.indicator} data-indicator>
+        <div className={styles.indicator} data-indicator ref={indicatorRef}>
           <span className="material-symbols-rounded" aria-hidden="true">
             {level.levelIcon}
           </span>

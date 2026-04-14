@@ -39,12 +39,7 @@ Then('I should see the sign-in modal with Google option', async ({ page }) => {
 
 Then('I should see the user avatar in the header', async ({ page }) => {
   // Avatar fallback (letter) should be visible since emulator users have no photo
-  const header = page.locator('header')
-  const avatar = header
-    .locator('div')
-    .filter({ hasText: /^[A-Z?]$/ })
-    .first()
-  await expect(avatar).toBeVisible()
+  await expect(page.getByTestId('user-avatar')).toBeVisible()
 })
 
 Then('I should see a {string} button', async ({ page }, name: string) => {
@@ -55,10 +50,6 @@ Then('I should not see {string}', async ({ page }, text: string) => {
   await expect(page.getByText(text, { exact: true })).not.toBeVisible()
 })
 
-Then('I should see {string}', async ({ page }, text: string) => {
-  await expect(page.getByText(text, { exact: true })).toBeVisible()
-})
-
 Then('I should not see the user avatar', async ({ page }) => {
-  await expect(page.getByRole('button', { name: 'Sign out' })).not.toBeVisible()
+  await expect(page.getByTestId('user-avatar')).not.toBeVisible()
 })

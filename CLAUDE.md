@@ -26,20 +26,23 @@ pnpm test <file>      # run a single test file
 pnpm emulators        # start Firebase Auth + Firestore emulators (requires Java 11+)
 pnpm test:e2e         # run E2E tests (assumes emulators running)
 pnpm test:e2e:emulator # run E2E tests with auto-managed emulators (25 scenarios)
-pnpm lint             # ESLint
+pnpm lint             # ESLint (includes sonarjs complexity/duplication rules)
 pnpm format           # Prettier
 pnpm typecheck        # tsc --noEmit
+pnpm test:mutate      # Stryker mutation testing on data layer (~2 min, manual/CI only)
 ```
 
-Pre-commit hooks (Husky + lint-staged) enforce: ESLint, Prettier, type-check, unit tests, and E2E tests on every commit.
+Pre-commit hooks (Husky + lint-staged) enforce: ESLint, Prettier, type-check.
+Pre-push hooks run: unit tests + E2E tests (with smart emulator detection).
 
 ## Key Directories
 
 - `web/` — SPA deployment target (GitHub Pages serves from here)
 - `docs/prototypes/prototype-c2.html` — **The reference prototype** (Quest Paths "Scrollwork"). Use this as the visual/interaction reference when building React components.
 - `docs/` — Requirements, design specs, skill tree content
-- `docs/superpowers/specs/` — Detailed design specifications
-- `docs/skill-trees.json` — Static skill tree data (3 axes: autonomy, parallel execution, skill usage) with Material Symbols icons
+- `docs/plans/` — Implementation plans (named `yyyy-mm-dd-<topic>.md`)
+- `docs/superpowers/specs/` — Design specifications and brainstorm plans
+- `src/data/skill-trees.json` — Static skill tree data (3 axes: autonomy, parallel execution, skill usage) with Material Symbols icons
 - `src/firebase.ts` — Firebase app init, emulator detection
 - `src/contexts/AuthContext.tsx` — Auth state context + `useAuth()` hook
 - `src/pages/` — Page components: LandingPage (unauthenticated), ProfilePage (owner/visitor)
@@ -60,7 +63,7 @@ Pre-commit hooks (Husky + lint-staged) enforce: ESLint, Prettier, type-check, un
 - **localStorage-first** — users interact without auth; state syncs to Firestore on login
 - **Conflict resolution:** Firestore wins silently over localStorage
 - **All synced profiles are public** — no sharing toggle for MVP
-- **Skill tree data is static** — bundled from `docs/skill-trees.json`, not stored in Firestore
+- **Skill tree data is static** — bundled from `src/data/skill-trees.json`, not stored in Firestore
 - **Firestore schema:** flat `users/{userId}` document with skills map + safetyZone + profile info
 
 ## Implementation Order
@@ -73,6 +76,18 @@ The design spec defines 6 ordered chunks. See `docs/superpowers/specs/2026-04-04
 4. ~~Firebase Local~~ ✅ (Chunk 4) — `docs/superpowers/specs/2026-04-05-chunk4-firebase-local.md`
 5. ~~Shareable Results~~ ✅ (Chunk 5) — `docs/superpowers/specs/2026-04-05-chunk5-shareable-results.md`
 6. ~~Terraform & Deploy~~ ✅ (Chunk 6) — `docs/superpowers/specs/2026-04-05-chunk6-terraform-deploy.md`
+
+## E2E Test Patterns
+
+This project does not cut corners on E2E tests. All Playwright steps must follow these rules:
+
+- **Never use `waitForTimeout`** — always wait for a real condition (`toBeVisible`, `toHaveAttribute`, `toPass`)
+- **Never use `force: true`** on clicks — if Playwright can't click it, the test has a timing bug to fix
+- **Wait for state changes after actions** — after a claim click, wait for the aria-label to reflect the new state (e.g. `[aria-label*="reached"]`) with a generous timeout (10000ms)
+- **Assert actionability before interacting** — use `expect(btn).toBeVisible()` before clicking buttons that may not be rendered yet
+- **Use `toPass()` with retry intervals** for polling external state (Firestore assertions) instead of fixed delays
+- **Use semantic selectors** — `getByRole`, `getByLabel`, `getByText`, aria attributes. No CSS class selectors
+- **Test isolation** — every scenario starts with cleared emulator data and localStorage (handled by the `Before` hook in `e2e/steps/common.ts`)
 
 ## Development Practices
 

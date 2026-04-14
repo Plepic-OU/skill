@@ -1,4 +1,2 @@
 pnpm exec lint-staged
 pnpm exec tsc --noEmit
-pnpm test:run
-pnpm test:e2e:emulator

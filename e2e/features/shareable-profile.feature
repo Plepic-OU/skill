@@ -12,7 +12,7 @@ Feature: Shareable profile
     Given I open the skill tree page
     And I sign in as a test user
     When I click the share button
-    Then I see a "Link copied!" toast
+    Then I should see "Link copied!"
 
   Scenario: View a shared profile as visitor
     Given a user exists with skills claimed
@@ -25,11 +25,11 @@ Feature: Shareable profile
   Scenario: Sign-out resets skill tree to defaults
     Given I open the skill tree page
     And I sign in as a test user
-    And I claim the "Review Every Edit" level on my profile
+    And I claim the "Review Every Edit" level
     When I sign out
     Then the "Review Every Edit" node should not be claimed
 
   Scenario: View a non-existent profile
     When I navigate to "/profile/nonexistent-user-id-12345"
-    Then I see a "Profile not found" message
+    Then I should see "Profile not found"
     And I see an "Assess your own skills" link

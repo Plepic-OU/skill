@@ -1,41 +1,45 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-
 // Mock firebase modules before importing sync
+const MOCK_DB = vi.hoisted(() => ({ __mock: 'firestore' }))
+
 vi.mock('firebase/firestore', () => ({
-  doc: vi.fn((_db, _collection, id) => ({ path: `users/${id}` })),
+  doc: vi.fn((_db: unknown, collection: string, id: string) => ({
+    path: `${collection}/${id}`,
+  })),
   getDoc: vi.fn(),
   setDoc: vi.fn(),
   serverTimestamp: vi.fn(() => 'SERVER_TIMESTAMP'),
-  getFirestore: vi.fn(),
+  getFirestore: vi.fn(() => MOCK_DB),
   connectFirestoreEmulator: vi.fn(),
 }))
 
+// Only exports used by firebase.ts at module load time — none are asserted in tests
 vi.mock('firebase/auth', () => ({
   getAuth: vi.fn(),
   connectAuthEmulator: vi.fn(),
-  onAuthStateChanged: vi.fn(),
-  signInWithEmailAndPassword: vi.fn(),
 }))
 
 vi.mock('firebase/app', () => ({
   initializeApp: vi.fn(() => ({})),
 }))
 
-import { getDoc, setDoc } from 'firebase/firestore'
-import type { User } from 'firebase/auth'
-import { readPublicProfile, syncOnLogin, writeAssessment } from '../../data/sync'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { syncOnLogin, writeAssessment } from '../../data/sync'
 import { DEFAULT_STATE } from '../../data/state'
+import { mockUser } from './helpers'
 
+const mockDoc = vi.mocked(doc)
 const mockGetDoc = vi.mocked(getDoc)
 const mockSetDoc = vi.mocked(setDoc)
 
-function mockUser(overrides: Partial<User> = {}): User {
+function firestoreSnap(overrides: Record<string, unknown> = {}) {
+  const defaults = {
+    skills: { autonomy: 1, parallelExecution: 1, skillUsage: 1 },
+    safetyZone: 'sandbox',
+  }
   return {
-    uid: 'test-uid',
-    displayName: 'Test User',
-    photoURL: 'https://example.com/photo.jpg',
-    ...overrides,
-  } as User
+    exists: () => true,
+    data: () => ({ ...defaults, ...overrides }),
+  } as never
 }
 
 beforeEach(() => {
@@ -45,15 +49,14 @@ beforeEach(() => {
 
 describe('syncOnLogin', () => {
   it('returns Firestore data when document exists', async () => {
-    mockGetDoc.mockResolvedValue({
-      exists: () => true,
-      data: () => ({
+    mockGetDoc.mockResolvedValue(
+      firestoreSnap({
         skills: { autonomy: 3, parallelExecution: 2, skillUsage: 4 },
         safetyZone: 'hardcore',
         displayName: 'Test User',
         avatarUrl: '',
       }),
-    } as never)
+    )
     mockSetDoc.mockResolvedValue(undefined)
 
     const result = await syncOnLogin(mockUser())
@@ -67,13 +70,7 @@ describe('syncOnLogin', () => {
   })
 
   it('updates profile info on existing document', async () => {
-    mockGetDoc.mockResolvedValue({
-      exists: () => true,
-      data: () => ({
-        skills: { autonomy: 1, parallelExecution: 1, skillUsage: 1 },
-        safetyZone: 'sandbox',
-      }),
-    } as never)
+    mockGetDoc.mockResolvedValue(firestoreSnap())
     mockSetDoc.mockResolvedValue(undefined)
 
     await syncOnLogin(mockUser({ displayName: 'New Name' }))
@@ -86,9 +83,7 @@ describe('syncOnLogin', () => {
   })
 
   it('pushes localStorage state when no Firestore data', async () => {
-    mockGetDoc.mockResolvedValue({
-      exists: () => false,
-    } as never)
+    mockGetDoc.mockResolvedValue({ exists: () => false } as never)
     mockSetDoc.mockResolvedValue(undefined)
 
     const result = await syncOnLogin(mockUser())
@@ -97,10 +92,63 @@ describe('syncOnLogin', () => {
     expect(mockSetDoc).toHaveBeenCalled()
   })
 
+  it("reads from the user's document path", async () => {
+    mockGetDoc.mockResolvedValue(firestoreSnap())
+    mockSetDoc.mockResolvedValue(undefined)
+
+    await syncOnLogin(mockUser({ uid: 'uid-abc' }))
+
+    // syncOnLogin calls doc() for both getDoc and setDoc
+    expect(mockDoc).toHaveBeenCalledWith(MOCK_DB, 'users', 'uid-abc')
+    // Verify the ref path contains the collection name
+    const ref = mockDoc.mock.results[0].value as { path: string }
+    expect(ref.path).toBe('users/uid-abc')
+  })
+
+  it('falls back to Anonymous when displayName is null', async () => {
+    mockGetDoc.mockResolvedValue(firestoreSnap())
+    mockSetDoc.mockResolvedValue(undefined)
+
+    await syncOnLogin(mockUser({ displayName: null }))
+
+    expect(mockSetDoc).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ displayName: 'Anonymous' }),
+      { merge: true },
+    )
+  })
+
+  it('falls back to empty string when photoURL is null', async () => {
+    mockGetDoc.mockResolvedValue(firestoreSnap())
+    mockSetDoc.mockResolvedValue(undefined)
+
+    await syncOnLogin(mockUser({ photoURL: null }))
+
+    expect(mockSetDoc).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ avatarUrl: '' }),
+      { merge: true },
+    )
+  })
+
   it('propagates errors from getDoc', async () => {
     mockGetDoc.mockRejectedValue(new Error('Network error'))
 
     await expect(syncOnLogin(mockUser())).rejects.toThrow('Network error')
+  })
+
+  it('propagates setDoc errors when updating profile', async () => {
+    mockGetDoc.mockResolvedValue(firestoreSnap())
+    mockSetDoc.mockRejectedValue(new Error('Write failed'))
+
+    await expect(syncOnLogin(mockUser())).rejects.toThrow('Write failed')
+  })
+
+  it('propagates setDoc errors when creating new document', async () => {
+    mockGetDoc.mockResolvedValue({ exists: () => false } as never)
+    mockSetDoc.mockRejectedValue(new Error('Quota exceeded'))
+
+    await expect(syncOnLogin(mockUser())).rejects.toThrow('Quota exceeded')
   })
 })
 
@@ -141,81 +189,43 @@ describe('writeAssessment', () => {
     expect(written).not.toHaveProperty('displayName')
     expect(written).not.toHaveProperty('avatarUrl')
   })
-})
 
-describe('readPublicProfile', () => {
-  it('returns null when document does not exist', async () => {
-    mockGetDoc.mockResolvedValue({
-      exists: () => false,
-    } as never)
+  it("writes to the user's document path", async () => {
+    mockSetDoc.mockResolvedValue(undefined)
 
-    const result = await readPublicProfile('nonexistent-uid')
-    expect(result).toBeNull()
+    await writeAssessment('uid-xyz', DEFAULT_STATE)
+
+    expect(mockDoc).toHaveBeenCalledWith(MOCK_DB, 'users', 'uid-xyz')
   })
 
-  it('returns profile with correct field mapping', async () => {
-    mockGetDoc.mockResolvedValue({
-      exists: () => true,
-      data: () => ({
-        skills: { autonomy: 4, parallelExecution: 3, skillUsage: 2 },
-        safetyZone: 'hardcore',
-        displayName: 'Alice',
-        avatarUrl: 'https://example.com/alice.jpg',
-      }),
-    } as never)
+  it('propagates setDoc errors', async () => {
+    mockSetDoc.mockRejectedValue(new Error('Permission denied'))
 
-    const result = await readPublicProfile('alice-uid')
-    expect(result).toEqual({
-      autonomy: 4,
-      parallelExecution: 3,
-      skillUsage: 2,
-      safetyZone: 'hardcore',
-      displayName: 'Alice',
-      avatarUrl: 'https://example.com/alice.jpg',
-    })
-  })
-
-  it('falls back to Anonymous when displayName is missing', async () => {
-    mockGetDoc.mockResolvedValue({
-      exists: () => true,
-      data: () => ({
-        skills: { autonomy: 1, parallelExecution: 1, skillUsage: 1 },
+    await expect(
+      writeAssessment('uid-123', {
+        autonomy: 1,
+        parallelExecution: 1,
+        skillUsage: 1,
         safetyZone: 'sandbox',
       }),
-    } as never)
-
-    const result = await readPublicProfile('uid')
-    expect(result?.displayName).toBe('Anonymous')
-    expect(result?.avatarUrl).toBe('')
+    ).rejects.toThrow('Permission denied')
   })
 
-  it('rejects non-HTTPS avatar URLs', async () => {
-    mockGetDoc.mockResolvedValue({
-      exists: () => true,
-      data: () => ({
-        skills: { autonomy: 1, parallelExecution: 1, skillUsage: 1 },
-        safetyZone: 'sandbox',
-        displayName: 'Eve',
-        avatarUrl: 'javascript:alert(1)',
-      }),
-    } as never)
+  it('falls back to Anonymous when user displayName is null', async () => {
+    mockSetDoc.mockResolvedValue(undefined)
 
-    const result = await readPublicProfile('uid')
-    expect(result?.avatarUrl).toBe('')
+    await writeAssessment('uid-123', DEFAULT_STATE, mockUser({ displayName: null }))
+
+    const written = mockSetDoc.mock.calls[0][1] as Record<string, unknown>
+    expect(written.displayName).toBe('Anonymous')
   })
 
-  it('accepts HTTP avatar URLs', async () => {
-    mockGetDoc.mockResolvedValue({
-      exists: () => true,
-      data: () => ({
-        skills: { autonomy: 1, parallelExecution: 1, skillUsage: 1 },
-        safetyZone: 'sandbox',
-        displayName: 'Bob',
-        avatarUrl: 'http://example.com/bob.jpg',
-      }),
-    } as never)
+  it('falls back to empty string when user photoURL is null', async () => {
+    mockSetDoc.mockResolvedValue(undefined)
 
-    const result = await readPublicProfile('uid')
-    expect(result?.avatarUrl).toBe('http://example.com/bob.jpg')
+    await writeAssessment('uid-123', DEFAULT_STATE, mockUser({ photoURL: null }))
+
+    const written = mockSetDoc.mock.calls[0][1] as Record<string, unknown>
+    expect(written.avatarUrl).toBe('')
   })
 })

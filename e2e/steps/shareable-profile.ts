@@ -5,9 +5,14 @@ import {
   setFirestoreAssessment,
   TEST_EMAIL,
   TEST_PASSWORD,
+  TEST_DISPLAY_NAME,
 } from '../helpers/emulator'
+import { claimLevel, waitForQuestMap } from '../helpers/claim'
 
 const { Given, When, Then } = createBdd()
+
+// Module-level variable to share userId between steps (survives page navigation, unlike window)
+let testUserId: string
 
 Then('the URL should contain {string}', async ({ page }, pattern: string) => {
   await page.waitForURL(`**${pattern}**`, { timeout: 5000 })
@@ -20,35 +25,7 @@ Then('the URL should be {string}', async ({ page }, path: string) => {
 })
 
 Then('I can still claim skills on my profile', async ({ page }) => {
-  await page.waitForSelector('#questMap')
-  // Expand a frontier node and click "This is me"
-  const node = page.getByLabel(/Review Every Edit/).first()
-  await node.click()
-  await expect(node).toHaveAttribute('aria-expanded', 'true')
-  const btn = page
-    .locator('[aria-expanded="true"]')
-    .first()
-    .getByRole('button', { name: 'This is me' })
-  await btn.scrollIntoViewIfNeeded()
-  await btn.click({ force: true })
-  await page.waitForTimeout(300)
-  // Verify claimed
-  const claimed = page.locator('[aria-label*="Review Every Edit"][aria-label*="reached"]').first()
-  await expect(claimed).toBeVisible({ timeout: 5000 })
-})
-
-Given('I claim the {string} level on my profile', async ({ page }, name: string) => {
-  await page.waitForSelector('#questMap')
-  const node = page.getByLabel(new RegExp(name)).first()
-  await node.click()
-  await expect(node).toHaveAttribute('aria-expanded', 'true')
-  const btn = page
-    .locator('[aria-expanded="true"]')
-    .first()
-    .getByRole('button', { name: 'This is me' })
-  await btn.scrollIntoViewIfNeeded()
-  await btn.click({ force: true })
-  await page.waitForTimeout(300)
+  await claimLevel(page, 'Review Every Edit')
 })
 
 When('I click the share button', async ({ page }) => {
@@ -57,32 +34,22 @@ When('I click the share button', async ({ page }) => {
   await page.getByRole('button', { name: 'Copy profile link' }).click()
 })
 
-Then('I see a {string} toast', async ({ page }, text: string) => {
-  await expect(page.getByText(text)).toBeVisible({ timeout: 3000 })
-})
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- playwright-bdd requires destructured fixtures
 Given('a user exists with skills claimed', async ({ page }) => {
   // Create user and set up profile in Firestore emulator
   const result = await createTestUser(TEST_EMAIL, TEST_PASSWORD)
-  const userId = result.localId
+  testUserId = result.localId
 
   await setFirestoreAssessment(
-    userId,
+    testUserId,
     { autonomy: 3, parallelExecution: 2, skillUsage: 1 },
     'normal',
   )
-
-  // Store userId for later steps
-  await page.evaluate((uid) => {
-    ;(window as Record<string, unknown>).__testUserId = uid
-  }, userId)
 })
 
 When('I navigate to their profile URL', async ({ page }) => {
-  const userId = await page.evaluate(() => {
-    return (window as Record<string, unknown>).__testUserId as string
-  })
-  await page.goto(`/profile/${userId}`)
+  if (!testUserId) throw new Error('testUserId not set — run the profile creation step first')
+  await page.goto(`/profile/${testUserId}`)
 })
 
 When('I navigate to {string}', async ({ page }, path: string) => {
@@ -90,18 +57,26 @@ When('I navigate to {string}', async ({ page }, path: string) => {
 })
 
 Then('I see their display name', async ({ page }) => {
-  // The profile banner should show the user's name (Test User from emulator helper)
-  await expect(page.locator('h2').filter({ hasText: /Test User/ })).toBeVisible({ timeout: 5000 })
+  // The profile banner should show the user's name from emulator helper
+  await expect(page.locator('h2').filter({ hasText: TEST_DISPLAY_NAME })).toBeVisible({
+    timeout: 5000,
+  })
 })
 
 Then('I see their skill tree in read-only mode', async ({ page }) => {
-  await page.waitForSelector('#questMap', { timeout: 5000 })
-  // Verify nodes are present (3 quest paths)
-  const paths = page.locator('#questMap > *')
+  await waitForQuestMap(page)
+  // Verify all 3 quest paths are present using semantic data attributes
+  const paths = page.locator('[data-quest-path]')
   await expect(paths).toHaveCount(3)
 })
 
 Then('I do not see claim or unclaim buttons', async ({ page }) => {
+  await waitForQuestMap(page)
+  // Expand a node first — claim/unclaim buttons are only visible in expanded nodes
+  const firstNode = page.locator('[data-skill-name]').first()
+  await firstNode.click()
+  await expect(firstNode).toHaveAttribute('aria-expanded', 'true')
+  // Now assert that no claim/unclaim buttons are visible within the expanded view
   const claimBtns = page.getByRole('button', { name: 'This is me' })
   await expect(claimBtns).toHaveCount(0)
   const unclaimBtns = page.getByRole('button', { name: 'Not here yet' })
@@ -110,8 +85,4 @@ Then('I do not see claim or unclaim buttons', async ({ page }) => {
 
 Then('I see an {string} link', async ({ page }, text: string) => {
   await expect(page.getByRole('link', { name: text }).first()).toBeVisible({ timeout: 5000 })
-})
-
-Then('I see a {string} message', async ({ page }, text: string) => {
-  await expect(page.getByText(text)).toBeVisible({ timeout: 5000 })
 })

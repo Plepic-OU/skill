@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useDialog } from '../hooks/useDialog'
 import styles from './ConfirmDialog.module.css'
 
 interface ConfirmDialogProps {
@@ -20,25 +20,7 @@ export default function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
-  const dialogRef = useRef<HTMLDialogElement>(null)
-
-  useEffect(() => {
-    const dialog = dialogRef.current
-    if (!dialog) return
-    if (open && !dialog.open) {
-      dialog.showModal()
-    } else if (!open && dialog.open) {
-      dialog.close()
-    }
-  }, [open])
-
-  useEffect(() => {
-    const dialog = dialogRef.current
-    if (!dialog) return
-    const handleClose = () => onCancel()
-    dialog.addEventListener('close', handleClose)
-    return () => dialog.removeEventListener('close', handleClose)
-  }, [onCancel])
+  const dialogRef = useDialog(open, onCancel)
 
   return (
     <dialog ref={dialogRef} className={styles.dialog}>
