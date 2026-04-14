@@ -40,7 +40,8 @@ Pre-push hooks run: unit tests + E2E tests (with smart emulator detection).
 - `web/` — SPA deployment target (GitHub Pages serves from here)
 - `docs/prototypes/prototype-c2.html` — **The reference prototype** (Quest Paths "Scrollwork"). Use this as the visual/interaction reference when building React components.
 - `docs/` — Requirements, design specs, skill tree content
-- `docs/superpowers/specs/` — Detailed design specifications
+- `docs/plans/` — Implementation plans (named `yyyy-mm-dd-<topic>.md`)
+- `docs/superpowers/specs/` — Design specifications and brainstorm plans
 - `src/data/skill-trees.json` — Static skill tree data (3 axes: autonomy, parallel execution, skill usage) with Material Symbols icons
 - `src/firebase.ts` — Firebase app init, emulator detection
 - `src/contexts/AuthContext.tsx` — Auth state context + `useAuth()` hook
