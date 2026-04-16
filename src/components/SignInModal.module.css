@@ -100,6 +100,20 @@
   cursor: not-allowed;
 }
 
+.demoSection {
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border);
+}
+
+.demoLabel {
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+  margin: 0 0 var(--space-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 .error {
   margin: var(--space-md) 0 0;
   padding: var(--space-sm) var(--space-md);
