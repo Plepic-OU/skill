@@ -115,6 +115,14 @@ resource "google_project_service" "artifactregistry" {
   disable_on_destroy = false
 }
 
+resource "google_project_service" "iam" {
+  provider = google-beta
+  project  = var.project_id
+  service  = "iam.googleapis.com"
+
+  disable_on_destroy = false
+}
+
 resource "google_project_service" "iamcredentials" {
   provider = google-beta
   project  = var.project_id
@@ -156,7 +164,7 @@ resource "google_iam_workload_identity_pool" "github" {
   display_name              = "GitHub Actions"
   description               = "OIDC identity pool for GitHub Actions CI/CD"
 
-  depends_on = [google_project_service.iamcredentials]
+  depends_on = [google_project_service.iam, google_project_service.iamcredentials]
 }
 
 resource "google_iam_workload_identity_pool_provider" "github" {
@@ -186,6 +194,8 @@ resource "google_service_account" "preview_ci" {
   account_id   = "preview-ci"
   display_name = "Preview CI"
   description  = "Used by GitHub Actions to deploy/delete preview environments"
+
+  depends_on = [google_project_service.iam]
 }
 
 resource "google_service_account" "preview_runner" {
@@ -194,6 +204,8 @@ resource "google_service_account" "preview_runner" {
   account_id   = "preview-runner"
   display_name = "Preview Runner"
   description  = "Runtime identity for preview Cloud Run services"
+
+  depends_on = [google_project_service.iam]
 }
 
 # IAM: CI service account permissions
