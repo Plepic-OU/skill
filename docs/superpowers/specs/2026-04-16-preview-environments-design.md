@@ -216,9 +216,8 @@ Credentials are:
 
 1. Authenticate to GCP
 2. Delete Cloud Run service `preview-pr-{number}`
-3. Update PR comment to "Preview environment removed"
-
-Artifact Registry image cleanup is handled by the retention policy (7-day auto-delete of untagged images) — no explicit image deletion needed in the workflow, which removes a failure point.
+3. Untag the Artifact Registry image (`gcloud artifacts docker tags delete` for the `pr-{number}` tag). This makes the image untagged, so the 7-day retention policy garbage-collects it. Untag is a lightweight operation that won't fail if the image is already gone.
+4. Update PR comment to "Preview environment removed"
 
 ## Cloud Run Configuration
 
