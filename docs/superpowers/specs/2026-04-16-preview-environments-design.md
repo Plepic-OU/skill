@@ -216,8 +216,9 @@ Credentials are:
 
 1. Authenticate to GCP
 2. Delete Cloud Run service `preview-pr-{number}`
-3. Delete Artifact Registry image
-4. Update PR comment to "Preview environment removed"
+3. Update PR comment to "Preview environment removed"
+
+Artifact Registry image cleanup is handled by the retention policy (7-day auto-delete of untagged images) — no explicit image deletion needed in the workflow, which removes a failure point.
 
 ## Cloud Run Configuration
 
@@ -281,6 +282,7 @@ One-time resources to create in the existing `skill-plepic-com` project, managed
 - Repository: `europe-docker.pkg.dev/skill-plepic-com/previews`
 - Format: Docker
 - Region: `europe-west1`
+- **Cleanup policy (Terraform-managed):** auto-delete untagged images older than 7 days. Each PR push tags the new image as `pr-{number}`, making the previous revision untagged. The policy garbage-collects stale layers without manual intervention. This also covers images orphaned by failed cleanup workflows.
 
 ### Workload Identity Federation
 
