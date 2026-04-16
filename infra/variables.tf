@@ -21,3 +21,15 @@ variable "oauth_client_id" {
   type        = string
   default     = "152087843840-ahc6uahoirq1vgibrk7esm5jerdcq8ro.apps.googleusercontent.com"
 }
+
+variable "cloud_run_region" {
+  description = "Region for Cloud Run services and Artifact Registry"
+  type        = string
+  default     = "europe-west1"
+}
+
+variable "github_repo" {
+  description = "GitHub repository (owner/name) for Workload Identity Federation"
+  type        = string
+  default     = "Plepic-OU/skill"
+}

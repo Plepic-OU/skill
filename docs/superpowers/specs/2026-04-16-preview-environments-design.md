@@ -308,8 +308,17 @@ One-time resources to create in the existing `skill-plepic-com` project, managed
 
 ## Implementation Order
 
-1. **Terraform:** Artifact Registry repo + Workload Identity Federation + IAM
+1. ~~**Terraform:** Artifact Registry repo + Workload Identity Federation + IAM~~ ✅
 2. **Container:** `preview/` directory with Dockerfile, nginx.conf, startup.sh, seed.sh, firebase.json
 3. **SPA:** `VITE_EMULATOR_HOST` support in `src/firebase.ts`
 4. **Workflows:** `preview-deploy.yml` and `preview-cleanup.yml`
 5. **Test:** open a PR and verify the full cycle
+
+## Implementation Notes
+
+### Chunk 1: Terraform (2026-04-16)
+
+- AR writer IAM binding scoped to repository level (`google_artifact_registry_repository_iam_member`) instead of project level for tighter security
+- `roles/run.admin` kept at project level — `roles/run.developer` cannot delete services (required for cleanup workflow)
+- WIF pool has explicit `depends_on` for `iamcredentials` API to prevent race condition on fresh environments
+- Spec references `europe-docker.pkg.dev` but the correct Artifact Registry hostname for `europe-west1` region is `europe-west1-docker.pkg.dev`
