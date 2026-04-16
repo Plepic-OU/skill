@@ -1,4 +1,4 @@
-name: CI
+name: "PR \u2014 Quality Gates"
 
 on:
   pull_request:

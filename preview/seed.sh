@@ -23,7 +23,7 @@ create_user() {
     http_code=$(echo "$response" | tail -1)
     if [ "$http_code" = "200" ]; then
       uid=$(echo "$response" | sed '$d' | grep -o '"localId":"[^"]*"' | cut -d'"' -f4)
-      echo "  Created user: ${email} (${uid})"
+      echo "  Created user: ${email} (${uid})" >&2
       echo "$uid"
       return 0
     fi

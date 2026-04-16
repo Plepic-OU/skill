@@ -1,4 +1,4 @@
-name: Preview Cleanup
+name: "PR \u2014 Preview Cleanup"
 
 on:
   pull_request:
