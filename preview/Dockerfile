@@ -43,6 +43,7 @@ COPY preview/nginx.conf /etc/nginx/conf.d/default.conf
 COPY preview/firebase.json /app/firebase.json
 COPY preview/startup.sh /app/preview/startup.sh
 COPY preview/seed.sh /app/preview/seed.sh
+COPY preview/demo-accounts.json /app/preview/demo-accounts.json
 
 # Copy Firestore rules and indexes for emulator
 COPY firestore.rules /app/firestore.rules
@@ -52,7 +53,7 @@ COPY firestore.indexes.json /app/firestore.indexes.json
 RUN rm -f /etc/nginx/sites-enabled/default
 
 # Pre-download Firebase emulator JARs so they don't download at runtime
-RUN firebase setup:emulators:firestore && firebase setup:emulators:ui
+RUN firebase setup:emulators:firestore
 
 RUN chmod +x /app/preview/startup.sh /app/preview/seed.sh
 

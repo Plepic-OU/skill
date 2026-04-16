@@ -18,6 +18,16 @@ env:
   SERVICE_NAME: preview-pr-${{ github.event.pull_request.number }}
   REGION: europe-west1
   IMAGE_TAG: pr-${{ github.event.pull_request.number }}
+  CLOUD_RUN_FLAGS: >-
+    --service-account ${{ secrets.GCP_PREVIEW_RUNNER_SA }}
+    --no-invoker-iam-check
+    --cpu 1
+    --memory 1Gi
+    --min-instances 0
+    --max-instances 1
+    --cpu-boost
+    --no-cpu-throttling
+    --timeout 300
 
 jobs:
   deploy:
@@ -60,15 +70,7 @@ jobs:
             --image gcr.io/cloudrun/hello \
             --region ${{ env.REGION }} \
             --project ${{ secrets.GCP_PROJECT_ID }} \
-            --service-account ${{ secrets.GCP_PREVIEW_RUNNER_SA }} \
-            --no-invoker-iam-check \
-            --cpu 1 \
-            --memory 1Gi \
-            --min-instances 0 \
-            --max-instances 1 \
-            --cpu-boost \
-            --no-cpu-throttling \
-            --timeout 300
+            ${{ env.CLOUD_RUN_FLAGS }}
 
       - name: Get service URL
         id: get-url
@@ -93,26 +95,18 @@ jobs:
             --build-arg VITE_EMULATOR_HOST=${{ steps.get-url.outputs.emulator_host }} \
             -t "$IMAGE" \
             .
-          echo "image=$IMAGE" >> "$GITHUB_ENV"
+          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
 
       - name: Push Docker image
-        run: docker push "$image"
+        run: docker push "$IMAGE"
 
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy ${{ env.SERVICE_NAME }} \
-            --image "$image" \
+            --image "$IMAGE" \
             --region ${{ env.REGION }} \
             --project ${{ secrets.GCP_PROJECT_ID }} \
-            --service-account ${{ secrets.GCP_PREVIEW_RUNNER_SA }} \
-            --no-invoker-iam-check \
-            --cpu 1 \
-            --memory 1Gi \
-            --min-instances 0 \
-            --max-instances 1 \
-            --cpu-boost \
-            --no-cpu-throttling \
-            --timeout 300 \
+            ${{ env.CLOUD_RUN_FLAGS }} \
             --port 8080
 
       - name: Post PR comment
@@ -121,8 +115,13 @@ jobs:
           PREVIEW_URL: ${{ steps.get-url.outputs.url }}
         with:
           script: |
+            const fs = require('fs');
+            const accounts = JSON.parse(fs.readFileSync('preview/demo-accounts.json', 'utf8'));
             const marker = '<!-- preview-env -->';
             const url = process.env.PREVIEW_URL;
+            const rows = accounts.map(a =>
+              `| ${a.label} | \`${a.email}\` | \`${a.password}\` |`
+            ).join('\n');
             const body = [
               marker,
               '## Preview Environment',
@@ -132,8 +131,7 @@ jobs:
               '**Demo accounts:**',
               '| Account | Email | Password |',
               '|---------|-------|----------|',
-              '| Alice (populated) | `demo-alice@plepic.com` | `demo-alice-123` |',
-              '| Bob (fresh) | `demo-bob@plepic.com` | `demo-bob-123` |',
+              rows,
               '',
               '> First load after idle may take ~15s (cold start: JVM + emulators + seeding).',
               '> Data is ephemeral — lost on scale-to-zero, re-seeded on next cold start.',

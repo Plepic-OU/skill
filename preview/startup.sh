@@ -5,7 +5,6 @@ echo "Starting Firebase emulators..."
 cd /app
 firebase emulators:start --only auth,firestore --project skill-plepic-com &
 EMULATOR_PID=$!
-trap 'kill $EMULATOR_PID 2>/dev/null; exit' TERM INT
 
 # Poll emulator health endpoints until ready (timeout 60s)
 deadline=$((SECONDS + 60))
@@ -30,6 +29,9 @@ done
 echo "Seeding demo data..."
 /app/preview/seed.sh
 
-# Start nginx in foreground (keeps container alive)
+# Start nginx in background and wait — keeps the shell alive to handle signals
 echo "Starting nginx..."
-exec nginx -g 'daemon off;'
+nginx -g 'daemon off;' &
+NGINX_PID=$!
+trap 'kill $EMULATOR_PID $NGINX_PID 2>/dev/null; exit' TERM INT
+wait $NGINX_PID
