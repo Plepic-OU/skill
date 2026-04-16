@@ -6,29 +6,29 @@ AUTH_EMULATOR="http://127.0.0.1:9099"
 FIRESTORE_EMULATOR="http://127.0.0.1:9199"
 PROJECT_ID="skill-plepic-com"
 
-# --- Create demo users with fixed UIDs ---
+# --- Create demo users ---
+# Use signUp endpoint (no fixed UIDs — emulator doesn't support localId).
+# Capture returned localId for Firestore seeding.
 
 create_user() {
-  local email="$1" password="$2" uid="$3" display_name="$4"
-  local attempt
+  local email="$1" password="$2" display_name="$3"
+  local attempt response http_code body uid
 
   for attempt in 1 2 3 4 5; do
-    local response
-    # Use admin accounts endpoint (not signUp) — only admin API accepts localId for fixed UIDs
-    response=$(curl -s -w "\n%{http_code}" "${AUTH_EMULATOR}/identitytoolkit.googleapis.com/v1/projects/${PROJECT_ID}/accounts" \
+    response=$(curl -s -w "\n%{http_code}" \
+      "${AUTH_EMULATOR}/identitytoolkit.googleapis.com/v1/accounts:signUp?key=fake-api-key" \
       -H 'Content-Type: application/json' \
-      -H 'Authorization: Bearer owner' \
-      -d "{\"email\":\"${email}\",\"rawPassword\":\"${password}\",\"localId\":\"${uid}\",\"displayName\":\"${display_name}\"}" \
+      -d "{\"email\":\"${email}\",\"password\":\"${password}\",\"displayName\":\"${display_name}\",\"returnSecureToken\":true}" \
       2>&1) || true
-    local http_code
     http_code=$(echo "$response" | tail -1)
     if [ "$http_code" = "200" ]; then
+      uid=$(echo "$response" | sed '$d' | grep -o '"localId":"[^"]*"' | cut -d'"' -f4)
       echo "  Created user: ${email} (${uid})"
+      echo "$uid"
       return 0
     fi
-    local body
     body=$(echo "$response" | sed '$d' | tr -d '\n')
-    echo "  Attempt $attempt for ${email} failed (HTTP $http_code): ${body}"
+    echo "  Attempt $attempt for ${email} failed (HTTP $http_code): ${body}" >&2
     sleep 2
   done
 
@@ -37,8 +37,8 @@ create_user() {
 }
 
 echo "Creating demo users..."
-create_user "demo-alice@plepic.com" "demo-alice-123" "demo-alice-uid-0001" "Alice"
-create_user "demo-bob@plepic.com"   "demo-bob-123"   "demo-bob-uid-0002"   "Bob"
+ALICE_UID=$(create_user "demo-alice@plepic.com" "demo-alice-123" "Alice")
+BOB_UID=$(create_user "demo-bob@plepic.com" "demo-bob-123" "Bob")
 
 # --- Seed Alice's Firestore data ---
 
@@ -71,6 +71,8 @@ seed_user_data() {
 }
 
 echo "Seeding Firestore data..."
-seed_user_data "demo-alice-uid-0001" "Alice" "normal" 4 3 5
+seed_user_data "$ALICE_UID" "Alice" "normal" 4 3 5
 
 echo "Demo data seeding complete."
+echo "  Alice UID: ${ALICE_UID}"
+echo "  Bob UID: ${BOB_UID}"
