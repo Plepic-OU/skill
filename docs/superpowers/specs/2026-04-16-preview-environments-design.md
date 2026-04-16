@@ -309,7 +309,7 @@ One-time resources to create in the existing `skill-plepic-com` project, managed
 ## Implementation Order
 
 1. ~~**Terraform:** Artifact Registry repo + Workload Identity Federation + IAM~~ ✅
-2. **Container:** `preview/` directory with Dockerfile, nginx.conf, startup.sh, seed.sh, firebase.json
+2. ~~**Container:** `preview/` directory with Dockerfile, nginx.conf, startup.sh, seed.sh, firebase.json~~ ✅
 3. **SPA:** `VITE_EMULATOR_HOST` support in `src/firebase.ts`
 4. **Workflows:** `preview-deploy.yml` and `preview-cleanup.yml`
 5. **Test:** open a PR and verify the full cycle
@@ -322,3 +322,12 @@ One-time resources to create in the existing `skill-plepic-com` project, managed
 - `roles/run.admin` kept at project level — `roles/run.developer` cannot delete services (required for cleanup workflow)
 - WIF pool has explicit `depends_on` for `iamcredentials` API to prevent race condition on fresh environments
 - Spec references `europe-docker.pkg.dev` but the correct Artifact Registry hostname for `europe-west1` region is `europe-west1-docker.pkg.dev`
+
+### Chunk 2: Container (2026-04-16)
+
+- `VITE_EMULATOR_HOST` passed only to build command (not promoted to ENV) to avoid leaking into runtime image
+- firebase-tools pinned to major version 15 (matches project devDependency)
+- Signal trap added to startup.sh for clean emulator shutdown on SIGTERM
+- `singleProjectMode` removed from firebase.json (default behavior is correct for matching project IDs)
+- `.dockerignore` added to exclude node_modules, .git, web/, infra/, docs/, e2e/ from build context
+- `server_tokens off` added to nginx for version disclosure prevention
