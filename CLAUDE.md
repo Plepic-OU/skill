@@ -12,6 +12,7 @@ Gamified web app where developers self-assess agentic coding skills via an RPG-s
 - **Backend:** Firebase (Auth with Google/GitHub, Firestore for user data) — no custom API
 - **Styling:** Plepic design system ([HTML](https://github.com/Plepic-OU/public-web/raw/refs/heads/main/design-system.html), [CSS](https://github.com/Plepic-OU/public-web/raw/refs/heads/main/design-system.css)). Main color is green; orange used sparingly only
 - **Infra:** Terraform for Firebase provisioning; Firebase CLI for security rules/indexes. Before running Terraform: `export GOOGLE_OAUTH_ACCESS_TOKEN=$(gcloud auth print-access-token)`
+- **Preview Environments:** Each PR gets a Cloud Run service (`preview-pr-{number}`) running SPA + Firebase emulators via nginx reverse proxy. See `docs/superpowers/specs/2026-04-16-preview-environments-design.md`
 - **Package manager:** pnpm (not npm)
 
 ## Build & Quality Commands
@@ -50,12 +51,15 @@ Pre-push hooks run: unit tests + E2E tests (with smart emulator detection).
 - `src/components/` — React components: Header, Hero, SafetyZoneSelector, SkillTree, QuestPath, SkillNode, CelebrationEffect, SignInModal, ConfirmDialog, Toast, ShareButton
 - `src/types/skill-tree.ts` — TypeScript interfaces for skill tree data and app state
 - `src/data/` — Data module (skill-trees.ts), state persistence (state.ts), auth helpers (auth.ts), Firestore sync (sync.ts)
-- `infra/` — Terraform config (google-beta provider, Firebase project + Firestore, GCS remote state)
+- `infra/` — Terraform config (google-beta provider, Firebase project + Firestore, GCS remote state, preview env infra)
+- `preview/` — Preview environment container (Dockerfile, nginx.conf, startup.sh, seed.sh, firebase.json)
 - `e2e/` — Playwright + playwright-bdd E2E tests (Gherkin features + step definitions)
 - `e2e/helpers/emulator.ts` — Firebase emulator REST API helpers for E2E tests
 - `firestore.rules` — Firestore security rules (public read, owner-only write with schema validation)
 - `.impeccable.md` — Design context (brand personality, aesthetic direction, design principles)
 - `.claude/skills/` — Custom Claude Code skills (validate-design, brainstorming, impeccable design suite)
+- `.claude/settings.json` — Claude Code hooks (SessionStart for cloud dependency install)
+- `scripts/cloud-install.sh` — Cloud session dependency installer (pnpm + Playwright)
 
 ## Architecture Decisions
 
@@ -89,6 +93,33 @@ This project does not cut corners on E2E tests. All Playwright steps must follow
 - **Use semantic selectors** — `getByRole`, `getByLabel`, `getByText`, aria attributes. No CSS class selectors
 - **Test isolation** — every scenario starts with cleared emulator data and localStorage (handled by the `Before` hook in `e2e/steps/common.ts`)
 
+## Cloud Development (claude.ai/code)
+
+This project supports Claude Code cloud sessions. On session start, `scripts/cloud-install.sh` runs automatically via the SessionStart hook in `.claude/settings.json` to install pnpm dependencies and Playwright's Chromium.
+
+When `SKILL_ENV=claude_web` (set in the cloud environment), skip these:
+
+- **`pnpm test:mutate`** — Stryker mutation testing runs in CI only, too slow/heavy for cloud sessions
+- **Terraform commands** — no GCP credentials in cloud; infra changes are local-only
+
+**Web UI environment name:** `claude-web`
+
+**Web UI setup script** (paste into environment settings):
+
+```bash
+#!/bin/bash
+npm install -g firebase-tools
+npx playwright install-deps chromium
+```
+
+**Web UI environment variables:**
+
+```
+SKILL_ENV=claude_web
+```
+
+The cloud VM has Node.js 22, OpenJDK 21, pnpm, and Docker pre-installed. Network access level: **Trusted** (covers npm registry, googleapis.com for Firebase).
+
 ## Development Practices
 
 - Use context7 (`npx ctx7@latest`) when working with any third-party library for up-to-date docs
@@ -96,3 +127,14 @@ This project does not cut corners on E2E tests. All Playwright steps must follow
 - Gherkin/BDD tests for main user flows; Firebase emulator for E2E tests
 - TypeScript with strong types throughout
 - Mobile-first, playful > serious, less is more
+- **No project/user memories** — do not use the Claude Code memory system for this project. All project knowledge belongs in CLAUDE.md or docs/ files checked into git.
+- Pre-push hook runs unit tests only (not E2E — too slow, CI covers them)
+
+## Preview Environment Gotchas
+
+- GCP org policy `iam.allowedPolicyMemberDomains` blocks `--allow-unauthenticated` on Cloud Run. Use `--no-invoker-iam-check` instead.
+- Firebase Auth emulator `accounts:signUp` rejects `localId` (`UNEXPECTED_PARAMETER`). Use dynamic UIDs from the signUp response.
+- `firebase-tools@15` requires Java 21+. Debian Bookworm ships 17. Install `temurin-21-jre` from Adoptium (needs `ca-certificates`).
+- `firebase setup:emulators:firestore` in Dockerfile pre-downloads the JAR — saves ~4s on cold start.
+- `--no-traffic` not supported when creating a new Cloud Run service.
+- `gcloud run deploy` doesn't support individual `--startup-probe-*` flags.

@@ -1,7 +1,18 @@
 import { useEffect, useState } from 'react'
+import { signInWithEmailAndPassword } from 'firebase/auth'
 import { useDialog } from '../hooks/useDialog'
 import { signInWithGoogle } from '../data/auth'
+import { auth } from '../firebase'
 import styles from './SignInModal.module.css'
+
+/* eslint-disable sonarjs/no-hardcoded-passwords -- intentionally public demo accounts in ephemeral emulator */
+const DEMO_ACCOUNTS = import.meta.env.VITE_EMULATOR_HOST
+  ? [
+      { email: 'demo-alice@plepic.com', password: 'demo-alice-123', label: 'Alice (populated)' },
+      { email: 'demo-bob@plepic.com', password: 'demo-bob-123', label: 'Bob (fresh)' },
+    ]
+  : []
+/* eslint-enable sonarjs/no-hardcoded-passwords */
 
 interface SignInModalProps {
   open: boolean
@@ -83,6 +94,27 @@ export default function SignInModal({ open, onClose }: SignInModalProps) {
             {isSigningIn ? 'Signing in\u2026' : 'Sign in with Google'}
           </button>
         </div>
+        {DEMO_ACCOUNTS.length > 0 && (
+          <div className={styles.demoSection}>
+            <p className={styles.demoLabel}>Preview demo accounts</p>
+            <div className={styles.buttons}>
+              {DEMO_ACCOUNTS.map((account) => (
+                <button
+                  key={account.email}
+                  className={styles.providerBtn}
+                  onClick={() =>
+                    handleProvider(() =>
+                      signInWithEmailAndPassword(auth, account.email, account.password),
+                    )
+                  }
+                  disabled={isSigningIn}
+                >
+                  {account.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         {error && <p className={styles.error}>{error}</p>}
       </div>
     </dialog>

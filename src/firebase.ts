@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import { getAuth, connectAuthEmulator } from 'firebase/auth'
-import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
+import { getFirestore, initializeFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 
 // --- Env-var validation ---
 
@@ -34,14 +34,32 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig)
 export const auth = getAuth(app)
-export const db = getFirestore(app)
 
-// --- Emulator wiring + E2E test bridge ---
+// --- Preview / emulator wiring ---
+
+const emulatorHost = import.meta.env.VITE_EMULATOR_HOST as string | undefined
+
+// Firestore: preview mode uses initializeFirestore with ssl:true (Cloud Run terminates TLS,
+// nginx proxies to emulator over HTTP — avoids mixed-content block from connectFirestoreEmulator)
+export const db = emulatorHost
+  ? initializeFirestore(app, { host: emulatorHost, ssl: true })
+  : getFirestore(app)
+
+// Preview: connect Auth emulator via HTTPS (same-origin proxy on Cloud Run)
+if (emulatorHost) {
+  connectAuthEmulator(auth, `https://${emulatorHost}`, { disableWarnings: true })
+}
+
+// --- Local dev emulator wiring + E2E test bridge ---
 
 const EMULATORS_CONNECTED_KEY = '__firebase_emulators_connected'
 
 function shouldConnectEmulators(): boolean {
-  return import.meta.env.DEV && !(globalThis as Record<string, unknown>)[EMULATORS_CONNECTED_KEY]
+  return (
+    import.meta.env.DEV &&
+    !emulatorHost &&
+    !(globalThis as Record<string, unknown>)[EMULATORS_CONNECTED_KEY]
+  )
 }
 
 if (shouldConnectEmulators()) {
