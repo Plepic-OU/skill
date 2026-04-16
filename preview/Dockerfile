@@ -9,6 +9,13 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 
 ARG VITE_EMULATOR_HOST
+# Firebase env vars for build — emulator doesn't validate these, only project ID must match
+ENV VITE_FIREBASE_API_KEY=fake-api-key \
+    VITE_FIREBASE_AUTH_DOMAIN=skill-plepic-com.firebaseapp.com \
+    VITE_FIREBASE_PROJECT_ID=skill-plepic-com \
+    VITE_FIREBASE_STORAGE_BUCKET=skill-plepic-com.firebasestorage.app \
+    VITE_FIREBASE_MESSAGING_SENDER_ID=000000000000 \
+    VITE_FIREBASE_APP_ID=1:000000000000:web:fake
 RUN VITE_EMULATOR_HOST=${VITE_EMULATOR_HOST} pnpm build
 
 # Stage 2: Runtime
@@ -16,7 +23,7 @@ FROM node:22-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     nginx \
-    openjdk-21-jre-headless \
+    default-jre-headless \
     curl \
   && rm -rf /var/lib/apt/lists/* \
   && npm install -g firebase-tools@15
