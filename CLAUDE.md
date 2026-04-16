@@ -58,6 +58,8 @@ Pre-push hooks run: unit tests + E2E tests (with smart emulator detection).
 - `firestore.rules` — Firestore security rules (public read, owner-only write with schema validation)
 - `.impeccable.md` — Design context (brand personality, aesthetic direction, design principles)
 - `.claude/skills/` — Custom Claude Code skills (validate-design, brainstorming, impeccable design suite)
+- `.claude/settings.json` — Claude Code hooks (SessionStart for cloud dependency install)
+- `scripts/cloud-install.sh` — Cloud session dependency installer (pnpm + Playwright)
 
 ## Architecture Decisions
 
@@ -90,6 +92,33 @@ This project does not cut corners on E2E tests. All Playwright steps must follow
 - **Use `toPass()` with retry intervals** for polling external state (Firestore assertions) instead of fixed delays
 - **Use semantic selectors** — `getByRole`, `getByLabel`, `getByText`, aria attributes. No CSS class selectors
 - **Test isolation** — every scenario starts with cleared emulator data and localStorage (handled by the `Before` hook in `e2e/steps/common.ts`)
+
+## Cloud Development (claude.ai/code)
+
+This project supports Claude Code cloud sessions. On session start, `scripts/cloud-install.sh` runs automatically via the SessionStart hook in `.claude/settings.json` to install pnpm dependencies and Playwright's Chromium.
+
+When `SKILL_ENV=claude_web` (set in the cloud environment), skip these:
+
+- **`pnpm test:mutate`** — Stryker mutation testing runs in CI only, too slow/heavy for cloud sessions
+- **Terraform commands** — no GCP credentials in cloud; infra changes are local-only
+
+**Web UI environment name:** `claude-web`
+
+**Web UI setup script** (paste into environment settings):
+
+```bash
+#!/bin/bash
+npm install -g firebase-tools
+npx playwright install-deps chromium
+```
+
+**Web UI environment variables:**
+
+```
+SKILL_ENV=claude_web
+```
+
+The cloud VM has Node.js 22, OpenJDK 21, pnpm, and Docker pre-installed. Network access level: **Trusted** (covers npm registry, googleapis.com for Firebase).
 
 ## Development Practices
 
