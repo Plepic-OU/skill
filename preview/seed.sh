@@ -13,14 +13,18 @@ create_user() {
   local attempt
 
   for attempt in 1 2 3 4 5; do
-    if curl -sf "${AUTH_EMULATOR}/identitytoolkit.googleapis.com/v1/accounts:signUp?key=fake-api-key" \
+    local response
+    response=$(curl -s -w "\n%{http_code}" "${AUTH_EMULATOR}/identitytoolkit.googleapis.com/v1/accounts:signUp?key=fake-api-key" \
       -H 'Content-Type: application/json' \
       -d "{\"email\":\"${email}\",\"password\":\"${password}\",\"localId\":\"${uid}\",\"displayName\":\"${display_name}\",\"returnSecureToken\":true}" \
-      > /dev/null 2>&1; then
+      2>&1) || true
+    local http_code
+    http_code=$(echo "$response" | tail -1)
+    if [ "$http_code" = "200" ]; then
       echo "  Created user: ${email} (${uid})"
       return 0
     fi
-    echo "  Retry $attempt for ${email}..."
+    echo "  Attempt $attempt for ${email} failed (HTTP $http_code): $(echo "$response" | head -1)"
     sleep 2
   done
 
