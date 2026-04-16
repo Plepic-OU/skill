@@ -127,3 +127,14 @@ The cloud VM has Node.js 22, OpenJDK 21, pnpm, and Docker pre-installed. Network
 - Gherkin/BDD tests for main user flows; Firebase emulator for E2E tests
 - TypeScript with strong types throughout
 - Mobile-first, playful > serious, less is more
+- **No project/user memories** — do not use the Claude Code memory system for this project. All project knowledge belongs in CLAUDE.md or docs/ files checked into git.
+- Pre-push hook runs unit tests only (not E2E — too slow, CI covers them)
+
+## Preview Environment Gotchas
+
+- GCP org policy `iam.allowedPolicyMemberDomains` blocks `--allow-unauthenticated` on Cloud Run. Use `--no-invoker-iam-check` instead.
+- Firebase Auth emulator `accounts:signUp` rejects `localId` (`UNEXPECTED_PARAMETER`). Use dynamic UIDs from the signUp response.
+- `firebase-tools@15` requires Java 21+. Debian Bookworm ships 17. Install `temurin-21-jre` from Adoptium (needs `ca-certificates`).
+- `firebase setup:emulators:firestore` in Dockerfile pre-downloads the JAR — saves ~4s on cold start.
+- `--no-traffic` not supported when creating a new Cloud Run service.
+- `gcloud run deploy` doesn't support individual `--startup-probe-*` flags.
