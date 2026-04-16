@@ -51,6 +51,9 @@ COPY firestore.indexes.json /app/firestore.indexes.json
 # Remove default nginx site if it exists
 RUN rm -f /etc/nginx/sites-enabled/default
 
+# Pre-download Firebase emulator JARs so they don't download at runtime
+RUN firebase setup:emulators:firestore && firebase setup:emulators:ui
+
 RUN chmod +x /app/preview/startup.sh /app/preview/seed.sh
 
 EXPOSE 8080

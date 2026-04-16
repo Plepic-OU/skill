@@ -10,13 +10,22 @@ PROJECT_ID="skill-plepic-com"
 
 create_user() {
   local email="$1" password="$2" uid="$3" display_name="$4"
+  local attempt
 
-  curl -sf "${AUTH_EMULATOR}/identitytoolkit.googleapis.com/v1/accounts:signUp?key=fake-api-key" \
-    -H 'Content-Type: application/json' \
-    -d "{\"email\":\"${email}\",\"password\":\"${password}\",\"localId\":\"${uid}\",\"displayName\":\"${display_name}\",\"returnSecureToken\":true}" \
-    > /dev/null
+  for attempt in 1 2 3 4 5; do
+    if curl -sf "${AUTH_EMULATOR}/identitytoolkit.googleapis.com/v1/accounts:signUp?key=fake-api-key" \
+      -H 'Content-Type: application/json' \
+      -d "{\"email\":\"${email}\",\"password\":\"${password}\",\"localId\":\"${uid}\",\"displayName\":\"${display_name}\",\"returnSecureToken\":true}" \
+      > /dev/null 2>&1; then
+      echo "  Created user: ${email} (${uid})"
+      return 0
+    fi
+    echo "  Retry $attempt for ${email}..."
+    sleep 2
+  done
 
-  echo "  Created user: ${email} (${uid})"
+  echo "  ERROR: Failed to create user ${email} after 5 attempts" >&2
+  return 1
 }
 
 echo "Creating demo users..."
