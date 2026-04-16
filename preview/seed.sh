@@ -14,9 +14,11 @@ create_user() {
 
   for attempt in 1 2 3 4 5; do
     local response
-    response=$(curl -s -w "\n%{http_code}" "${AUTH_EMULATOR}/identitytoolkit.googleapis.com/v1/accounts:signUp?key=fake-api-key" \
+    # Use admin accounts endpoint (not signUp) — only admin API accepts localId for fixed UIDs
+    response=$(curl -s -w "\n%{http_code}" "${AUTH_EMULATOR}/identitytoolkit.googleapis.com/v1/projects/${PROJECT_ID}/accounts" \
       -H 'Content-Type: application/json' \
-      -d "{\"email\":\"${email}\",\"password\":\"${password}\",\"localId\":\"${uid}\",\"displayName\":\"${display_name}\",\"returnSecureToken\":true}" \
+      -H 'Authorization: Bearer owner' \
+      -d "{\"email\":\"${email}\",\"rawPassword\":\"${password}\",\"localId\":\"${uid}\",\"displayName\":\"${display_name}\"}" \
       2>&1) || true
     local http_code
     http_code=$(echo "$response" | tail -1)
