@@ -12,6 +12,7 @@ Gamified web app where developers self-assess agentic coding skills via an RPG-s
 - **Backend:** Firebase (Auth with Google/GitHub, Firestore for user data) — no custom API
 - **Styling:** Plepic design system ([HTML](https://github.com/Plepic-OU/public-web/raw/refs/heads/main/design-system.html), [CSS](https://github.com/Plepic-OU/public-web/raw/refs/heads/main/design-system.css)). Main color is green; orange used sparingly only
 - **Infra:** Terraform for Firebase provisioning; Firebase CLI for security rules/indexes. Before running Terraform: `export GOOGLE_OAUTH_ACCESS_TOKEN=$(gcloud auth print-access-token)`
+- **Preview Environments:** Each PR gets a Cloud Run service (`preview-pr-{number}`) running SPA + Firebase emulators via nginx reverse proxy. See `docs/superpowers/specs/2026-04-16-preview-environments-design.md`
 - **Package manager:** pnpm (not npm)
 
 ## Build & Quality Commands
@@ -50,7 +51,8 @@ Pre-push hooks run: unit tests + E2E tests (with smart emulator detection).
 - `src/components/` — React components: Header, Hero, SafetyZoneSelector, SkillTree, QuestPath, SkillNode, CelebrationEffect, SignInModal, ConfirmDialog, Toast, ShareButton
 - `src/types/skill-tree.ts` — TypeScript interfaces for skill tree data and app state
 - `src/data/` — Data module (skill-trees.ts), state persistence (state.ts), auth helpers (auth.ts), Firestore sync (sync.ts)
-- `infra/` — Terraform config (google-beta provider, Firebase project + Firestore, GCS remote state)
+- `infra/` — Terraform config (google-beta provider, Firebase project + Firestore, GCS remote state, preview env infra)
+- `preview/` — Preview environment container (Dockerfile, nginx.conf, startup.sh, seed.sh, firebase.json)
 - `e2e/` — Playwright + playwright-bdd E2E tests (Gherkin features + step definitions)
 - `e2e/helpers/emulator.ts` — Firebase emulator REST API helpers for E2E tests
 - `firestore.rules` — Firestore security rules (public read, owner-only write with schema validation)

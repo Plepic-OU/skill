@@ -305,13 +305,14 @@ One-time resources to create in the existing `skill-plepic-com` project, managed
 - `GCP_PROJECT_ID` — `skill-plepic-com`
 - `GCP_WORKLOAD_IDENTITY_PROVIDER` — full provider resource name
 - `GCP_SERVICE_ACCOUNT` — CI service account email
+- `GCP_PREVIEW_RUNNER_SA` — Cloud Run runtime service account email
 
 ## Implementation Order
 
 1. ~~**Terraform:** Artifact Registry repo + Workload Identity Federation + IAM~~ ✅
 2. ~~**Container:** `preview/` directory with Dockerfile, nginx.conf, startup.sh, seed.sh, firebase.json~~ ✅
 3. ~~**SPA:** `VITE_EMULATOR_HOST` support in `src/firebase.ts`~~ ✅
-4. **Workflows:** `preview-deploy.yml` and `preview-cleanup.yml`
+4. ~~**Workflows:** `preview-deploy.yml` and `preview-cleanup.yml`~~ ✅
 5. **Test:** open a PR and verify the full cycle
 
 ## Implementation Notes
@@ -338,3 +339,12 @@ One-time resources to create in the existing `skill-plepic-com` project, managed
 - Local dev path guarded with `!emulatorHost` to prevent double emulator connection
 - E2E test bridge preserved unchanged
 - No new dependencies or env files needed
+
+### Chunk 4: Workflows (2026-04-16)
+
+- Job-level `if: github.event.pull_request.state == 'open'` instead of in-step exit guard
+- Cloud Run URL passed via `process.env.PREVIEW_URL` in github-script (not template interpolation) for injection safety
+- Startup probe added: HTTP GET /healthz, period 10s, 6 failures before kill (~60s total)
+- Single `gcloud run services describe` call for existing services (no redundant re-fetch)
+- `GCP_PREVIEW_RUNNER_SA` added to spec's GitHub secrets section (was missing)
+- `--project` added to `gcloud artifacts docker tags delete` in cleanup workflow
