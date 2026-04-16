@@ -24,7 +24,9 @@ create_user() {
       echo "  Created user: ${email} (${uid})"
       return 0
     fi
-    echo "  Attempt $attempt for ${email} failed (HTTP $http_code): $(echo "$response" | head -1)"
+    local body
+    body=$(echo "$response" | sed '$d' | tr -d '\n')
+    echo "  Attempt $attempt for ${email} failed (HTTP $http_code): ${body}"
     sleep 2
   done
 
