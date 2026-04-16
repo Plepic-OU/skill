@@ -310,7 +310,7 @@ One-time resources to create in the existing `skill-plepic-com` project, managed
 
 1. ~~**Terraform:** Artifact Registry repo + Workload Identity Federation + IAM~~ ✅
 2. ~~**Container:** `preview/` directory with Dockerfile, nginx.conf, startup.sh, seed.sh, firebase.json~~ ✅
-3. **SPA:** `VITE_EMULATOR_HOST` support in `src/firebase.ts`
+3. ~~**SPA:** `VITE_EMULATOR_HOST` support in `src/firebase.ts`~~ ✅
 4. **Workflows:** `preview-deploy.yml` and `preview-cleanup.yml`
 5. **Test:** open a PR and verify the full cycle
 
@@ -331,3 +331,10 @@ One-time resources to create in the existing `skill-plepic-com` project, managed
 - `singleProjectMode` removed from firebase.json (default behavior is correct for matching project IDs)
 - `.dockerignore` added to exclude node_modules, .git, web/, infra/, docs/, e2e/ from build context
 - `server_tokens off` added to nginx for version disclosure prevention
+
+### Chunk 3: SPA (2026-04-16)
+
+- Implemented exactly as spec'd: `initializeFirestore` with `ssl: true` for preview, `connectAuthEmulator` with `https://` prefix
+- Local dev path guarded with `!emulatorHost` to prevent double emulator connection
+- E2E test bridge preserved unchanged
+- No new dependencies or env files needed
