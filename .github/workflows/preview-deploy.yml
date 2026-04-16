@@ -61,7 +61,7 @@ jobs:
             --region ${{ env.REGION }} \
             --project ${{ secrets.GCP_PROJECT_ID }} \
             --service-account ${{ secrets.GCP_PREVIEW_RUNNER_SA }} \
-            --allow-unauthenticated \
+            --no-invoker-iam-check \
             --cpu 1 \
             --memory 1Gi \
             --min-instances 0 \
@@ -105,7 +105,7 @@ jobs:
             --region ${{ env.REGION }} \
             --project ${{ secrets.GCP_PROJECT_ID }} \
             --service-account ${{ secrets.GCP_PREVIEW_RUNNER_SA }} \
-            --allow-unauthenticated \
+            --no-invoker-iam-check \
             --cpu 1 \
             --memory 1Gi \
             --min-instances 0 \
