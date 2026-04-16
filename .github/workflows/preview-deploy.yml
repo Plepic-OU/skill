@@ -113,11 +113,7 @@ jobs:
             --cpu-boost \
             --no-cpu-throttling \
             --timeout 300 \
-            --port 8080 \
-            --startup-probe-path /healthz \
-            --startup-probe-initial-delay 0 \
-            --startup-probe-period 10 \
-            --startup-probe-failure-threshold 6
+            --port 8080
 
       - name: Post PR comment
         uses: actions/github-script@v7
