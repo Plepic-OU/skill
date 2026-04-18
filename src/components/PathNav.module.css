@@ -133,10 +133,6 @@
   }
 }
 
-/* Desktop renders three columns side-by-side, so this top-level nav is
-   redundant. Hide it rather than duplicate the structure. */
-@media (min-width: 820px) {
-  .nav {
-    display: none;
-  }
-}
+/* Desktop doesn't render PathNav at all — the component returns null above
+   820px so the tile text doesn't shadow the QuestPath ribbon text in
+   getByText queries. */

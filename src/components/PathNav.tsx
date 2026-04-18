@@ -4,17 +4,39 @@ import type { AxisId, SkillState } from '../types/skill-tree'
 import styles from './PathNav.module.css'
 
 const AXIS_IDS = Object.keys(skillTreeData.axes) as AxisId[]
+// Above this width the skill tree renders three columns side-by-side, so a
+// separate top nav is redundant. Matches the SkillTree grid breakpoint.
+const DESKTOP_QUERY = '(min-width: 820px)'
 
 interface PathNavProps {
   state: SkillState
+}
+
+function useIsDesktop(): boolean {
+  const [isDesktop, setIsDesktop] = useState(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return true
+    return window.matchMedia(DESKTOP_QUERY).matches
+  })
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return
+    const mql = window.matchMedia(DESKTOP_QUERY)
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches)
+    mql.addEventListener('change', handler)
+    return () => mql.removeEventListener('change', handler)
+  }, [])
+  return isDesktop
 }
 
 /**
  * Sticky top nav — three tiles, one per skill path. Clicking a tile smooth-
  * scrolls to that path section. An IntersectionObserver tracks which section
  * is most in view and highlights the matching tile.
+ *
+ * Returns null on desktop rather than using display:none, so the tile text
+ * doesn't shadow the QuestPath ribbon text in visibility queries.
  */
 export default function PathNav({ state }: PathNavProps) {
+  const isDesktop = useIsDesktop()
   const [activeAxis, setActiveAxis] = useState<AxisId>(AXIS_IDS[0])
 
   useEffect(() => {
@@ -53,6 +75,8 @@ export default function PathNav({ state }: PathNavProps) {
     if (!section) return
     section.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }, [])
+
+  if (isDesktop) return null
 
   return (
     <nav className={styles.nav} aria-label="Skill paths">
