@@ -33,7 +33,7 @@ export default function SkillNode({
 
   const levelLabels: Record<NodeState, string> = {
     claimed: isHighestClaimed ? 'You are here' : `Lv ${level.level} · Reached`,
-    frontier: 'Up next',
+    frontier: `Lv ${level.level}`,
     future: `Lv ${level.level}`,
   }
   const levelLabel = levelLabels[nodeState]
