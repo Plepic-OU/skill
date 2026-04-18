@@ -41,7 +41,8 @@
   align-items: center;
 }
 
-/* ── Compact level badge — persistent level/class readout in the header ── */
+/* ── Compact level badge — persistent level/class readout in the header.
+      Clicking it jumps to the LevelCrest section. ── */
 
 .levelBadge {
   display: inline-flex;
@@ -50,7 +51,29 @@
   min-width: 0;
   flex: 0 1 auto;
   font-family: var(--font-display);
-  padding: 0 var(--space-xs);
+  padding: 0.25rem var(--space-xs);
+  /* Reset button defaults */
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  cursor: pointer;
+  color: inherit;
+  text-align: left;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+.levelBadge:hover {
+  background: color-mix(in srgb, var(--green-brand) 7%, transparent);
+  border-color: color-mix(in srgb, var(--green-brand) 25%, transparent);
+}
+.levelBadge:active {
+  transform: translateY(0.5px);
+}
+.levelBadge:focus-visible {
+  outline: 2px solid var(--green-vivid);
+  outline-offset: 2px;
 }
 
 .levelSeal {

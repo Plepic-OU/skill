@@ -14,6 +14,9 @@
   margin: var(--space-xl) auto var(--space-md);
   padding: calc(var(--space-xl) + 0.3rem) var(--space-xl) var(--space-lg);
   isolation: isolate;
+  /* Header is 56px sticky — offset so the crest seal isn't clipped when the
+     header level badge scrolls the user here. */
+  scroll-margin-top: 72px;
 }
 
 /* Parchment backdrop with torn-edge feel rather than a rounded card */

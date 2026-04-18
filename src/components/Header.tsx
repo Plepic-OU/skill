@@ -20,10 +20,21 @@ interface LevelBadgeProps {
   state: SkillState
 }
 
+function scrollToCrest() {
+  const crest = document.getElementById('level-crest')
+  if (!crest) return
+  crest.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
 function LevelBadge({ state }: LevelBadgeProps) {
   const { unifiedLevel, classInfo, stakesPrefix, title } = computeProgression(state)
   return (
-    <div className={styles.levelBadge} aria-label={`Level ${unifiedLevel}, ${title}`}>
+    <button
+      type="button"
+      className={styles.levelBadge}
+      aria-label={`Level ${unifiedLevel}, ${title}. Jump to class details.`}
+      onClick={scrollToCrest}
+    >
       <span className={styles.levelSeal}>
         <span className={styles.levelSealLabel}>Lv</span>
         <span className={styles.levelSealNumber}>{unifiedLevel}</span>
@@ -36,7 +47,7 @@ function LevelBadge({ state }: LevelBadgeProps) {
         )}
         <span className={styles.levelClassName}>{classInfo.name}</span>
       </span>
-    </div>
+    </button>
   )
 }
 
