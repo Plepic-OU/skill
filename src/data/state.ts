@@ -3,7 +3,7 @@ import type { AxisId, SafetyZoneId, SkillState } from '../types/skill-tree'
 const STORAGE_KEY = 'plepic-skill-state'
 
 const AXIS_IDS: AxisId[] = ['autonomy', 'parallelExecution', 'skillUsage']
-const MAX_LEVELS: Record<AxisId, number> = { autonomy: 6, parallelExecution: 5, skillUsage: 6 }
+const MAX_LEVELS: Record<AxisId, number> = { autonomy: 6, parallelExecution: 6, skillUsage: 6 }
 const SAFETY_ZONE_IDS: SafetyZoneId[] = ['sandbox', 'normal', 'hardcore', 'impossible']
 
 export const DEFAULT_STATE: SkillState = {

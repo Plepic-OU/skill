@@ -22,7 +22,7 @@ service cloud.firestore {
         && request.resource.data.skills.autonomy is int
         && request.resource.data.skills.autonomy >= 0 && request.resource.data.skills.autonomy <= 6
         && request.resource.data.skills.parallelExecution is int
-        && request.resource.data.skills.parallelExecution >= 0 && request.resource.data.skills.parallelExecution <= 5
+        && request.resource.data.skills.parallelExecution >= 0 && request.resource.data.skills.parallelExecution <= 6
         && request.resource.data.skills.skillUsage is int
         && request.resource.data.skills.skillUsage >= 0 && request.resource.data.skills.skillUsage <= 6;
 

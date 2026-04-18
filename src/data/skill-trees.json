@@ -203,10 +203,29 @@
             "Hard to debug: which decision in the chain caused the bad outcome"
           ],
           "howToProgress": [
-            "This is the frontier of parallel execution.",
             "Build robust monitoring and cost controls before enabling full autonomy",
             "Implement circuit breakers that pause orchestration on anomalies",
-            "Start with narrow domains where autonomous decomposition is well-understood"
+            "Start with narrow domains where autonomous decomposition is well-understood",
+            "Begin delegating the orchestration policy itself — let the system choose how many agents to spawn"
+          ]
+        },
+        {
+          "level": 6,
+          "name": "Self-Organizing Swarm",
+          "desc": "The system decides the shape of the swarm. Agents spawn, coordinate, and retire other agents as goals demand — you set outcomes, not task graphs.",
+          "levelIcon": "hive",
+          "obstacles": [
+            "Runaway scaling — swarms expand faster than budget or rate limits allow",
+            "Coordination failures emerge from agent interactions no one scripted",
+            "Goals drift subtly as the swarm reinterprets them across generations",
+            "Post-hoc explainability: reconstructing why the swarm took a given path"
+          ],
+          "howToProgress": [
+            "This is the frontier of parallel execution.",
+            "Invest in outcome-level observability — measure results, not agent activity",
+            "Enforce hard budget and rate caps the swarm cannot override",
+            "Keep a kill switch that collapses the swarm to a single-agent fallback",
+            "Treat goal specifications as code: version them, test them, review them"
           ]
         }
       ]

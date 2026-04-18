@@ -1,6 +1,7 @@
 import type { AxisId, SafetyZoneId, SkillState, SyncStatus } from '../types/skill-tree'
 import Header from './Header'
 import Hero from './Hero'
+import LevelCrest from './LevelCrest'
 import SafetyZoneSelector from './SafetyZoneSelector'
 import SafetyZoneBadge from './SafetyZoneBadge'
 import SkillTree from './SkillTree'
@@ -30,6 +31,7 @@ export default function SkillTreeLayout({
     <>
       <Header syncStatus={syncStatus} mode={headerMode} />
       <Hero state={state} visitorName={visitorName} />
+      <LevelCrest state={state} visitor={readOnly} />
       {readOnly || !onSafetyZone ? (
         <SafetyZoneBadge zoneId={state.safetyZone} />
       ) : (

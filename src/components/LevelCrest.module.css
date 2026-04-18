@@ -1,0 +1,185 @@
+.crest {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  max-width: 640px;
+  margin: var(--space-lg) auto 0;
+  padding: var(--space-lg) var(--space-xl) var(--space-md);
+  border-radius: 20px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.55)), var(--parchment);
+  border: 1px solid var(--parchment-edge);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.8) inset,
+    0 10px 30px rgba(80, 50, 10, 0.07),
+    0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.crest::before,
+.crest::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 36px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--parchment-edge), transparent);
+  pointer-events: none;
+}
+.crest::before {
+  left: -12px;
+}
+.crest::after {
+  right: -12px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.levelPill {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--green-brand), var(--green-dark));
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.2) inset,
+    0 4px 10px rgba(19, 123, 48, 0.25);
+  white-space: nowrap;
+}
+.levelPillNumber {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 1.2rem + 2vw, 2.4rem);
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  margin: 0;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.prefix {
+  color: var(--green-dark);
+  font-style: italic;
+  font-weight: 600;
+}
+
+.tagline {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  color: var(--text-2);
+  text-align: center;
+  max-width: 460px;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.bar {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(19, 123, 48, 0.1);
+  overflow: hidden;
+  margin-top: var(--space-xs);
+}
+
+.barFill {
+  position: absolute;
+  inset: 0;
+  right: auto;
+  background: linear-gradient(90deg, var(--green-brand), var(--green-medium, var(--green-brand)));
+  border-radius: 999px;
+  transition: width 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+  box-shadow: 0 0 10px rgba(19, 123, 48, 0.35);
+}
+
+.barFillMax {
+  background: linear-gradient(90deg, var(--orange-brand, #e26c45), var(--green-brand));
+}
+
+.stats {
+  display: flex;
+  gap: var(--space-md);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-2);
+  letter-spacing: 0.02em;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.stats b {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.levelUp {
+  animation: levelUpPulse 0.9s cubic-bezier(0.25, 1, 0.5, 1);
+}
+@keyframes levelUpPulse {
+  0% {
+    transform: scale(1);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.8) inset,
+      0 10px 30px rgba(80, 50, 10, 0.07),
+      0 0 0 0 rgba(19, 123, 48, 0.55);
+  }
+  50% {
+    transform: scale(1.015);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.8) inset,
+      0 20px 50px rgba(19, 123, 48, 0.25),
+      0 0 0 12px rgba(19, 123, 48, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.8) inset,
+      0 10px 30px rgba(80, 50, 10, 0.07),
+      0 0 0 0 rgba(19, 123, 48, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .levelUp {
+    animation: none;
+  }
+  .barFill {
+    transition: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .crest {
+    padding: var(--space-md) var(--space-lg) var(--space-sm);
+    border-radius: 16px;
+  }
+  .titleRow {
+    gap: var(--space-sm);
+  }
+  .stats {
+    font-size: 0.66rem;
+    gap: var(--space-sm);
+  }
+}

@@ -32,9 +32,9 @@ export default function SkillNode({
   useClaimAnimation(indicatorRef, color, nodeState === 'claimed', styles.justClaimed)
 
   const levelLabels: Record<NodeState, string> = {
-    claimed: isHighestClaimed ? 'You are here' : `Level ${level.level}`,
+    claimed: isHighestClaimed ? 'You are here' : `Lv ${level.level} · Reached`,
     frontier: 'Up next',
-    future: `Level ${level.level}`,
+    future: `Lv ${level.level}`,
   }
   const levelLabel = levelLabels[nodeState]
 
@@ -117,7 +117,7 @@ export default function SkillNode({
 
         {level.howToProgress.length > 0 && (
           <>
-            <div className={styles.sectionTitle}>How to get here</div>
+            <div className={styles.sectionTitle}>How to reach this level</div>
             <ul className={styles.detailList}>
               {level.howToProgress.map((h, i) => (
                 <li key={i}>{h}</li>

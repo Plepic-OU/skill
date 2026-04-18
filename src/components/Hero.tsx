@@ -27,9 +27,9 @@ export default function Hero({ state, visitorName }: HeroProps) {
           return (
             <span key={id} className={styles.progressChip}>
               <span className={styles.chipDot} style={{ background: axis.color }} />
-              {axis.name}:{' '}
+              {axis.name} ·{' '}
               <span className={styles.chipLevel}>
-                {state[id]}/{axis.levels.length}
+                Lv {state[id]} of {axis.levels.length}
               </span>
             </span>
           )
