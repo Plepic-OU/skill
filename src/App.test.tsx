@@ -36,7 +36,7 @@ describe('App', () => {
     )
     expect(screen.getByText('Map Your Agentic Skills')).toBeInTheDocument()
 
-    // Default state: level 1 claimed on each axis. All three axes now have 6 levels.
+    // All three axes now have 6 levels.
     const autonomyLevels = skillTreeData.axes.autonomy.levels.length
     const parallelLevels = skillTreeData.axes.parallelExecution.levels.length
     const skillUsageLevels = skillTreeData.axes.skillUsage.levels.length
@@ -45,8 +45,8 @@ describe('App', () => {
     expect(parallelLevels).toBe(6)
     expect(skillUsageLevels).toBe(6)
 
-    // All three chips render "Lv 1 of 6"
-    const chips = screen.getAllByText(`Lv 1 of ${autonomyLevels}`)
-    expect(chips).toHaveLength(3)
+    // The axis breakdown inside the LevelCrest shows "1 / 6" for each axis at default state.
+    const breakdownLevels = screen.getAllByText(`1 / ${autonomyLevels}`)
+    expect(breakdownLevels).toHaveLength(3)
   })
 })

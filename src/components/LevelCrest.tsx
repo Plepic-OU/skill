@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { computeProgression } from '../data/progression'
-import type { SkillState } from '../types/skill-tree'
+import { skillTreeData } from '../data/skill-trees'
+import type { AxisId, SkillState } from '../types/skill-tree'
 import styles from './LevelCrest.module.css'
+
+const AXIS_IDS = Object.keys(skillTreeData.axes) as AxisId[]
 
 interface LevelCrestProps {
   state: SkillState
@@ -15,7 +18,6 @@ export default function LevelCrest({ state, visitor }: LevelCrestProps) {
     classInfo,
     stakesPrefix,
     completedSkills,
-    totalXp,
     xpIntoLevel,
     xpForNextLevel,
     isMaxLevel,
@@ -100,25 +102,41 @@ export default function LevelCrest({ state, visitor }: LevelCrestProps) {
       )}
 
       <div className={styles.stats}>
-        <span>
-          <b>{completedSkills}</b>/18 skills
-        </span>
-        <span className={styles.sep} aria-hidden="true">
-          ·
-        </span>
-        <span>
-          <b>{totalXp}</b> XP
-        </span>
-        {!isMaxLevel && (
+        {isMaxLevel ? (
+          <span>
+            <b>{completedSkills} of 18</b> skills
+          </span>
+        ) : (
           <>
+            <span>
+              <b>{xpRemaining} XP</b> to Lv {unifiedLevel + 1}
+            </span>
             <span className={styles.sep} aria-hidden="true">
               ·
             </span>
             <span>
-              <b>{xpRemaining}</b> XP to Lv {unifiedLevel + 1}
+              <b>{completedSkills}</b> of 18 skills
             </span>
           </>
         )}
+      </div>
+
+      <div className={styles.breakdown} aria-live="polite">
+        <span className={styles.breakdownLabel}>By path</span>
+        <div className={styles.breakdownRow}>
+          {AXIS_IDS.map((id) => {
+            const axis = skillTreeData.axes[id]
+            return (
+              <span key={id} className={styles.breakdownItem}>
+                <span className={styles.breakdownDot} style={{ background: axis.color }} />
+                <span className={styles.breakdownName}>{axis.name}</span>
+                <span className={styles.breakdownLevel}>
+                  {state[id]} / {axis.levels.length}
+                </span>
+              </span>
+            )
+          })}
+        </div>
       </div>
     </section>
   )

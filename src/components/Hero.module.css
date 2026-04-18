@@ -68,9 +68,17 @@
 .subtitle {
   color: var(--text-2);
   font-size: 1rem;
-  max-width: 480px;
+  max-width: 520px;
   margin: var(--space-md) auto 0;
   line-height: 1.6;
+}
+
+.visitorExplainer {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text-2);
+  margin: 0.3rem auto 0;
+  letter-spacing: 0.01em;
 }
 
 .progressSummary {

@@ -1,17 +1,15 @@
-import { skillTreeData } from '../data/skill-trees'
-import type { AxisId, SkillState } from '../types/skill-tree'
+import type { SkillState } from '../types/skill-tree'
 import styles from './Hero.module.css'
 
-const AXIS_IDS = Object.keys(skillTreeData.axes) as AxisId[]
-
 interface HeroProps {
-  state: SkillState
+  state?: SkillState
   visitorName?: string
   variant?: 'landing' | 'profile'
 }
 
-export default function Hero({ state, visitorName, variant = 'landing' }: HeroProps) {
-  const isProfile = variant === 'profile' || Boolean(visitorName)
+export default function Hero({ visitorName, variant = 'landing' }: HeroProps) {
+  const isVisitor = Boolean(visitorName)
+  const isProfile = variant === 'profile' || isVisitor
   const heroClass = `${styles.hero} ${isProfile ? styles.heroProfile : ''}`
 
   return (
@@ -21,24 +19,13 @@ export default function Hero({ state, visitorName, variant = 'landing' }: HeroPr
       </h1>
       {!isProfile && (
         <p className={styles.subtitle}>
-          Where are you on the path to agentic development mastery? Claim the levels you've reached
-          and see what's next.
+          A self-assessment for developers coding with AI. Claim the levels you&rsquo;ve reached on
+          three paths — your class and level appear as you go.
         </p>
       )}
-      <div className={styles.progressSummary} aria-live="polite">
-        {AXIS_IDS.map((id) => {
-          const axis = skillTreeData.axes[id]
-          return (
-            <span key={id} className={styles.progressChip}>
-              <span className={styles.chipDot} style={{ background: axis.color }} />
-              {axis.name} ·{' '}
-              <span className={styles.chipLevel}>
-                Lv {state[id]} of {axis.levels.length}
-              </span>
-            </span>
-          )
-        })}
-      </div>
+      {isVisitor && (
+        <p className={styles.visitorExplainer}>A self-assessment of agentic coding skills.</p>
+      )}
     </section>
   )
 }

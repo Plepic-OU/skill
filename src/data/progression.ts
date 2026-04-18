@@ -28,14 +28,14 @@ export interface ProgressionSummary {
 }
 
 export const CLASS_TABLE: readonly ClassInfo[] = [
-  { index: 0, name: 'Apprentice', tagline: 'Still learning the ropes across all dimensions' },
-  { index: 1, name: 'Toolsmith', tagline: 'Deep tooling expertise, hands-on execution' },
-  { index: 2, name: 'Swarm Wrangler', tagline: 'Runs many agents with basic tools' },
-  { index: 3, name: 'Operator', tagline: 'Many agents, sophisticated tooling, reviews everything' },
+  { index: 0, name: 'Apprentice', tagline: 'Just stepping onto the path' },
+  { index: 1, name: 'Toolsmith', tagline: 'Deep tooling, hands-on execution' },
+  { index: 2, name: 'Swarm Wrangler', tagline: 'Many agents, basic tools' },
+  { index: 3, name: 'Operator', tagline: 'Many agents, rich tooling, reviews every step' },
   { index: 4, name: 'Sentinel', tagline: 'Careful delegator, one task at a time' },
-  { index: 5, name: 'Architect', tagline: 'High trust plus custom tooling, focused execution' },
-  { index: 6, name: 'Commander', tagline: 'Delegates and parallelizes with stock tools' },
-  { index: 7, name: 'Overseer', tagline: 'Fully evolved across all dimensions' },
+  { index: 5, name: 'Architect', tagline: 'High trust, bespoke tooling' },
+  { index: 6, name: 'Commander', tagline: 'Delegates and parallelizes' },
+  { index: 7, name: 'Overseer', tagline: 'Fully realized across all dimensions' },
 ] as const
 
 export const STAKES_PREFIX: Record<SafetyZoneId, string> = {
