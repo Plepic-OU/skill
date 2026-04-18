@@ -3,16 +3,10 @@ import { signInWithEmailAndPassword } from 'firebase/auth'
 import { useDialog } from '../hooks/useDialog'
 import { signInWithGoogle } from '../data/auth'
 import { auth } from '../firebase'
+import demoAccountsData from '../../preview/demo-accounts.json'
 import styles from './SignInModal.module.css'
 
-/* eslint-disable sonarjs/no-hardcoded-passwords -- intentionally public demo accounts in ephemeral emulator */
-const DEMO_ACCOUNTS = import.meta.env.VITE_EMULATOR_HOST
-  ? [
-      { email: 'demo-alice@plepic.com', password: 'demo-alice-123', label: 'Alice (populated)' },
-      { email: 'demo-bob@plepic.com', password: 'demo-bob-123', label: 'Bob (fresh)' },
-    ]
-  : []
-/* eslint-enable sonarjs/no-hardcoded-passwords */
+const DEMO_ACCOUNTS = import.meta.env.VITE_EMULATOR_HOST ? demoAccountsData : []
 
 interface SignInModalProps {
   open: boolean

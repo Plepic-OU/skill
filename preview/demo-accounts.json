@@ -1,0 +1,14 @@
+[
+  {
+    "email": "demo-alice@plepic.com",
+    "password": "demo-alice-123",
+    "displayName": "Alice",
+    "label": "Alice (populated)"
+  },
+  {
+    "email": "demo-bob@plepic.com",
+    "password": "demo-bob-123",
+    "displayName": "Bob",
+    "label": "Bob (fresh)"
+  }
+]

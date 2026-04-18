@@ -2,9 +2,11 @@
 set -euo pipefail
 
 # Demo user credentials — disposable accounts in ephemeral emulator, not secrets.
+# Single source of truth: preview/demo-accounts.json
 AUTH_EMULATOR="http://127.0.0.1:9099"
 FIRESTORE_EMULATOR="http://127.0.0.1:9199"
 PROJECT_ID="skill-plepic-com"
+ACCOUNTS_FILE="/app/preview/demo-accounts.json"
 
 # --- Create demo users ---
 # Use signUp endpoint (no fixed UIDs — emulator doesn't support localId).
@@ -23,6 +25,10 @@ create_user() {
     http_code=$(echo "$response" | tail -1)
     if [ "$http_code" = "200" ]; then
       uid=$(echo "$response" | sed '$d' | grep -o '"localId":"[^"]*"' | cut -d'"' -f4)
+      if [ -z "$uid" ]; then
+        echo "  ERROR: empty localId in signUp response for ${email}" >&2
+        return 1
+      fi
       echo "  Created user: ${email} (${uid})" >&2
       echo "$uid"
       return 0
@@ -36,9 +42,17 @@ create_user() {
   return 1
 }
 
+# Read accounts from shared JSON (node is available in the container)
 echo "Creating demo users..."
-ALICE_UID=$(create_user "demo-alice@plepic.com" "demo-alice-123" "Alice")
-BOB_UID=$(create_user "demo-bob@plepic.com" "demo-bob-123" "Bob")
+ALICE_EMAIL=$(node -e "console.log(require('${ACCOUNTS_FILE}')[0].email)")
+ALICE_PASS=$(node -e "console.log(require('${ACCOUNTS_FILE}')[0].password)")
+ALICE_NAME=$(node -e "console.log(require('${ACCOUNTS_FILE}')[0].displayName)")
+BOB_EMAIL=$(node -e "console.log(require('${ACCOUNTS_FILE}')[1].email)")
+BOB_PASS=$(node -e "console.log(require('${ACCOUNTS_FILE}')[1].password)")
+BOB_NAME=$(node -e "console.log(require('${ACCOUNTS_FILE}')[1].displayName)")
+
+ALICE_UID=$(create_user "$ALICE_EMAIL" "$ALICE_PASS" "$ALICE_NAME")
+BOB_UID=$(create_user "$BOB_EMAIL" "$BOB_PASS" "$BOB_NAME")
 
 # --- Seed Alice's Firestore data ---
 
