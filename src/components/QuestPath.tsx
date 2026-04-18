@@ -13,6 +13,12 @@ interface QuestPathProps {
   onClaim: (axisId: AxisId, level: number) => void
   onUnclaim: (axisId: AxisId, level: number) => void
   readonly?: boolean
+  /** When true, this path can be collapsed. Renders the ribbon as a button
+   *  and transitions nodeList to zero height when `collapsed`. */
+  canCollapse?: boolean
+  /** Only meaningful when canCollapse is true. */
+  collapsed?: boolean
+  onToggleCollapsed?: (axisId: AxisId) => void
 }
 
 interface QuestPathNodeProps {
@@ -74,6 +80,9 @@ export default function QuestPath({
   onClaim,
   onUnclaim,
   readonly,
+  canCollapse = false,
+  collapsed = false,
+  onToggleCollapsed,
 }: QuestPathProps) {
   const [expandedLevel, setExpandedLevel] = useState<number | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -125,51 +134,82 @@ export default function QuestPath({
     return 'faded'
   }
 
+  const levelMax = axis.levels.length
+  const isExpandedForCollapseUX = canCollapse && !collapsed
+  const pathClasses = [
+    styles.questPath,
+    canCollapse ? styles.collapsible : '',
+    collapsed ? styles.collapsed : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+
+  const HeaderTag = canCollapse ? 'button' : 'div'
+  const headerProps = canCollapse
+    ? {
+        type: 'button' as const,
+        className: styles.pathHeader,
+        onClick: () => onToggleCollapsed?.(axisId),
+        'aria-expanded': !collapsed,
+        'aria-controls': `path-body-${axisId}`,
+      }
+    : { className: styles.pathHeader }
+
   return (
     <div
       ref={containerRef}
-      className={styles.questPath}
+      className={pathClasses}
       data-quest-path={axisId}
       style={{ '--node-color': axis.color } as React.CSSProperties}
     >
-      <div className={styles.pathHeader}>
+      <HeaderTag {...headerProps}>
         <div className={styles.pathIcon} style={{ color: axis.color }}>
           <span className="material-symbols-rounded">{axis.icon}</span>
         </div>
         <div className={styles.ribbonBanner}>
-          {axis.name}
+          <span className={styles.ribbonName}>{axis.name}</span>
+          <span className={styles.ribbonMeta}>
+            Lv {claimedLevel}/{levelMax}
+          </span>
+          {canCollapse && (
+            <span className={`material-symbols-rounded ${styles.ribbonChevron}`} aria-hidden="true">
+              {isExpandedForCollapseUX ? 'expand_less' : 'expand_more'}
+            </span>
+          )}
           <span className={styles.ribbonFoldLeft} />
           <span className={styles.ribbonFoldRight} />
         </div>
         <div className={styles.pathSubtitle}>{axis.description}</div>
-      </div>
+      </HeaderTag>
 
-      <div className={styles.nodeList}>
-        {axis.levels.map((level, i) => {
-          const isClaimed = level.level <= claimedLevel
-          const isFrontier = level.level === claimedLevel + 1
-          let nodeState: NodeState = 'future'
-          if (isClaimed) nodeState = 'claimed'
-          else if (isFrontier && !readonly) nodeState = 'frontier'
+      <div id={`path-body-${axisId}`} className={styles.pathBody} aria-hidden={collapsed}>
+        <div className={styles.nodeList}>
+          {axis.levels.map((level, i) => {
+            const isClaimed = level.level <= claimedLevel
+            const isFrontier = level.level === claimedLevel + 1
+            let nodeState: NodeState = 'future'
+            if (isClaimed) nodeState = 'claimed'
+            else if (isFrontier && !readonly) nodeState = 'frontier'
 
-          return (
-            <QuestPathNode
-              key={level.level}
-              level={level}
-              index={i}
-              axisId={axisId}
-              color={axis.color}
-              nodeState={nodeState}
-              isHighestClaimed={isClaimed && level.level === claimedLevel}
-              isExpanded={expandedLevel === level.level}
-              connectorType={i > 0 ? getConnectorType(i) : undefined}
-              onToggle={() => toggleNode(level.level)}
-              onClaim={onClaim}
-              onUnclaim={onUnclaim}
-              readonly={readonly}
-            />
-          )
-        })}
+            return (
+              <QuestPathNode
+                key={level.level}
+                level={level}
+                index={i}
+                axisId={axisId}
+                color={axis.color}
+                nodeState={nodeState}
+                isHighestClaimed={isClaimed && level.level === claimedLevel}
+                isExpanded={expandedLevel === level.level}
+                connectorType={i > 0 ? getConnectorType(i) : undefined}
+                onToggle={() => toggleNode(level.level)}
+                onClaim={onClaim}
+                onUnclaim={onUnclaim}
+                readonly={readonly}
+              />
+            )
+          })}
+        </div>
       </div>
     </div>
   )

@@ -38,12 +38,21 @@ export default function SkillTreeLayout({
   readOnly,
   visitorName,
 }: SkillTreeLayoutProps) {
-  // On landing, the hero earns the first viewport — introducing the app. The
-  // crest is a payoff that appears after the user has claimed something, so it
-  // sits below the tree. On profile pages the crest *is* the identity and
-  // belongs up top.
+  // Layout hierarchy:
+  //   Landing  — Hero → (FirstRunHint) → Tree → Crest → Stakes
+  //   Profile  — Hero → Crest → Tree → Stakes
+  // Rationale: on landing, the crest is a payoff and sits after interaction.
+  // On profile pages the crest IS the identity and belongs right below the
+  // hero. Stakes is cosmetic (flavors the title only) and always sits after
+  // the tree so it never competes with the primary interaction.
   const isLanding = headerMode === 'landing'
   const crest = <LevelCrest state={state} visitor={readOnly} />
+  const stakes =
+    readOnly || !onSafetyZone ? (
+      <SafetyZoneBadge zoneId={state.safetyZone} />
+    ) : (
+      <SafetyZoneSelector selected={state.safetyZone} onSelect={onSafetyZone} />
+    )
   // Whisper-light first-run nudge above the tree, visible only while state is
   // untouched. Any claim or stake change dismisses it naturally — no storage
   // needed, no user friction.
@@ -54,14 +63,10 @@ export default function SkillTreeLayout({
       <Header syncStatus={syncStatus} mode={headerMode} state={state} />
       <Hero state={state} visitorName={visitorName} variant={isLanding ? 'landing' : 'profile'} />
       {!isLanding && crest}
-      {readOnly || !onSafetyZone ? (
-        <SafetyZoneBadge zoneId={state.safetyZone} />
-      ) : (
-        <SafetyZoneSelector selected={state.safetyZone} onSelect={onSafetyZone} />
-      )}
       {showFirstRunHint && <FirstRunHint />}
       <SkillTree state={state} onClaim={onClaim} onUnclaim={onUnclaim} readonly={readOnly} />
       {isLanding && crest}
+      {stakes}
     </>
   )
 }

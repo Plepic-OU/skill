@@ -8,6 +8,7 @@ import {
   computeClassIndex,
   computeClassInfo,
   computeCompletedSkills,
+  computeDefaultOpenPath,
   computeProgression,
   computeTitle,
   computeTotalXp,
@@ -144,5 +145,19 @@ describe('STAKES_PREFIX', () => {
     expect(STAKES_PREFIX.normal).toBeTruthy()
     expect(STAKES_PREFIX.hardcore).toBeTruthy()
     expect(STAKES_PREFIX.impossible).toBeTruthy()
+  })
+})
+
+describe('computeDefaultOpenPath', () => {
+  it('defaults to autonomy on a pristine state', () => {
+    expect(computeDefaultOpenPath(state(1, 1, 1))).toBe('autonomy')
+  })
+  it('picks the axis with the highest claimed level', () => {
+    expect(computeDefaultOpenPath(state(2, 5, 3))).toBe('parallelExecution')
+    expect(computeDefaultOpenPath(state(1, 2, 6))).toBe('skillUsage')
+  })
+  it('breaks ties in AXIS_IDS order (autonomy first)', () => {
+    expect(computeDefaultOpenPath(state(4, 4, 2))).toBe('autonomy')
+    expect(computeDefaultOpenPath(state(2, 3, 3))).toBe('parallelExecution')
   })
 })
