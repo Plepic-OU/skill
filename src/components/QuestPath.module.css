@@ -30,15 +30,20 @@
   padding: 0.25rem 0.5rem;
   transition: background var(--transition-fast);
 }
-.collapsible .pathHeader:hover {
-  background: color-mix(in srgb, var(--node-color) 5%, transparent);
+/* Hover tint only on devices that actually hover — on touch, :hover sticks
+   after the tap and looks like a stuck state. */
+@media (hover: hover) {
+  .collapsible .pathHeader:hover {
+    background: color-mix(in srgb, var(--node-color) 5%, transparent);
+  }
 }
 .collapsible .pathHeader:focus-visible {
   outline: 2px solid var(--node-color);
   outline-offset: 2px;
 }
 
-/* When collapsed, compact the header so three ribbons can share the viewport. */
+/* When collapsed, compact the header so three ribbons share the viewport.
+   The icon lives in the ribbon's color; the separate large glyph is excess. */
 .collapsed .pathHeader {
   margin-bottom: var(--space-sm);
 }
@@ -46,8 +51,7 @@
   display: none;
 }
 .collapsed .pathIcon {
-  font-size: 1.6rem;
-  margin-bottom: 0.25rem;
+  display: none;
 }
 
 .pathIcon {

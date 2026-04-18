@@ -102,10 +102,13 @@ export function computeProgression(state: SkillState): ProgressionSummary {
 
 /**
  * Pick which skill path should be expanded by default in the mobile accordion.
- * Prefers the path the user has progressed furthest on (signals identity).
- * Ties resolve in AXIS_IDS order so Autonomy wins a pristine state.
+ * For a pristine user we keep all paths collapsed so the three-path structure
+ * is visible at a glance. For users with progress, open the furthest axis —
+ * it's a low-friction identity signal. Ties resolve in AXIS_IDS order.
  */
-export function computeDefaultOpenPath(state: SkillState): AxisId {
+export function computeDefaultOpenPath(state: SkillState): AxisId | null {
+  const hasProgress = AXIS_IDS.some((id) => state[id] > 1)
+  if (!hasProgress) return null
   let best: AxisId = AXIS_IDS[0]
   let bestLevel = state[best]
   for (const id of AXIS_IDS) {
