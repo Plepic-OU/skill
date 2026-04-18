@@ -5,13 +5,15 @@
   padding: var(--space-3xl) var(--space-xl) var(--space-lg);
 }
 
-/* On mobile, the hero owns the first viewport — the tree only appears after
-   an intentional scroll. The H1 anchors the top; the explainer + nav
-   anchor the bottom of the screen. Desktop keeps its natural block layout
-   because the three-column tree is already in view below. */
+/* On mobile, the hero owns the upper portion of the first viewport; the
+   FirstRunHint and sticky PathNav fill in below it. The min-height reserves
+   room for: 56px sticky header + ~160px for hint + nav + breathing, so the
+   nav lands around ~70% down the screen with clear space beneath it.
+   Desktop keeps its natural block layout — the three-column tree is
+   already in view below. */
 @media (max-width: 819px) {
   .hero {
-    min-height: calc(100svh - 116px);
+    min-height: calc(100svh - 280px);
     padding-top: var(--space-2xl);
     padding-bottom: var(--space-md);
     display: flex;
@@ -20,7 +22,7 @@
   }
   @supports not (min-height: 100svh) {
     .hero {
-      min-height: calc(100vh - 116px);
+      min-height: calc(100vh - 280px);
     }
   }
 }
