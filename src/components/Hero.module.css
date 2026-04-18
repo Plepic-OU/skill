@@ -3,12 +3,30 @@
   z-index: 1;
   text-align: center;
   padding: var(--space-3xl) var(--space-xl) var(--space-lg);
+  /* On mobile, the hero owns the first viewport — the tree only appears after
+     an intentional scroll. Keeps focus on the pitch before the interaction
+     surfaces. The header (56px) + the sticky PathNav below (~60px) are
+     subtracted so the hero and nav together fill the first screen. */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100svh - 116px);
+}
+/* svh fallback — older browsers use 100vh which is close enough. */
+@supports not (min-height: 100svh) {
+  .hero {
+    min-height: calc(100vh - 116px);
+  }
 }
 
 /* On profile pages the crest carries the headline, so the hero title becomes
-   a smaller kicker — same words, drastically less visual weight. */
+   a smaller kicker — same words, drastically less visual weight. Profile
+   hero doesn't fill the first viewport — the crest does. */
 .heroProfile {
   padding: var(--space-xl) var(--space-xl) var(--space-xs);
+  min-height: 0;
+  justify-content: flex-start;
 }
 
 .title {

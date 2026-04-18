@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router'
 import { useAuth } from '../contexts/AuthContext'
 import { useAuthActions } from '../hooks/useAuthActions'
 import { computeProgression } from '../data/progression'
+import { hasAnyProgress } from '../data/state'
 import SignInModal from './SignInModal'
 import ConfirmDialog from './ConfirmDialog'
 import ShareButton from './ShareButton'
@@ -198,7 +199,7 @@ export default function Header({ syncStatus = 'idle', mode = 'landing', state }:
           <span className={styles.logoWordmark}>Agentic Skills</span>
         </Link>
       </div>
-      {state && <LevelBadge state={state} />}
+      {state && hasAnyProgress(state) && <LevelBadge state={state} />}
       <div className={styles.authArea}>
         {!loading && user && (
           <div className={styles.userInfo}>

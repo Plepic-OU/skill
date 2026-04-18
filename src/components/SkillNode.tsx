@@ -31,8 +31,12 @@ export default function SkillNode({
   const indicatorRef = useRef<HTMLDivElement>(null)
   useClaimAnimation(indicatorRef, color, nodeState === 'claimed', styles.justClaimed)
 
+  // For the default level-1 node on any axis, "You are here" overclaims:
+  // the user hasn't actively marked their position yet. Call it a neutral
+  // starting point until they progress past the default.
+  const highestClaimedLabel = level.level === 1 ? 'Starting point' : 'You are here'
   const levelLabels: Record<NodeState, string> = {
-    claimed: isHighestClaimed ? 'You are here' : `Lv ${level.level} · Reached`,
+    claimed: isHighestClaimed ? highestClaimedLabel : `Lv ${level.level} · Reached`,
     frontier: `Lv ${level.level}`,
     future: `Lv ${level.level}`,
   }

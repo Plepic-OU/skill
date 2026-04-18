@@ -51,3 +51,8 @@ export function saveState(state: SkillState): void {
 export function resetState(): void {
   saveState(DEFAULT_STATE)
 }
+
+/** True when the user has progressed beyond the default on any axis. */
+export function hasAnyProgress(state: SkillState): boolean {
+  return AXIS_IDS.some((id) => state[id] > DEFAULT_STATE[id])
+}

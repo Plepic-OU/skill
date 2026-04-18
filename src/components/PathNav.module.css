@@ -65,10 +65,16 @@
 }
 
 .tileActive {
-  background: color-mix(in srgb, var(--tile-color) 12%, var(--surface));
-  border-color: color-mix(in srgb, var(--tile-color) 45%, transparent);
+  background: color-mix(in srgb, var(--tile-color) 20%, var(--surface));
+  border-color: color-mix(in srgb, var(--tile-color) 70%, transparent);
   color: var(--ink);
-  font-weight: 600;
+  font-weight: 700;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--tile-color) 30%, transparent),
+    0 2px 6px color-mix(in srgb, var(--tile-color) 18%, transparent);
+}
+.tileActive .name {
+  color: color-mix(in srgb, var(--tile-color) 85%, var(--ink));
 }
 
 .dot {
@@ -113,23 +119,23 @@
   .tile {
     padding: 0.35rem 0.45rem;
     font-size: 0.78rem;
-    gap: 0.25rem;
+    gap: 0.3rem;
+    justify-content: center;
   }
   .name {
     font-size: 0.82rem;
   }
+  /* Drop the level pill on mobile — the ribbon banner inside each path
+     repeats this info. Removing it frees ~40px so the full axis name fits. */
   .level {
-    font-size: 0.65rem;
-    padding: 0.05rem 0.3rem;
+    display: none;
   }
 }
 
-/* Very narrow screens — trim the name so the tile still fits. */
-@media (max-width: 380px) {
-  .tile {
-    padding: 0.3rem 0.35rem;
-  }
-  .level {
+/* Desktop renders three columns side-by-side, so this top-level nav is
+   redundant. Hide it rather than duplicate the structure. */
+@media (min-width: 820px) {
+  .nav {
     display: none;
   }
 }
