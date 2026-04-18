@@ -29,7 +29,7 @@ export default function SkillTreeLayout({
 }: SkillTreeLayoutProps) {
   return (
     <>
-      <Header syncStatus={syncStatus} mode={headerMode} />
+      <Header syncStatus={syncStatus} mode={headerMode} state={state} />
       <Hero
         state={state}
         visitorName={visitorName}

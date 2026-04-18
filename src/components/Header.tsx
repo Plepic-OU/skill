@@ -1,17 +1,43 @@
 import type { User } from 'firebase/auth'
-import { Link } from 'react-router'
+import { Link, useLocation } from 'react-router'
 import { useAuth } from '../contexts/AuthContext'
 import { useAuthActions } from '../hooks/useAuthActions'
+import { computeProgression } from '../data/progression'
 import SignInModal from './SignInModal'
 import ConfirmDialog from './ConfirmDialog'
 import ShareButton from './ShareButton'
-import type { SyncStatus } from '../types/skill-tree'
+import type { SkillState, SyncStatus } from '../types/skill-tree'
 import { LinkIcon } from './icons'
 import styles from './Header.module.css'
 
 interface HeaderProps {
   syncStatus?: SyncStatus
   mode?: 'landing' | 'owner' | 'visitor'
+  state?: SkillState
+}
+
+interface LevelBadgeProps {
+  state: SkillState
+}
+
+function LevelBadge({ state }: LevelBadgeProps) {
+  const { unifiedLevel, classInfo, stakesPrefix, title } = computeProgression(state)
+  return (
+    <div className={styles.levelBadge} aria-label={`Level ${unifiedLevel}, ${title}`}>
+      <span className={styles.levelSeal}>
+        <span className={styles.levelSealLabel}>Lv</span>
+        <span className={styles.levelSealNumber}>{unifiedLevel}</span>
+      </span>
+      <span className={styles.levelClass}>
+        {stakesPrefix && (
+          <em className={styles.levelPrefix} aria-hidden="true">
+            {stakesPrefix}
+          </em>
+        )}
+        <span className={styles.levelClassName}>{classInfo.name}</span>
+      </span>
+    </div>
+  )
 }
 
 interface OwnerControlsProps {
@@ -99,8 +125,9 @@ function LandingControls({ onSignIn }: LandingControlsProps) {
   )
 }
 
-export default function Header({ syncStatus = 'idle', mode = 'landing' }: HeaderProps) {
+export default function Header({ syncStatus = 'idle', mode = 'landing', state }: HeaderProps) {
   const { user, loading } = useAuth()
+  const location = useLocation()
   const {
     isModalOpen,
     openModal,
@@ -110,6 +137,21 @@ export default function Header({ syncStatus = 'idle', mode = 'landing' }: Header
     confirmSignOut,
     closeConfirm,
   } = useAuthActions()
+
+  const handleLogoClick = (e: React.MouseEvent) => {
+    // Mobile: logo taps scroll to the top of the current page instead of navigating,
+    // since mobile browsers lack a scroll-thumb affordance. Desktop keeps Link nav.
+    if (typeof window !== 'undefined' && window.innerWidth <= 560) {
+      e.preventDefault()
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+    // On desktop, if we're already on the home route, also scroll up rather than no-op.
+    if (location.pathname === '/') {
+      e.preventDefault()
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
 
   function renderAuthControls() {
     if (loading) return null
@@ -140,11 +182,12 @@ export default function Header({ syncStatus = 'idle', mode = 'landing' }: Header
   return (
     <header className={styles.header}>
       <div className={styles.logo}>
-        <Link to="/" className={styles.logoLink}>
+        <Link to="/" className={styles.logoLink} onClick={handleLogoClick}>
           <div className={styles.logoIcon}>P</div>
           <span className={styles.logoWordmark}>Agentic Skills</span>
         </Link>
       </div>
+      {state && <LevelBadge state={state} />}
       <div className={styles.authArea}>
         {!loading && user && (
           <div className={styles.userInfo}>

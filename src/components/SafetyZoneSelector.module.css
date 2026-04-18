@@ -21,6 +21,15 @@
   font-size: 0.82rem;
   color: var(--text-3);
   text-align: center;
+  margin-bottom: var(--space-2xs);
+}
+
+.hint {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-style: italic;
+  color: color-mix(in srgb, var(--text-3) 85%, transparent);
+  text-align: center;
   margin-bottom: var(--space-md);
 }
 

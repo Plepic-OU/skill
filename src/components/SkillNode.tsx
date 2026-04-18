@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useClaimAnimation } from '../hooks/useClaimAnimation'
 import type { AxisId, Level, NodeState } from '../types/skill-tree'
 import styles from './SkillNode.module.css'
@@ -29,7 +29,19 @@ export default function SkillNode({
   readonly,
 }: SkillNodeProps) {
   const indicatorRef = useRef<HTMLDivElement>(null)
+  const nodeRef = useRef<HTMLDivElement>(null)
+  const prevExpandedRef = useRef(false)
   useClaimAnimation(indicatorRef, color, nodeState === 'claimed', styles.justClaimed)
+
+  useEffect(() => {
+    // Only scroll on the false→true transition, not on mount or collapse.
+    if (isExpanded && !prevExpandedRef.current && nodeRef.current) {
+      requestAnimationFrame(() => {
+        nodeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      })
+    }
+    prevExpandedRef.current = isExpanded
+  }, [isExpanded])
 
   const levelLabels: Record<NodeState, string> = {
     claimed: isHighestClaimed ? 'You are here' : `Lv ${level.level} · Reached`,
@@ -66,6 +78,7 @@ export default function SkillNode({
 
   return (
     <div
+      ref={nodeRef}
       className={`${styles.node} ${styles[nodeState]} ${isExpanded ? styles.expanded : ''}`}
       tabIndex={0}
       role="button"

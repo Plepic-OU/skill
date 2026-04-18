@@ -6,6 +6,8 @@
   transition: all var(--transition-smooth);
   position: relative;
   border: 2px solid transparent;
+  /* Keep expanded node below the sticky header when scrolled into view */
+  scroll-margin-top: 70px;
 }
 .node:hover {
   transform: translateY(-3px) scale(1.01);

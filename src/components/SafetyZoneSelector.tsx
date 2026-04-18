@@ -28,6 +28,7 @@ export default function SafetyZoneSelector({ selected, onSelect }: SafetyZoneSel
     <section className={styles.stakes}>
       <div className={styles.heading}>Stakes</div>
       <div className={styles.label}>What's at stake in your environment?</div>
+      <div className={styles.hint}>Flavors your title. XP and level are unaffected.</div>
       <div className={styles.options} role="radiogroup" aria-label="Stakes selection">
         {ZONE_IDS.map((id) => {
           const zone = zones[id]
