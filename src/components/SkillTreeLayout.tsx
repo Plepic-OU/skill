@@ -1,4 +1,6 @@
+import { DEFAULT_STATE } from '../data/state'
 import type { AxisId, SafetyZoneId, SkillState, SyncStatus } from '../types/skill-tree'
+import FirstRunHint from './FirstRunHint'
 import Header from './Header'
 import Hero from './Hero'
 import LevelCrest from './LevelCrest'
@@ -17,6 +19,15 @@ interface SkillTreeLayoutProps {
   visitorName?: string
 }
 
+function isPristineState(state: SkillState): boolean {
+  return (
+    state.autonomy === DEFAULT_STATE.autonomy &&
+    state.parallelExecution === DEFAULT_STATE.parallelExecution &&
+    state.skillUsage === DEFAULT_STATE.skillUsage &&
+    state.safetyZone === DEFAULT_STATE.safetyZone
+  )
+}
+
 export default function SkillTreeLayout({
   headerMode,
   syncStatus,
@@ -33,6 +44,10 @@ export default function SkillTreeLayout({
   // belongs up top.
   const isLanding = headerMode === 'landing'
   const crest = <LevelCrest state={state} visitor={readOnly} />
+  // Whisper-light first-run nudge above the tree, visible only while state is
+  // untouched. Any claim or stake change dismisses it naturally — no storage
+  // needed, no user friction.
+  const showFirstRunHint = isLanding && !readOnly && isPristineState(state)
 
   return (
     <>
@@ -44,6 +59,7 @@ export default function SkillTreeLayout({
       ) : (
         <SafetyZoneSelector selected={state.safetyZone} onSelect={onSafetyZone} />
       )}
+      {showFirstRunHint && <FirstRunHint />}
       <SkillTree state={state} onClaim={onClaim} onUnclaim={onUnclaim} readonly={readOnly} />
       {isLanding && crest}
     </>

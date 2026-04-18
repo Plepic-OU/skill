@@ -130,11 +130,7 @@ export default function LevelCrest({ state, visitor }: LevelCrestProps) {
 
       <h2 className={styles.title}>
         {stakesPrefix && <span className={styles.prefix}>{stakesPrefix}</span>}
-        <span className={styles.className}>
-          <span className={styles.classNameFlourishLeft} aria-hidden="true" />
-          {classInfo.name}
-          <span className={styles.classNameFlourishRight} aria-hidden="true" />
-        </span>
+        <span className={styles.className}>{classInfo.name}</span>
       </h2>
       <p className={styles.tagline}>{classInfo.tagline}</p>
 

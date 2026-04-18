@@ -126,27 +126,6 @@
   display: inline-block;
   position: relative;
 }
-.classNameFlourishLeft,
-.classNameFlourishRight {
-  display: inline-block;
-  vertical-align: middle;
-  width: 26px;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    color-mix(in srgb, var(--parchment-edge) 50%, var(--green-dark))
-  );
-  margin: 0 0.6rem;
-  opacity: 0.8;
-}
-.classNameFlourishRight {
-  background: linear-gradient(
-    -90deg,
-    transparent,
-    color-mix(in srgb, var(--parchment-edge) 50%, var(--green-dark))
-  );
-}
 
 .tagline {
   font-family: var(--font-body);
@@ -434,11 +413,6 @@
   /* Tighten parchment inset so bar + breakdown have clear margin from the edge */
   .crest::before {
     inset: 0.2rem 0.4rem;
-  }
-  .classNameFlourishLeft,
-  .classNameFlourishRight {
-    width: 18px;
-    margin: 0 0.4rem;
   }
   .stats {
     font-size: 0.72rem;
