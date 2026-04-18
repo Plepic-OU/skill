@@ -120,7 +120,7 @@
       ]
     },
     "parallelExecution": {
-      "name": "Parallel Execution",
+      "name": "Parallelism",
       "description": "How many concurrent AI tasks you manage and how they're coordinated.",
       "icon": "bolt",
       "color": "#0891b2",

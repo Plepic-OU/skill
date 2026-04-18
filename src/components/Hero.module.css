@@ -6,16 +6,17 @@
 }
 
 /* On mobile, the hero owns the first viewport — the tree only appears after
-   an intentional scroll. Extra bottom padding pushes the subtitle up from
-   the fold edge while the min-height fills the screen. Desktop keeps its
-   natural sizing because the three-column tree is already in view below. */
+   an intentional scroll. The H1 anchors the top; the explainer + nav
+   anchor the bottom of the screen. Desktop keeps its natural block layout
+   because the three-column tree is already in view below. */
 @media (max-width: 819px) {
   .hero {
     min-height: calc(100svh - 116px);
-    padding-bottom: var(--space-3xl);
+    padding-top: var(--space-2xl);
+    padding-bottom: var(--space-md);
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
   }
   @supports not (min-height: 100svh) {
     .hero {

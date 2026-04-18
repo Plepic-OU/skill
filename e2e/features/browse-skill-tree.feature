@@ -3,7 +3,7 @@ Feature: Browse skill tree
   Scenario: View all three skill axes
     Given I open the skill tree page
     Then I should see the "Autonomy" path
-    And I should see the "Parallel Execution" path
+    And I should see the "Parallelism" path
     And I should see the "Skill Usage" path
 
   Scenario: Expand a node to see details

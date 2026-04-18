@@ -64,8 +64,8 @@ export default function SkillTreeLayout({
       <Header syncStatus={syncStatus} mode={headerMode} state={state} />
       <Hero state={state} visitorName={visitorName} variant={isLanding ? 'landing' : 'profile'} />
       {!isLanding && crest}
-      <PathNav state={state} />
       {showFirstRunHint && <FirstRunHint />}
+      <PathNav state={state} />
       <SkillTree state={state} onClaim={onClaim} onUnclaim={onUnclaim} readonly={readOnly} />
       {isLanding && crest}
       {stakes}

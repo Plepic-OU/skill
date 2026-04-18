@@ -10,6 +10,7 @@
   top: 56px;
   z-index: 50;
   padding: 0.5rem var(--space-md);
+  margin-bottom: var(--space-lg);
   background: color-mix(in srgb, var(--parchment) 94%, transparent);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid color-mix(in srgb, var(--parchment-edge) 75%, transparent);
