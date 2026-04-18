@@ -79,7 +79,7 @@ Then('I do not see claim or unclaim buttons', async ({ page }) => {
   // Now assert that no claim/unclaim buttons are visible within the expanded view
   const claimBtns = page.getByRole('button', { name: 'This is me' })
   await expect(claimBtns).toHaveCount(0)
-  const unclaimBtns = page.getByRole('button', { name: 'Not here yet' })
+  const unclaimBtns = page.getByRole('button', { name: 'Step back one' })
   await expect(unclaimBtns).toHaveCount(0)
 })
 

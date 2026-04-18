@@ -17,7 +17,7 @@ Feature: Claim and unclaim levels
     When I expand the "Review Every Edit" node
     And I click the "This is me" action
     And I expand the "Review Every Edit" node
-    And I click the "Not here yet" action
+    And I click the "Step back one" action
     Then the "Review Every Edit" node should not be claimed
 
   Scenario: Claiming level 3 marks levels 1 and 2 as claimed

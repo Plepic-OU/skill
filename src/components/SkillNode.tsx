@@ -61,7 +61,7 @@ export default function SkillNode({
     }
   }
 
-  const showClaimBtn = !readonly && nodeState !== 'claimed'
+  const showClaimBtn = !readonly && !isHighestClaimed
   const showUnclaimBtn = !readonly && nodeState === 'claimed' && isHighestClaimed
 
   return (
@@ -136,7 +136,7 @@ export default function SkillNode({
             className={`${styles.actionBtn} ${styles.unclaimBtn}`}
             onClick={handleActionClick}
           >
-            Not here yet
+            Step back one
           </button>
         )}
       </div>
