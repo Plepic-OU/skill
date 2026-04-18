@@ -169,7 +169,7 @@ export default function LevelCrest({ state, visitor }: LevelCrestProps) {
           {AXIS_IDS.map((id) => {
             const axis = skillTreeData.axes[id]
             return (
-              <span key={id} className={styles.breakdownItem}>
+              <span key={id} className={styles.breakdownItem} data-axis={id}>
                 <span className={styles.breakdownDot} style={{ background: axis.color }} />
                 <span className={styles.breakdownName}>{axis.name}</span>
                 <span className={styles.breakdownLevel}>

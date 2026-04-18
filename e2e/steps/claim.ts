@@ -42,6 +42,8 @@ Then('the {string} node should not be claimed', async ({ page }, name: string) =
 })
 
 Then('the Autonomy progress chip should show {string}', async ({ page }, value: string) => {
-  const chip = page.locator('[aria-live="polite"]').getByText(/Autonomy/)
+  // Target the breakdown row by stable data-axis, not by text proximity —
+  // "Autonomy" and the level value live in sibling spans.
+  const chip = page.locator('[data-axis="autonomy"]')
   await expect(chip).toContainText(value)
 })
