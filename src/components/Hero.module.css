@@ -5,6 +5,12 @@
   padding: var(--space-3xl) var(--space-xl) var(--space-lg);
 }
 
+/* On profile pages the crest carries the headline, so the hero title becomes
+   a smaller kicker — same words, drastically less visual weight. */
+.heroProfile {
+  padding: var(--space-xl) var(--space-xl) var(--space-xs);
+}
+
 .title {
   font-family: var(--font-display);
   font-size: clamp(2rem, 1.5rem + 3vw, 3.2rem);
@@ -41,6 +47,22 @@
   );
   border-radius: 2px;
   -webkit-text-fill-color: initial;
+}
+
+.heroProfile .title {
+  font-size: clamp(0.8rem, 0.7rem + 0.4vw, 0.95rem);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  background: none;
+  -webkit-text-fill-color: initial;
+  text-shadow: none;
+  margin-bottom: 0;
+  line-height: 1.2;
+}
+.heroProfile .title::after {
+  display: none;
 }
 
 .subtitle {

@@ -7,15 +7,19 @@ const AXIS_IDS = Object.keys(skillTreeData.axes) as AxisId[]
 interface HeroProps {
   state: SkillState
   visitorName?: string
+  variant?: 'landing' | 'profile'
 }
 
-export default function Hero({ state, visitorName }: HeroProps) {
+export default function Hero({ state, visitorName, variant = 'landing' }: HeroProps) {
+  const isProfile = variant === 'profile' || Boolean(visitorName)
+  const heroClass = `${styles.hero} ${isProfile ? styles.heroProfile : ''}`
+
   return (
-    <section className={styles.hero}>
+    <section className={heroClass}>
       <h1 className={styles.title}>
         {visitorName ? `${visitorName}\u2019s Agentic Skills` : 'Map Your Agentic Skills'}
       </h1>
-      {!visitorName && (
+      {!isProfile && (
         <p className={styles.subtitle}>
           Where are you on the path to agentic development mastery? Claim the levels you've reached
           and see what's next.

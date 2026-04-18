@@ -30,7 +30,11 @@ export default function SkillTreeLayout({
   return (
     <>
       <Header syncStatus={syncStatus} mode={headerMode} />
-      <Hero state={state} visitorName={visitorName} />
+      <Hero
+        state={state}
+        visitorName={visitorName}
+        variant={headerMode === 'landing' ? 'landing' : 'profile'}
+      />
       <LevelCrest state={state} visitor={readOnly} />
       {readOnly || !onSafetyZone ? (
         <SafetyZoneBadge zoneId={state.safetyZone} />
