@@ -4,6 +4,7 @@ import FirstRunHint from './FirstRunHint'
 import Header from './Header'
 import Hero from './Hero'
 import LevelCrest from './LevelCrest'
+import PathNav from './PathNav'
 import SafetyZoneSelector from './SafetyZoneSelector'
 import SafetyZoneBadge from './SafetyZoneBadge'
 import SkillTree from './SkillTree'
@@ -63,6 +64,7 @@ export default function SkillTreeLayout({
       <Header syncStatus={syncStatus} mode={headerMode} state={state} />
       <Hero state={state} visitorName={visitorName} variant={isLanding ? 'landing' : 'profile'} />
       {!isLanding && crest}
+      <PathNav state={state} />
       {showFirstRunHint && <FirstRunHint />}
       <SkillTree state={state} onClaim={onClaim} onUnclaim={onUnclaim} readonly={readOnly} />
       {isLanding && crest}

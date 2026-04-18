@@ -2,8 +2,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* Offset for the sticky header when scrollIntoView targets this path. */
-  scroll-margin-top: 72px;
+  /* Header 56 + sticky PathNav ~50 + breathing. Applies when users tap a
+     nav tile and we scrollIntoView this section. */
+  scroll-margin-top: 120px;
 }
 
 /* ── Path Header with Ribbon ── */
@@ -11,47 +12,10 @@
   text-align: center;
   margin-bottom: var(--space-xl);
   position: relative;
-  /* Reset button defaults when the header is a <button> (collapsible paths) */
-  background: transparent;
-  border: none;
-  padding: 0;
-  color: inherit;
-  font: inherit;
-  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-/* Make the header an obvious click target when the path is collapsible. */
-.collapsible .pathHeader {
-  cursor: pointer;
-  border-radius: 14px;
-  padding: 0.25rem 0.5rem;
-  transition: background var(--transition-fast);
-}
-/* Hover tint only on devices that actually hover — on touch, :hover sticks
-   after the tap and looks like a stuck state. */
-@media (hover: hover) {
-  .collapsible .pathHeader:hover {
-    background: color-mix(in srgb, var(--node-color) 5%, transparent);
-  }
-}
-.collapsible .pathHeader:focus-visible {
-  outline: 2px solid var(--node-color);
-  outline-offset: 2px;
-}
-
-/* When collapsed, compact the header so three ribbons share the viewport.
-   The icon lives in the ribbon's color; the separate large glyph is excess. */
-.collapsed .pathHeader {
-  margin-bottom: var(--space-sm);
-}
-.collapsed .pathSubtitle {
-  display: none;
-}
-.collapsed .pathIcon {
-  display: none;
+  width: 100%;
 }
 
 .pathIcon {
@@ -125,13 +89,6 @@
   text-shadow: none;
 }
 
-.ribbonChevron {
-  font-size: 1.2rem;
-  line-height: 1;
-  opacity: 0.9;
-  transition: transform var(--transition-smooth);
-}
-
 .ribbonFoldLeft,
 .ribbonFoldRight {
   position: absolute;
@@ -159,27 +116,6 @@
   max-width: 220px;
   line-height: 1.4;
   margin: 0.3rem auto 0;
-}
-
-/* ── Collapsible body wrapper — animates to zero height ── */
-.pathBody {
-  display: grid;
-  grid-template-rows: 1fr;
-  width: 100%;
-  transition: grid-template-rows 360ms cubic-bezier(0.25, 1, 0.5, 1);
-}
-.collapsed .pathBody {
-  grid-template-rows: 0fr;
-}
-.pathBody > * {
-  overflow: hidden;
-  min-height: 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .pathBody {
-    transition: none;
-  }
 }
 
 /* ── Node List ── */
