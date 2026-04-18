@@ -19,8 +19,7 @@ export default function Hero({ visitorName, variant = 'landing' }: HeroProps) {
       </h1>
       {!isProfile && (
         <p className={styles.subtitle}>
-          Self-assess how you code with AI — claim where you stand, and your class sharpens as you
-          go.
+          Where are you with AI coding? Mark your level on each path — your class appears as you go.
         </p>
       )}
       {isVisitor && (

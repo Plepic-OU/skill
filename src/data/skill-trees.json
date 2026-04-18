@@ -354,7 +354,7 @@
       "normal": {
         "label": "Normal",
         "icon": "groups",
-        "hint": "production systems",
+        "hint": "real users",
         "color": "#2563eb",
         "bg": "#eff6ff",
         "border": "#93c5fd",
@@ -363,7 +363,7 @@
       "hardcore": {
         "label": "Hardcore",
         "icon": "bolt",
-        "hint": "cascading failures",
+        "hint": "business-critical",
         "color": "#dc2626",
         "bg": "#fef2f2",
         "border": "#fca5a5",

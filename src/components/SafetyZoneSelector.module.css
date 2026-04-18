@@ -34,10 +34,9 @@
 }
 
 .options {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--space-sm);
-  justify-content: center;
-  flex-wrap: wrap;
 }
 
 .btn {
@@ -54,7 +53,8 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   background: transparent;
-  min-width: 5.5rem;
+  /* Width is controlled by the grid so every option is visually equal. */
+  min-width: 0;
 }
 .btn:hover {
   transform: translateY(-2px) !important;
@@ -92,16 +92,24 @@
   font-style: italic;
 }
 
-@media (max-width: 380px) {
+/* Drop to 2×2 on narrow mobile — 4-across gets too cramped for "Impossible". */
+@media (max-width: 480px) {
   .options {
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--space-xs);
   }
   .btn {
+    font-size: 0.7rem;
+    padding: 0.45rem 0.6rem 0.4rem;
+  }
+}
+
+@media (max-width: 340px) {
+  .btn {
     font-size: 0.65rem;
-    padding: 0.4rem 0.5rem 0.35rem;
-    min-width: 4.5rem;
+    padding: 0.4rem 0.45rem 0.35rem;
   }
   .btnHint {
-    font-size: 0.55rem;
+    font-size: 0.58rem;
   }
 }
