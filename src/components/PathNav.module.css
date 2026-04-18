@@ -10,7 +10,10 @@
   top: 56px;
   z-index: 50;
   padding: 0.5rem var(--space-md);
-  margin-bottom: var(--space-lg);
+  /* Scales with viewport so the first path ribbon stays below the fold on
+     first paint across phone sizes, while still giving generous breathing
+     beneath the nav once scrolled. */
+  margin-bottom: max(6rem, 14svh);
   background: color-mix(in srgb, var(--parchment) 94%, transparent);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid color-mix(in srgb, var(--parchment-edge) 75%, transparent);

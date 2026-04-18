@@ -275,6 +275,10 @@
   outline: 2px solid var(--green-vivid);
   outline-offset: 2px;
 }
+.btnShareIcon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
 
 .btnSignInSecondary {
   font-family: var(--font-body);

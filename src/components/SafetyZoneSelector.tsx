@@ -16,7 +16,6 @@ function getZoneStyle(isActive: boolean, zone: { color: string }): React.CSSProp
     color: isActive ? 'white' : zone.color,
     background: isActive ? zone.color : 'transparent',
     boxShadow: isActive ? `0 3px 12px ${zone.color}4d` : 'none',
-    transform: isActive ? 'scale(1.05)' : 'none',
     fontWeight: isActive ? 700 : 600,
   } as React.CSSProperties
 }

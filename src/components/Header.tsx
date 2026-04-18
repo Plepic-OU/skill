@@ -8,7 +8,6 @@ import SignInModal from './SignInModal'
 import ConfirmDialog from './ConfirmDialog'
 import ShareButton from './ShareButton'
 import type { SkillState, SyncStatus } from '../types/skill-tree'
-import { LinkIcon } from './icons'
 import styles from './Header.module.css'
 
 interface HeaderProps {
@@ -126,7 +125,9 @@ function LandingControls({ onSignIn }: LandingControlsProps) {
   return (
     <>
       <button className={styles.btnShare} onClick={onSignIn} aria-label="Share">
-        <LinkIcon />
+        <span className={`material-symbols-rounded ${styles.btnShareIcon}`} aria-hidden="true">
+          share
+        </span>
         <span className={styles.btnShareLabel}>Share</span>
       </button>
       <button className={styles.btnLogin} onClick={onSignIn}>
