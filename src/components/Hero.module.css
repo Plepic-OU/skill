@@ -65,12 +65,26 @@
   display: none;
 }
 
+@media (max-width: 520px) {
+  .hero {
+    padding: var(--space-2xl) var(--space-md) var(--space-md);
+  }
+  .heroProfile {
+    padding: var(--space-lg) var(--space-md) var(--space-xs);
+  }
+  .title::after {
+    width: 120px;
+    margin-top: 0.6rem;
+  }
+}
+
 .subtitle {
   color: var(--text-2);
-  font-size: 1rem;
-  max-width: 520px;
+  font-size: clamp(0.92rem, 0.88rem + 0.2vw, 1.05rem);
+  max-width: 440px;
   margin: var(--space-md) auto 0;
-  line-height: 1.6;
+  line-height: 1.55;
+  padding: 0 var(--space-sm);
 }
 
 .visitorExplainer {

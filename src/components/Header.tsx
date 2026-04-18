@@ -87,12 +87,13 @@ interface LandingControlsProps {
 function LandingControls({ onSignIn }: LandingControlsProps) {
   return (
     <>
-      <button className={styles.btnShare} onClick={onSignIn}>
+      <button className={styles.btnShare} onClick={onSignIn} aria-label="Share">
         <LinkIcon />
-        Share
+        <span className={styles.btnShareLabel}>Share</span>
       </button>
       <button className={styles.btnLogin} onClick={onSignIn}>
-        Sign in to save
+        <span className={styles.btnLoginFull}>Sign in to save</span>
+        <span className={styles.btnLoginShort}>Sign in</span>
       </button>
     </>
   )
@@ -141,7 +142,7 @@ export default function Header({ syncStatus = 'idle', mode = 'landing' }: Header
       <div className={styles.logo}>
         <Link to="/" className={styles.logoLink}>
           <div className={styles.logoIcon}>P</div>
-          Agentic Skills
+          <span className={styles.logoWordmark}>Agentic Skills</span>
         </Link>
       </div>
       <div className={styles.authArea}>

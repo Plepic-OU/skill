@@ -393,7 +393,12 @@
 @media (max-width: 520px) {
   .crest {
     margin-top: var(--space-lg);
-    padding: var(--space-xl) var(--space-md) var(--space-md);
+    padding: var(--space-xl) var(--space-lg) var(--space-md);
+    max-width: 100%;
+  }
+  /* Tighten parchment inset so bar + breakdown have clear margin from the edge */
+  .crest::before {
+    inset: 0.2rem 0.4rem;
   }
   .classNameFlourishLeft,
   .classNameFlourishRight {
@@ -402,6 +407,32 @@
   }
   .stats {
     font-size: 0.72rem;
-    gap: 0.8rem;
+    gap: 0.6rem;
+  }
+  /* Cap the bar narrower than the content area so it feels framed, not edge-to-edge */
+  .barRow {
+    max-width: 86%;
+  }
+  /* Stack the "By path" items so Skill Usage doesn't orphan onto its own line */
+  .breakdown {
+    max-width: 86%;
+  }
+  .breakdownRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+    width: 100%;
+  }
+  .breakdownItem {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .breakdownLevel {
+    margin-left: auto;
+  }
+  /* The max-level sealed mark also gets room so the dividers don't run out */
+  .sealMark {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
   }
 }

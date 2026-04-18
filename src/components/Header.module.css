@@ -223,3 +223,50 @@
   outline: 2px solid var(--green-vivid);
   outline-offset: 2px;
 }
+
+/* Hide full-length login label by default; wider breakpoint restores it. */
+.btnLoginFull {
+  display: none;
+}
+.btnLoginShort {
+  display: inline;
+}
+
+/* ── Responsive ── */
+
+/* Compact phones: hide wordmark + Share label. Keep the P icon + primary CTA. */
+@media (max-width: 560px) {
+  .header {
+    padding: 0 var(--space-md);
+    gap: var(--space-xs);
+  }
+  .logoWordmark {
+    display: none;
+  }
+  .btnShareLabel {
+    display: none;
+  }
+  .btnShare {
+    padding: 0.3rem;
+  }
+  .authArea {
+    gap: 0.15rem;
+  }
+}
+
+/* Comfortable phones and up: show the Share label + full wordmark. */
+@media (min-width: 561px) {
+  .authArea {
+    gap: 0.25rem;
+  }
+}
+
+/* Large screens: use the full "Sign in to save" CTA. */
+@media (min-width: 640px) {
+  .btnLoginFull {
+    display: inline;
+  }
+  .btnLoginShort {
+    display: none;
+  }
+}
