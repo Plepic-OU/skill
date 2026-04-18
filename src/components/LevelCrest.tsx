@@ -11,6 +11,66 @@ interface LevelCrestProps {
   visitor?: boolean
 }
 
+interface ProgressViewProps {
+  isMaxLevel: boolean
+  justReached: boolean
+  unifiedLevel: number
+  xpIntoLevel: number
+  xpForNextLevel: number
+  barPercent: number
+}
+
+function renderProgress({
+  isMaxLevel,
+  justReached,
+  unifiedLevel,
+  xpIntoLevel,
+  xpForNextLevel,
+  barPercent,
+}: ProgressViewProps) {
+  if (isMaxLevel) {
+    return (
+      <div className={styles.sealMark} aria-label="Max level reached">
+        <span className={styles.sealMarkText}>
+          <span className={styles.sealGlyph} aria-hidden="true">
+            auto_awesome
+          </span>
+          Fully realized
+          <span className={styles.sealGlyph} aria-hidden="true">
+            auto_awesome
+          </span>
+        </span>
+      </div>
+    )
+  }
+  if (justReached) {
+    return (
+      <div className={styles.justReached} aria-label={`Level ${unifiedLevel} reached`}>
+        <span className={styles.justReachedStamp}>
+          <span className={styles.justReachedIcon} aria-hidden="true">
+            check_circle
+          </span>
+          Lv {unifiedLevel} reached
+        </span>
+      </div>
+    )
+  }
+  return (
+    <div className={styles.barRow}>
+      <div
+        className={styles.bar}
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={xpForNextLevel}
+        aria-valuenow={xpIntoLevel}
+        aria-label={`${xpIntoLevel} of ${xpForNextLevel} XP toward level ${unifiedLevel + 1}`}
+      >
+        <div className={styles.barFill} style={{ width: `${barPercent}%` }} />
+      </div>
+    </div>
+  )
+}
+
 export default function LevelCrest({ state, visitor }: LevelCrestProps) {
   const progression = computeProgression(state)
   const {
@@ -45,6 +105,10 @@ export default function LevelCrest({ state, visitor }: LevelCrestProps) {
 
   const barPercent = isMaxLevel ? 100 : (xpIntoLevel / xpForNextLevel) * 100
   const xpRemaining = xpForNextLevel - xpIntoLevel
+  // At an exact level boundary (xpIntoLevel === 0) the bar would render empty,
+  // misreading as "you haven't started". Swap it for a stamp that celebrates
+  // the milestone instead.
+  const justReached = !isMaxLevel && unifiedLevel >= 1 && xpIntoLevel === 0
 
   const classes = [styles.crest, celebrate ? styles.levelUp : '', isMaxLevel ? styles.maxState : '']
     .filter(Boolean)
@@ -74,32 +138,14 @@ export default function LevelCrest({ state, visitor }: LevelCrestProps) {
       </h2>
       <p className={styles.tagline}>{classInfo.tagline}</p>
 
-      {isMaxLevel ? (
-        <div className={styles.sealMark} aria-label="Max level reached">
-          <span className={styles.sealMarkText}>
-            <span className={styles.sealGlyph} aria-hidden="true">
-              auto_awesome
-            </span>
-            Fully realized
-            <span className={styles.sealGlyph} aria-hidden="true">
-              auto_awesome
-            </span>
-          </span>
-        </div>
-      ) : (
-        <div className={styles.barRow}>
-          <div
-            className={styles.bar}
-            role="progressbar"
-            aria-valuemin={0}
-            aria-valuemax={xpForNextLevel}
-            aria-valuenow={xpIntoLevel}
-            aria-label={`${xpIntoLevel} of ${xpForNextLevel} XP toward level ${unifiedLevel + 1}`}
-          >
-            <div className={styles.barFill} style={{ width: `${barPercent}%` }} />
-          </div>
-        </div>
-      )}
+      {renderProgress({
+        isMaxLevel,
+        justReached,
+        unifiedLevel,
+        xpIntoLevel,
+        xpForNextLevel,
+        barPercent,
+      })}
 
       <div className={styles.stats}>
         {isMaxLevel ? (

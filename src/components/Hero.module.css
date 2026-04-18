@@ -19,15 +19,6 @@
   margin-bottom: var(--space-xs);
   letter-spacing: -0.02em;
   line-height: 1.1;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
-  background: linear-gradient(
-    180deg,
-    var(--ink) 40%,
-    color-mix(in srgb, var(--green-dark) 60%, var(--ink)) 100%
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 /* Decorative flourish under hero title */
@@ -55,9 +46,6 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text-2);
-  background: none;
-  -webkit-text-fill-color: initial;
-  text-shadow: none;
   margin-bottom: 0;
   line-height: 1.2;
 }
