@@ -31,10 +31,18 @@ export default function SkillNode({
   const indicatorRef = useRef<HTMLDivElement>(null)
   useClaimAnimation(indicatorRef, color, nodeState === 'claimed', styles.justClaimed)
 
-  // For the default level-1 node on any axis, "You are here" overclaims:
-  // the user hasn't actively marked their position yet. Call it a neutral
-  // starting point until they progress past the default.
-  const highestClaimedLabel = level.level === 1 ? 'Starting point' : 'You are here'
+  // On the visitor view there's no "you" to be here, so the owner-voiced
+  // "You are here" / "Starting point" labels read oddly. Use a neutral
+  // "Current" marker instead. Owner view keeps the personal copy since the
+  // level-1 default shouldn't overclaim as a milestone.
+  let highestClaimedLabel: string
+  if (readonly) {
+    highestClaimedLabel = `Lv ${level.level} · Current`
+  } else if (level.level === 1) {
+    highestClaimedLabel = 'Starting point'
+  } else {
+    highestClaimedLabel = 'You are here'
+  }
   const levelLabels: Record<NodeState, string> = {
     claimed: isHighestClaimed ? highestClaimedLabel : `Lv ${level.level} · Reached`,
     frontier: `Lv ${level.level}`,

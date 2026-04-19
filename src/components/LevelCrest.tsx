@@ -135,17 +135,18 @@ export default function LevelCrest({ state, visitor }: LevelCrestProps) {
       </h2>
       <p className={styles.tagline}>{classInfo.tagline}</p>
 
-      {renderProgress({
-        isMaxLevel,
-        justReached,
-        unifiedLevel,
-        xpIntoLevel,
-        xpForNextLevel,
-        barPercent,
-      })}
+      {!visitor &&
+        renderProgress({
+          isMaxLevel,
+          justReached,
+          unifiedLevel,
+          xpIntoLevel,
+          xpForNextLevel,
+          barPercent,
+        })}
 
       <div className={styles.stats}>
-        {isMaxLevel ? (
+        {isMaxLevel || visitor ? (
           <span>
             <b>{completedSkills} of 18</b> skills
           </span>
