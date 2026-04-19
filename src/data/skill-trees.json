@@ -120,7 +120,7 @@
       ]
     },
     "parallelExecution": {
-      "name": "Parallel Execution",
+      "name": "Parallelism",
       "description": "How many concurrent AI tasks you manage and how they're coordinated.",
       "icon": "bolt",
       "color": "#0891b2",
@@ -203,10 +203,29 @@
             "Hard to debug: which decision in the chain caused the bad outcome"
           ],
           "howToProgress": [
-            "This is the frontier of parallel execution.",
             "Build robust monitoring and cost controls before enabling full autonomy",
             "Implement circuit breakers that pause orchestration on anomalies",
-            "Start with narrow domains where autonomous decomposition is well-understood"
+            "Start with narrow domains where autonomous decomposition is well-understood",
+            "Begin delegating the orchestration policy itself — let the system choose how many agents to spawn"
+          ]
+        },
+        {
+          "level": 6,
+          "name": "Self-Organizing Swarm",
+          "desc": "The system decides the shape of the swarm. Agents spawn, coordinate, and retire other agents as goals demand — you set outcomes, not task graphs.",
+          "levelIcon": "hive",
+          "obstacles": [
+            "Runaway scaling — swarms expand faster than budget or rate limits allow",
+            "Coordination failures emerge from agent interactions no one scripted",
+            "Goals drift subtly as the swarm reinterprets them across generations",
+            "Post-hoc explainability: reconstructing why the swarm took a given path"
+          ],
+          "howToProgress": [
+            "This is the frontier of parallel execution.",
+            "Invest in outcome-level observability — measure results, not agent activity",
+            "Enforce hard budget and rate caps the swarm cannot override",
+            "Keep a kill switch that collapses the swarm to a single-agent fallback",
+            "Treat goal specifications as code: version them, test them, review them"
           ]
         }
       ]
@@ -330,25 +349,25 @@
         "color": "#16a34a",
         "bg": "#f0fdf4",
         "border": "#86efac",
-        "desc": "Mistake shows incorrect information. Static websites, hobby projects, personal tools. Mistakes are annoying but recoverable."
+        "desc": "Hobby projects, personal tools, static sites. Mistakes are annoying but recoverable."
       },
       "normal": {
         "label": "Normal",
         "icon": "groups",
-        "hint": "production systems",
+        "hint": "real users",
         "color": "#2563eb",
         "bg": "#eff6ff",
         "border": "#93c5fd",
-        "desc": "Mistake stops your service for your users. Production systems with real users, but bounded blast radius."
+        "desc": "Production systems with real users. Mistakes stop the service, but the blast radius stays bounded."
       },
       "hardcore": {
         "label": "Hardcore",
         "icon": "bolt",
-        "hint": "cascading failures",
+        "hint": "business-critical",
         "color": "#dc2626",
         "bg": "#fef2f2",
         "border": "#fca5a5",
-        "desc": "Mistake stops client services too. Your failure cascades to downstream systems and customers."
+        "desc": "Business-critical systems. Failures cascade to downstream services and customers."
       },
       "impossible": {
         "label": "Impossible",
@@ -357,7 +376,7 @@
         "color": "#7c3aed",
         "bg": "#f5f3ff",
         "border": "#c4b5fd",
-        "desc": "Mistake costs lives. Medical devices, autonomous vehicles, critical infrastructure. The highest stakes."
+        "desc": "Life-safety domains — medical devices, autonomous vehicles, critical infrastructure. The highest stakes."
       }
     }
   }

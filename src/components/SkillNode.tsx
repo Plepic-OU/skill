@@ -31,10 +31,22 @@ export default function SkillNode({
   const indicatorRef = useRef<HTMLDivElement>(null)
   useClaimAnimation(indicatorRef, color, nodeState === 'claimed', styles.justClaimed)
 
+  // On the visitor view there's no "you" to be here, so the owner-voiced
+  // "You are here" / "Starting point" labels read oddly. Use a neutral
+  // "Current" marker instead. Owner view keeps the personal copy since the
+  // level-1 default shouldn't overclaim as a milestone.
+  let highestClaimedLabel: string
+  if (readonly) {
+    highestClaimedLabel = `Lv ${level.level} · Current`
+  } else if (level.level === 1) {
+    highestClaimedLabel = 'Starting point'
+  } else {
+    highestClaimedLabel = 'You are here'
+  }
   const levelLabels: Record<NodeState, string> = {
-    claimed: isHighestClaimed ? 'You are here' : `Level ${level.level}`,
-    frontier: 'Up next',
-    future: `Level ${level.level}`,
+    claimed: isHighestClaimed ? highestClaimedLabel : `Lv ${level.level} · Reached`,
+    frontier: `Lv ${level.level}`,
+    future: `Lv ${level.level}`,
   }
   const levelLabel = levelLabels[nodeState]
 
@@ -61,7 +73,7 @@ export default function SkillNode({
     }
   }
 
-  const showClaimBtn = !readonly && nodeState !== 'claimed'
+  const showClaimBtn = !readonly && !isHighestClaimed
   const showUnclaimBtn = !readonly && nodeState === 'claimed' && isHighestClaimed
 
   return (
@@ -72,6 +84,7 @@ export default function SkillNode({
       aria-expanded={isExpanded}
       aria-label={`Level ${level.level}: ${level.name} — ${ariaState}`}
       data-skill-name={level.name}
+      data-level={level.level}
       onClick={onToggle}
       onKeyDown={handleKeyDown}
     >
@@ -94,7 +107,7 @@ export default function SkillNode({
         <div className={styles.descPreview}>{level.desc}</div>
       )}
 
-      <div className={styles.detail}>
+      <div className={styles.detail} data-detail>
         <div className={styles.descFull}>{level.desc}</div>
 
         {level.verification && (
@@ -117,7 +130,7 @@ export default function SkillNode({
 
         {level.howToProgress.length > 0 && (
           <>
-            <div className={styles.sectionTitle}>How to get here</div>
+            <div className={styles.sectionTitle}>How to reach this level</div>
             <ul className={styles.detailList}>
               {level.howToProgress.map((h, i) => (
                 <li key={i}>{h}</li>
@@ -136,7 +149,7 @@ export default function SkillNode({
             className={`${styles.actionBtn} ${styles.unclaimBtn}`}
             onClick={handleActionClick}
           >
-            Not here yet
+            Step back one
           </button>
         )}
       </div>

@@ -1,0 +1,450 @@
+/*
+ * LevelCrest — RPG identity, echoes QuestPath ribbon language
+ * Not a generic SaaS card: parchment surface, ribbon for the class title,
+ * parchment-tinted XP bar, distinct max-level payoff.
+ */
+
+.crest {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  max-width: 620px;
+  margin: var(--space-xl) auto var(--space-md);
+  padding: calc(var(--space-xl) + 0.3rem) var(--space-xl) var(--space-lg);
+  isolation: isolate;
+  /* Header is 56px sticky — offset so the crest seal isn't clipped when the
+     header level badge scrolls the user here. */
+  scroll-margin-top: 72px;
+}
+
+/* Parchment backdrop with torn-edge feel rather than a rounded card */
+.crest::before {
+  content: '';
+  position: absolute;
+  inset: 0.2rem 1.2rem;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse at 20% 15%, rgba(180, 150, 100, 0.08), transparent 55%),
+    radial-gradient(ellipse at 85% 75%, rgba(140, 110, 70, 0.06), transparent 45%),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--parchment) 92%, white) 0%,
+      var(--parchment) 100%
+    );
+  border-top: 1px solid color-mix(in srgb, var(--parchment-edge) 70%, white);
+  border-bottom: 1px solid color-mix(in srgb, var(--parchment-edge) 85%, var(--ink));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(80, 50, 10, 0.08);
+}
+
+/* Decorative end-caps flanking the crest — echoes map cartouches */
+.crest::after {
+  content: '';
+  position: absolute;
+  top: calc(var(--space-xl) - 0.3rem);
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--parchment-edge) 80%, var(--green-dark)) 20%,
+    color-mix(in srgb, var(--parchment-edge) 80%, var(--green-dark)) 80%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+/* ── Ribbon holding the level number — a small seal-pill ── */
+
+.levelSeal {
+  position: absolute;
+  top: calc(-0.9rem);
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.85rem;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--green-brand) 85%, white) 0%,
+    var(--green-brand) 45%,
+    var(--green-dark) 100%
+  );
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  border-radius: 999px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.15),
+    0 4px 10px rgba(19, 123, 48, 0.3),
+    0 1px 2px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+  z-index: 1;
+}
+.levelSealNumber {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+.sealIcon {
+  font-family: 'Material Symbols Rounded';
+  font-size: 1rem;
+  line-height: 1;
+  color: color-mix(in srgb, #fff 88%, #ffdb70);
+}
+
+/* ── Class title block ── */
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 1.2rem + 2.2vw, 2.5rem);
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  margin: 0;
+  text-align: center;
+}
+.prefix {
+  color: var(--green-dark);
+  font-style: italic;
+  font-weight: 600;
+  display: block;
+  font-size: 0.55em;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.2em;
+}
+.className {
+  display: inline-block;
+  position: relative;
+}
+
+.tagline {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  color: var(--text-2);
+  text-align: center;
+  max-width: 440px;
+  margin: 0;
+  line-height: 1.45;
+  font-style: italic;
+}
+
+/* ── XP progress — vine-track rather than a raw progress bar ── */
+
+.barRow {
+  width: 100%;
+  max-width: 440px;
+  margin-top: var(--space-xs);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  align-items: center;
+}
+.bar {
+  position: relative;
+  width: 100%;
+  height: 10px;
+  border-radius: 2px;
+  background:
+    linear-gradient(180deg, rgba(80, 50, 10, 0.08), rgba(80, 50, 10, 0.04)), var(--parchment);
+  border: 1px solid color-mix(in srgb, var(--parchment-edge) 80%, var(--ink));
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(80, 50, 10, 0.1);
+}
+.barFill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--green-brand) 85%, white) 0%,
+    var(--green-brand) 50%,
+    var(--green-dark) 100%
+  );
+  border-right: 1px solid color-mix(in srgb, var(--green-dark) 70%, black);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 0 8px rgba(19, 123, 48, 0.3);
+  transition: width 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.stats {
+  display: flex;
+  gap: 0.8rem;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--text-2);
+  flex-wrap: wrap;
+  justify-content: center;
+  font-variant-numeric: tabular-nums;
+  margin-top: 0.1rem;
+}
+.stats b {
+  color: var(--ink);
+  font-weight: 700;
+}
+.stats .sep {
+  opacity: 0.3;
+}
+
+/* ── Axis breakdown ("By path") — clearly secondary to the class + level ── */
+
+.breakdown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
+  width: 100%;
+  max-width: 460px;
+  border-top: 1px dashed color-mix(in srgb, var(--parchment-edge) 70%, transparent);
+}
+.breakdownLabel {
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--text-2) 80%, var(--green-dark));
+}
+.breakdownRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem 1.1rem;
+}
+.breakdownItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+.breakdownDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 3px currentColor;
+}
+.breakdownName {
+  font-weight: 500;
+}
+.breakdownLevel {
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+
+/* ── Just-reached treatment: milestone stamp when xpIntoLevel === 0 ── */
+
+.justReached {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 440px;
+  margin-top: var(--space-xs);
+}
+.justReachedStamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.95rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--green-dark);
+  background: color-mix(in srgb, var(--green-brand) 8%, var(--parchment));
+  border: 1px dashed color-mix(in srgb, var(--green-dark) 55%, transparent);
+  border-radius: 999px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 1px 2px rgba(80, 50, 10, 0.06);
+}
+.justReachedIcon {
+  font-family: 'Material Symbols Rounded';
+  font-size: 1.05rem;
+  line-height: 1;
+  color: var(--green-brand);
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--green-brand) 40%, transparent));
+}
+
+/* ── Max-level treatment: a sealed crest instead of a progress bar ── */
+
+.maxState .levelSeal {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--green-brand) 80%, #ffd475) 0%,
+    var(--green-brand) 45%,
+    var(--green-dark) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 230, 160, 0.5),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+    0 4px 12px rgba(19, 123, 48, 0.35),
+    0 0 0 2px color-mix(in srgb, var(--parchment) 60%, #f5c24a) inset,
+    0 0 16px rgba(245, 194, 74, 0.35);
+}
+.maxState .sealIcon {
+  color: #ffe08a;
+  filter: drop-shadow(0 0 3px rgba(255, 210, 100, 0.6));
+}
+
+.sealMark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.2rem 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--green-dark);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  position: relative;
+}
+.sealMark::before,
+.sealMark::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--parchment-edge) 40%, var(--green-dark)),
+    transparent
+  );
+  max-width: 80px;
+}
+.sealMarkText {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.sealGlyph {
+  font-family: 'Material Symbols Rounded';
+  font-size: 1.2rem;
+  color: color-mix(in srgb, var(--green-dark) 80%, #d4a24c);
+  animation: sealShine 4s ease-in-out infinite;
+}
+@keyframes sealShine {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 1px rgba(245, 194, 74, 0.5));
+  }
+  50% {
+    filter: drop-shadow(0 0 6px rgba(245, 194, 74, 0.9));
+  }
+}
+
+/* ── Level-up pulse ── */
+
+.levelUp {
+  animation: levelUpPulse 0.9s cubic-bezier(0.25, 1, 0.5, 1);
+}
+@keyframes levelUpPulse {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.025);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.levelUp::before {
+  animation: crestGlow 0.9s cubic-bezier(0.25, 1, 0.5, 1);
+}
+@keyframes crestGlow {
+  0% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.5),
+      inset 0 -1px 0 rgba(80, 50, 10, 0.08),
+      0 0 0 0 rgba(19, 123, 48, 0);
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.5),
+      inset 0 -1px 0 rgba(80, 50, 10, 0.08),
+      0 0 30px 6px rgba(19, 123, 48, 0.28);
+  }
+  100% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.5),
+      inset 0 -1px 0 rgba(80, 50, 10, 0.08),
+      0 0 0 0 rgba(19, 123, 48, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .levelUp,
+  .levelUp::before,
+  .sealGlyph {
+    animation: none;
+  }
+  .barFill {
+    transition: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .crest {
+    margin-top: var(--space-sm);
+    padding: var(--space-lg) var(--space-lg) var(--space-md);
+    max-width: 100%;
+  }
+  /* Tighten parchment inset so bar + breakdown have clear margin from the edge */
+  .crest::before {
+    inset: 0.2rem 0.4rem;
+  }
+  .stats {
+    font-size: 0.72rem;
+    gap: 0.6rem;
+  }
+  /* Cap the bar narrower than the content area so it feels framed, not edge-to-edge */
+  .barRow {
+    max-width: 86%;
+  }
+  /* Stack the "By path" items so Skill Usage doesn't orphan onto its own line */
+  .breakdown {
+    max-width: 86%;
+  }
+  .breakdownRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+    width: 100%;
+  }
+  .breakdownItem {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .breakdownLevel {
+    margin-left: auto;
+  }
+  /* The max-level sealed mark also gets room so the dividers don't run out */
+  .sealMark {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+  }
+}

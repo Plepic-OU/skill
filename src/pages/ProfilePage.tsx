@@ -59,29 +59,13 @@ function VisitorProfile({ userId }: { userId: string | undefined }) {
   }
 
   return (
-    <>
-      <div className={styles.profileBanner}>
-        {profile.avatarUrl ? (
-          <img
-            src={profile.avatarUrl}
-            alt=""
-            className={styles.bannerAvatar}
-            referrerPolicy="no-referrer"
-          />
-        ) : (
-          <div className={styles.bannerAvatarFallback}>
-            {profile.displayName?.[0]?.toUpperCase() ?? '?'}
-          </div>
-        )}
-        <h2 className={styles.bannerName}>{profile.displayName}</h2>
-      </div>
-      <SkillTreeLayout
-        headerMode="visitor"
-        state={profile}
-        readOnly
-        visitorName={profile.displayName}
-      />
-    </>
+    <SkillTreeLayout
+      headerMode="visitor"
+      state={profile}
+      readOnly
+      visitorName={profile.displayName}
+      visitorAvatarUrl={profile.avatarUrl}
+    />
   )
 }
 

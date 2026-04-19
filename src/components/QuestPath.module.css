@@ -2,6 +2,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* Header 56 + sticky PathNav ~50 + breathing. Applies when users tap a
+     nav tile and we scrollIntoView this section. */
+  scroll-margin-top: 120px;
 }
 
 /* ── Path Header with Ribbon ── */
@@ -9,6 +12,10 @@
   text-align: center;
   margin-bottom: var(--space-xl);
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 .pathIcon {
@@ -22,7 +29,9 @@
 
 .ribbonBanner {
   position: relative;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
   padding: 0.55rem 2.5rem;
   margin: 0 auto 0.4rem;
   background: linear-gradient(
@@ -63,6 +72,23 @@
   border-color: transparent transparent transparent var(--node-color, var(--green-brand));
 }
 
+.ribbonName {
+  font-weight: inherit;
+}
+
+.ribbonMeta {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.1rem 0.5rem;
+  background: color-mix(in srgb, white 25%, transparent);
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, white 30%, transparent);
+  font-variant-numeric: tabular-nums;
+  text-shadow: none;
+}
+
 .ribbonFoldLeft,
 .ribbonFoldRight {
   position: absolute;
@@ -98,6 +124,7 @@
   flex-direction: column;
   width: 100%;
   max-width: 360px;
+  margin: 0 auto;
   position: relative;
 }
 

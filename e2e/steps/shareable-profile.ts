@@ -57,8 +57,11 @@ When('I navigate to {string}', async ({ page }, path: string) => {
 })
 
 Then('I see their display name', async ({ page }) => {
-  // The profile banner should show the user's name from emulator helper
-  await expect(page.locator('h2').filter({ hasText: TEST_DISPLAY_NAME })).toBeVisible({
+  // The Hero h1 renders "{displayName}'s Agentic Skills" on visitor view
+  // (uses a curly apostrophe), so match the name as a substring.
+  await expect(
+    page.getByRole('heading', { level: 1, name: new RegExp(TEST_DISPLAY_NAME) }),
+  ).toBeVisible({
     timeout: 5000,
   })
 })
@@ -79,7 +82,7 @@ Then('I do not see claim or unclaim buttons', async ({ page }) => {
   // Now assert that no claim/unclaim buttons are visible within the expanded view
   const claimBtns = page.getByRole('button', { name: 'This is me' })
   await expect(claimBtns).toHaveCount(0)
-  const unclaimBtns = page.getByRole('button', { name: 'Not here yet' })
+  const unclaimBtns = page.getByRole('button', { name: 'Step back one' })
   await expect(unclaimBtns).toHaveCount(0)
 })
 

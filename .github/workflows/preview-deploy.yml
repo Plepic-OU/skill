@@ -120,7 +120,7 @@ jobs:
             const marker = '<!-- preview-env -->';
             const url = process.env.PREVIEW_URL;
             const rows = accounts.map(a =>
-              `| ${a.label} | \`${a.email}\` | \`${a.password}\` |`
+              `| ${a.label} | [/profile/${a.uid}](${url}/profile/${a.uid}) | \`${a.email}\` | \`${a.password}\` |`
             ).join('\n');
             const body = [
               marker,
@@ -128,9 +128,9 @@ jobs:
               '',
               `**URL:** ${url}`,
               '',
-              '**Demo accounts:**',
-              '| Account | Email | Password |',
-              '|---------|-------|----------|',
+              '**Demo accounts** (UIDs are stable across deploys):',
+              '| Account | Profile | Email | Password |',
+              '|---------|---------|-------|----------|',
               rows,
               '',
               '> First load after idle may take ~15s (cold start: JVM + emulators + seeding).',

@@ -1,5 +1,4 @@
 import { showToast } from './Toast'
-import { LinkIcon } from './icons'
 import styles from './ShareButton.module.css'
 
 interface ShareButtonProps {
@@ -18,7 +17,9 @@ export default function ShareButton({ url }: ShareButtonProps) {
 
   return (
     <button className={styles.shareBtn} onClick={handleShare} aria-label="Copy profile link">
-      <LinkIcon />
+      <span className={`material-symbols-rounded ${styles.shareIcon}`} aria-hidden="true">
+        share
+      </span>
       Share
     </button>
   )

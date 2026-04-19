@@ -18,5 +18,5 @@ Then('the {string} button should not be active', async ({ page }, label: string)
 })
 
 Then('I should see the hardcore zone description', async ({ page }) => {
-  await expect(page.getByText(/Mistake stops client services/)).toBeVisible()
+  await expect(page.getByText(/Business-critical systems/)).toBeVisible()
 })

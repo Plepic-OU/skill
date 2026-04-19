@@ -25,7 +25,7 @@ describe('App', () => {
         <App />
       </MemoryRouter>,
     )
-    expect(screen.getByRole('heading')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
   })
 
   it('loads default state when localStorage is empty', () => {
@@ -36,17 +36,17 @@ describe('App', () => {
     )
     expect(screen.getByText('Map Your Agentic Skills')).toBeInTheDocument()
 
-    // Default state: level 1 claimed on each axis. Progress chips show "1/{maxLevel}".
+    // All three axes now have 6 levels.
     const autonomyLevels = skillTreeData.axes.autonomy.levels.length
     const parallelLevels = skillTreeData.axes.parallelExecution.levels.length
     const skillUsageLevels = skillTreeData.axes.skillUsage.levels.length
 
-    // Autonomy and Skill Usage both show "1/6"
-    const sixLevelChips = screen.getAllByText(`1/${autonomyLevels}`)
-    expect(autonomyLevels).toBe(skillUsageLevels)
-    expect(sixLevelChips).toHaveLength(2)
+    expect(autonomyLevels).toBe(6)
+    expect(parallelLevels).toBe(6)
+    expect(skillUsageLevels).toBe(6)
 
-    // Parallel Execution shows "1/5"
-    expect(screen.getByText(`1/${parallelLevels}`)).toBeInTheDocument()
+    // The axis breakdown inside the LevelCrest shows "1 / 6" for each axis at default state.
+    const breakdownLevels = screen.getAllByText(`1 / ${autonomyLevels}`)
+    expect(breakdownLevels).toHaveLength(3)
   })
 })
