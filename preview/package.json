@@ -1,0 +1,9 @@
+{
+  "name": "preview-seeder",
+  "private": true,
+  "type": "module",
+  "description": "Isolated dependency manifest for the preview-env seeding script. Kept separate from the SPA's package.json so firebase-admin (a server-side dep) doesn't bloat the web bundle.",
+  "dependencies": {
+    "firebase-admin": "^12.7.0"
+  }
+}

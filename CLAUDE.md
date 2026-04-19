@@ -52,7 +52,7 @@ Pre-push hooks run: unit tests + E2E tests (with smart emulator detection).
 - `src/types/skill-tree.ts` — TypeScript interfaces for skill tree data and app state
 - `src/data/` — Data module (skill-trees.ts), state persistence (state.ts), auth helpers (auth.ts), Firestore sync (sync.ts)
 - `infra/` — Terraform config (google-beta provider, Firebase project + Firestore, GCS remote state, preview env infra)
-- `preview/` — Preview environment container (Dockerfile, nginx.conf, startup.sh, seed.sh, firebase.json)
+- `preview/` — Preview environment container (Dockerfile, nginx.conf, startup.sh, seed.mjs, firebase.json). Seeder uses firebase-admin with deterministic UIDs (`demo-alice`, `demo-bob`) so `/profile/demo-alice` is a stable preview link across deploys.
 - `e2e/` — Playwright + playwright-bdd E2E tests (Gherkin features + step definitions)
 - `e2e/helpers/emulator.ts` — Firebase emulator REST API helpers for E2E tests
 - `firestore.rules` — Firestore security rules (public read, owner-only write with schema validation)
