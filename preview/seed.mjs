@@ -12,6 +12,8 @@
  * custom UIDs — problem solved.
  */
 import { readFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { initializeApp } from 'firebase-admin/app'
 import { getAuth } from 'firebase-admin/auth'
 import { getFirestore } from 'firebase-admin/firestore'
@@ -20,7 +22,9 @@ process.env.FIREBASE_AUTH_EMULATOR_HOST ??= '127.0.0.1:9099'
 process.env.FIRESTORE_EMULATOR_HOST ??= '127.0.0.1:9199'
 
 const PROJECT_ID = 'skill-plepic-com'
-const ACCOUNTS_FILE = '/app/preview/demo-accounts.json'
+// Script-relative so this works both inside the container (/app/preview) and
+// when a dev runs it from the repo against local emulators.
+const ACCOUNTS_FILE = join(dirname(fileURLToPath(import.meta.url)), 'demo-accounts.json')
 
 initializeApp({ projectId: PROJECT_ID })
 const auth = getAuth()

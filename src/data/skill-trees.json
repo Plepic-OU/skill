@@ -349,7 +349,7 @@
         "color": "#16a34a",
         "bg": "#f0fdf4",
         "border": "#86efac",
-        "desc": "Mistake shows incorrect information. Static websites, hobby projects, personal tools. Mistakes are annoying but recoverable."
+        "desc": "Hobby projects, personal tools, static sites. Mistakes are annoying but recoverable."
       },
       "normal": {
         "label": "Normal",
@@ -358,7 +358,7 @@
         "color": "#2563eb",
         "bg": "#eff6ff",
         "border": "#93c5fd",
-        "desc": "Mistake stops your service for your users. Production systems with real users, but bounded blast radius."
+        "desc": "Production systems with real users. Mistakes stop the service, but the blast radius stays bounded."
       },
       "hardcore": {
         "label": "Hardcore",
@@ -367,7 +367,7 @@
         "color": "#dc2626",
         "bg": "#fef2f2",
         "border": "#fca5a5",
-        "desc": "Mistake stops client services too. Your failure cascades to downstream systems and customers."
+        "desc": "Business-critical systems. Failures cascade to downstream services and customers."
       },
       "impossible": {
         "label": "Impossible",
@@ -376,7 +376,7 @@
         "color": "#7c3aed",
         "bg": "#f5f3ff",
         "border": "#c4b5fd",
-        "desc": "Mistake costs lives. Medical devices, autonomous vehicles, critical infrastructure. The highest stakes."
+        "desc": "Life-safety domains — medical devices, autonomous vehicles, critical infrastructure. The highest stakes."
       }
     }
   }

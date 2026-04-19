@@ -52,7 +52,7 @@ export default function SkillTreeLayout({
   const crest = <LevelCrest state={state} visitor={readOnly} />
   const stakes =
     readOnly || !onSafetyZone ? (
-      <SafetyZoneBadge zoneId={state.safetyZone} visitor={readOnly} />
+      <SafetyZoneBadge zoneId={state.safetyZone} />
     ) : (
       <SafetyZoneSelector selected={state.safetyZone} onSelect={onSafetyZone} />
     )
