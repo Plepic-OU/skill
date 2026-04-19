@@ -1,6 +1,9 @@
 /* Global resets and body defaults. Design tokens come from CDN stylesheet. */
 
 :root {
+  /* Opt out of automatic dark-mode inversion (e.g. Samsung Internet's
+     "dark theme for websites") — the warm-cream brand is light-only by design. */
+  color-scheme: light;
   --parchment: #f5f0e6;
   --parchment-dark: #e8dece;
   --parchment-edge: #d4c8b4;

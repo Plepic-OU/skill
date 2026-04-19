@@ -149,6 +149,28 @@
   text-decoration: none;
   transition: opacity var(--transition-fast);
 }
+
+/* Visitor-view "try it yourself" link. Quiet on purpose — a visitor's primary
+   job is reading the profile, not converting. No border box means no two-line
+   wrap on narrow phones. Still a link, still green, just not bordered. */
+.btnAssess {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: var(--green-brand);
+  text-decoration: none;
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  transition: opacity var(--transition-fast);
+}
+.btnAssess:hover {
+  opacity: 0.8;
+}
+.btnAssess:focus-visible {
+  outline: 2px solid var(--green-vivid);
+  outline-offset: 2px;
+}
 .btnLogin:hover {
   opacity: 0.8;
 }

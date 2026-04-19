@@ -102,12 +102,29 @@
   padding: 0 var(--space-sm);
 }
 
-.visitorExplainer {
+/* Visitor avatar: compact identity anchor that sits directly above the
+   uppercase kicker title. Replaces the separate ProfileBanner — keeps the
+   owner's face visible without consuming its own scroll region. */
+.visitorAvatar,
+.visitorAvatarFallback {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  margin: 0 auto var(--space-sm);
+  display: block;
+}
+.visitorAvatar {
+  object-fit: cover;
+  border: 2px solid var(--green-surface);
+}
+.visitorAvatarFallback {
+  background: var(--green-brand);
+  color: white;
   font-family: var(--font-body);
-  font-size: 0.85rem;
-  color: var(--text-2);
-  margin: 0.3rem auto 0;
-  letter-spacing: 0.01em;
+  font-weight: 700;
+  font-size: 1.4rem;
+  display: grid;
+  place-items: center;
 }
 
 .progressSummary {

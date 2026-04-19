@@ -107,7 +107,7 @@ function VisitorControls({ user, onSignOut, onSignIn }: VisitorControlsProps) {
   }
   return (
     <>
-      <Link to="/" className={styles.btnLogin}>
+      <Link to="/" className={styles.btnAssess}>
         Assess your own skills
       </Link>
       <button className={styles.btnSignInSecondary} onClick={onSignIn}>
@@ -200,7 +200,7 @@ export default function Header({ syncStatus = 'idle', mode = 'landing', state }:
           <span className={styles.logoWordmark}>Agentic Skills</span>
         </Link>
       </div>
-      {state && hasAnyProgress(state) && <LevelBadge state={state} />}
+      {state && hasAnyProgress(state) && mode !== 'visitor' && <LevelBadge state={state} />}
       <div className={styles.authArea}>
         {!loading && user && (
           <div className={styles.userInfo}>

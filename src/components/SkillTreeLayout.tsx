@@ -18,6 +18,7 @@ interface SkillTreeLayoutProps {
   onSafetyZone?: (zone: SafetyZoneId) => void
   readOnly?: boolean
   visitorName?: string
+  visitorAvatarUrl?: string
 }
 
 function isPristineState(state: SkillState): boolean {
@@ -38,6 +39,7 @@ export default function SkillTreeLayout({
   onSafetyZone,
   readOnly,
   visitorName,
+  visitorAvatarUrl,
 }: SkillTreeLayoutProps) {
   // Layout hierarchy:
   //   Landing  — Hero → (FirstRunHint) → Tree → Crest → Stakes
@@ -62,7 +64,12 @@ export default function SkillTreeLayout({
   return (
     <>
       <Header syncStatus={syncStatus} mode={headerMode} state={state} />
-      <Hero state={state} visitorName={visitorName} variant={isLanding ? 'landing' : 'profile'} />
+      <Hero
+        state={state}
+        visitorName={visitorName}
+        visitorAvatarUrl={visitorAvatarUrl}
+        variant={isLanding ? 'landing' : 'profile'}
+      />
       {!isLanding && crest}
       {showFirstRunHint && <FirstRunHint />}
       <PathNav state={state} />
