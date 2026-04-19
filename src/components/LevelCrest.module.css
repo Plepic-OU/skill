@@ -409,8 +409,8 @@
 
 @media (max-width: 520px) {
   .crest {
-    margin-top: var(--space-lg);
-    padding: var(--space-xl) var(--space-lg) var(--space-md);
+    margin-top: var(--space-sm);
+    padding: var(--space-lg) var(--space-lg) var(--space-md);
     max-width: 100%;
   }
   /* Tighten parchment inset so bar + breakdown have clear margin from the edge */
