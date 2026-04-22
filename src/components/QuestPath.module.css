@@ -132,22 +132,6 @@
   position: relative;
 }
 
-/* Meandering path on desktop */
-.nodeWrapper:nth-child(4n + 1) {
-  transform: translateX(3%);
-}
-.nodeWrapper:nth-child(4n + 3) {
-  transform: translateX(-3%);
-}
-@media (min-width: 820px) {
-  .nodeWrapper:nth-child(4n + 1) {
-    transform: translateX(4%);
-  }
-  .nodeWrapper:nth-child(4n + 3) {
-    transform: translateX(-4%);
-  }
-}
-
 /* ── Trail Connectors ── */
 .trailConnector {
   width: 100%;
@@ -238,11 +222,5 @@
   .ribbonFoldRight {
     right: -10px;
     border-width: 50% 0 0 10px;
-  }
-  .nodeWrapper:nth-child(4n + 1) {
-    transform: none;
-  }
-  .nodeWrapper:nth-child(4n + 3) {
-    transform: none;
   }
 }
