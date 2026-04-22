@@ -10,14 +10,14 @@ Feature: Claim and unclaim levels
     Given I open the skill tree page
     When I expand the "Review Every Edit" node
     And I click the "This is me" action
-    Then the Autonomy progress chip should show "2/6"
+    Then the Autonomy progress chip should show "2 / 6"
 
   Scenario: Unclaim a level on an axis
     Given I open the skill tree page
     When I expand the "Review Every Edit" node
     And I click the "This is me" action
     And I expand the "Review Every Edit" node
-    And I click the "Not here yet" action
+    And I click the "Step back one" action
     Then the "Review Every Edit" node should not be claimed
 
   Scenario: Claiming level 3 marks levels 1 and 2 as claimed

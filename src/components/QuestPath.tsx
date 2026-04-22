@@ -1,7 +1,10 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import type { Axis, AxisId, Level, NodeState } from '../types/skill-tree'
 import SkillNode from './SkillNode'
 import styles from './QuestPath.module.css'
+
+// Sticky header (56px) + sticky PathNav (~50px) + a small breathing gap.
+const HEADER_OFFSET = 120
 
 interface QuestPathProps {
   axis: Axis
@@ -73,9 +76,41 @@ export default function QuestPath({
   readonly,
 }: QuestPathProps) {
   const [expandedLevel, setExpandedLevel] = useState<number | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  // When opening a node while another is already open, the closing sibling's
+  // detail shrinks over ~500ms. A naive scrollIntoView chases a moving target
+  // and overshoots. Predict the final offsetTop by subtracting the collapsing
+  // sibling's current detail height (if it sits above), then smooth-scroll to
+  // that fixed target. Scroll and CSS transitions animate to the same endpoint.
+  const scrollToNodeAtFinalPosition = (opening: number, closing: number | null) => {
+    const container = containerRef.current
+    if (!container) return
+    const newNode = container.querySelector<HTMLElement>(`[data-level="${opening}"]`)
+    if (!newNode) return
+    const newTop = newNode.getBoundingClientRect().top + window.scrollY
+
+    let adjustment = 0
+    if (closing !== null) {
+      const closingDetail = container.querySelector<HTMLElement>(
+        `[data-level="${closing}"] [data-detail]`,
+      )
+      if (closingDetail) {
+        const closingTop = closingDetail.getBoundingClientRect().top + window.scrollY
+        // Only nodes above the new one push it when they collapse.
+        if (closingTop < newTop) adjustment = closingDetail.offsetHeight
+      }
+    }
+
+    const targetY = Math.max(0, newTop - adjustment - HEADER_OFFSET)
+    window.scrollTo({ top: targetY, behavior: 'smooth' })
+  }
 
   const toggleNode = (level: number) => {
-    setExpandedLevel((prev) => (prev === level ? null : level))
+    const closing = expandedLevel
+    const isOpening = closing !== level
+    if (isOpening) scrollToNodeAtFinalPosition(level, closing)
+    setExpandedLevel(isOpening ? level : null)
   }
 
   const getConnectorType = (index: number): 'solid' | 'dashed' | 'faded' => {
@@ -90,8 +125,11 @@ export default function QuestPath({
     return 'faded'
   }
 
+  const levelMax = axis.levels.length
+
   return (
     <div
+      ref={containerRef}
       className={styles.questPath}
       data-quest-path={axisId}
       style={{ '--node-color': axis.color } as React.CSSProperties}
@@ -101,7 +139,10 @@ export default function QuestPath({
           <span className="material-symbols-rounded">{axis.icon}</span>
         </div>
         <div className={styles.ribbonBanner}>
-          {axis.name}
+          <span className={styles.ribbonName}>{axis.name}</span>
+          <span className={styles.ribbonMeta}>
+            Lv {claimedLevel}/{levelMax}
+          </span>
           <span className={styles.ribbonFoldLeft} />
           <span className={styles.ribbonFoldRight} />
         </div>

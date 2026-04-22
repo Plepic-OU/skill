@@ -1,0 +1,141 @@
+/*
+ * PathNav — persistent nav for the three skill paths.
+ * Sticky below the Header (56px) so the tiles stay within reach while the
+ * user is deep inside a path. Each tile links to its axis section; the
+ * active tile follows scroll via IntersectionObserver in the component.
+ */
+
+.nav {
+  position: sticky;
+  top: 56px;
+  z-index: 50;
+  padding: 0.5rem var(--space-md);
+  /* Scales with viewport so the first path ribbon stays below the fold on
+     first paint across phone sizes, while still giving generous breathing
+     beneath the nav once scrolled. */
+  margin-bottom: max(6rem, 14svh);
+  background: color-mix(in srgb, var(--parchment) 94%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid color-mix(in srgb, var(--parchment-edge) 75%, transparent);
+  box-shadow: 0 1px 6px rgba(80, 50, 10, 0.04);
+}
+
+.tiles {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 620px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.4rem;
+}
+
+.tileItem {
+  display: flex;
+  min-width: 0;
+}
+
+.tile {
+  flex: 1;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.6rem;
+  border: 1.5px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--text-2);
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.tile:focus-visible {
+  outline: 2px solid var(--tile-color, var(--green-brand));
+  outline-offset: 2px;
+}
+
+/* Hover tint only on hover-capable devices — avoids sticky :hover on touch. */
+@media (hover: hover) {
+  .tile:hover {
+    background: color-mix(in srgb, var(--tile-color) 8%, transparent);
+    color: var(--ink);
+  }
+}
+
+.tileActive {
+  background: color-mix(in srgb, var(--tile-color) 20%, var(--surface));
+  border-color: color-mix(in srgb, var(--tile-color) 70%, transparent);
+  color: var(--ink);
+  font-weight: 700;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--tile-color) 30%, transparent),
+    0 2px 6px color-mix(in srgb, var(--tile-color) 18%, transparent);
+}
+.tileActive .name {
+  color: color-mix(in srgb, var(--tile-color) 85%, var(--ink));
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--tile-color);
+  flex-shrink: 0;
+  box-shadow: 0 0 4px color-mix(in srgb, var(--tile-color) 50%, transparent);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.level {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in srgb, var(--tile-color) 80%, var(--ink));
+  padding: 0.05rem 0.35rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--tile-color) 14%, transparent);
+  flex-shrink: 0;
+}
+
+@media (max-width: 560px) {
+  .nav {
+    padding: 0.4rem var(--space-sm);
+  }
+  .tiles {
+    gap: 0.3rem;
+  }
+  .tile {
+    padding: 0.35rem 0.45rem;
+    font-size: 0.78rem;
+    gap: 0.3rem;
+    justify-content: center;
+  }
+  .name {
+    font-size: 0.82rem;
+  }
+  /* Drop the level pill on mobile — the ribbon banner inside each path
+     repeats this info. Removing it frees ~40px so the full axis name fits. */
+  .level {
+    display: none;
+  }
+}
+
+/* Desktop doesn't render PathNav at all — the component returns null above
+   820px so the tile text doesn't shadow the QuestPath ribbon text in
+   getByText queries. */

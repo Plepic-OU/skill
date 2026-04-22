@@ -42,8 +42,13 @@ COPY --from=build /app/web /app/web
 COPY preview/nginx.conf /etc/nginx/conf.d/default.conf
 COPY preview/firebase.json /app/firebase.json
 COPY preview/startup.sh /app/preview/startup.sh
-COPY preview/seed.sh /app/preview/seed.sh
+COPY preview/seed.mjs /app/preview/seed.mjs
+COPY preview/package.json /app/preview/package.json
 COPY preview/demo-accounts.json /app/preview/demo-accounts.json
+
+# Install the seeder's isolated Node deps (firebase-admin). Kept out of the
+# SPA's package.json so the web bundle stays lean.
+RUN cd /app/preview && npm install --omit=dev --no-package-lock --no-audit --no-fund
 
 # Copy Firestore rules and indexes for emulator
 COPY firestore.rules /app/firestore.rules
@@ -55,7 +60,7 @@ RUN rm -f /etc/nginx/sites-enabled/default
 # Pre-download Firebase emulator JARs so they don't download at runtime
 RUN firebase setup:emulators:firestore
 
-RUN chmod +x /app/preview/startup.sh /app/preview/seed.sh
+RUN chmod +x /app/preview/startup.sh
 
 EXPOSE 8080
 

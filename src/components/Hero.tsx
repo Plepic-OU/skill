@@ -1,40 +1,50 @@
-import { skillTreeData } from '../data/skill-trees'
-import type { AxisId, SkillState } from '../types/skill-tree'
+import type { SkillState } from '../types/skill-tree'
 import styles from './Hero.module.css'
 
-const AXIS_IDS = Object.keys(skillTreeData.axes) as AxisId[]
-
 interface HeroProps {
-  state: SkillState
+  state?: SkillState
   visitorName?: string
+  visitorAvatarUrl?: string
+  variant?: 'landing' | 'profile'
 }
 
-export default function Hero({ state, visitorName }: HeroProps) {
+export default function Hero({ visitorName, visitorAvatarUrl, variant = 'landing' }: HeroProps) {
+  const isVisitor = Boolean(visitorName)
+
+  if (isVisitor) {
+    const initial = visitorName?.[0]?.toUpperCase() ?? '?'
+    return (
+      <section className={`${styles.hero} ${styles.heroVisitor}`}>
+        <div className={styles.visitorIdentity}>
+          {visitorAvatarUrl ? (
+            <img
+              src={visitorAvatarUrl}
+              alt=""
+              className={styles.visitorAvatar}
+              referrerPolicy="no-referrer"
+            />
+          ) : (
+            <div className={styles.visitorAvatarFallback} aria-hidden="true">
+              {initial}
+            </div>
+          )}
+          <h1 className={styles.visitorName}>{visitorName}</h1>
+        </div>
+      </section>
+    )
+  }
+
+  const isProfile = variant === 'profile'
+  const heroClass = `${styles.hero} ${isProfile ? styles.heroProfile : ''}`
+
   return (
-    <section className={styles.hero}>
-      <h1 className={styles.title}>
-        {visitorName ? `${visitorName}\u2019s Agentic Skills` : 'Map Your Agentic Skills'}
-      </h1>
-      {!visitorName && (
+    <section className={heroClass}>
+      <h1 className={styles.title}>Map Your Agentic Skills</h1>
+      {!isProfile && (
         <p className={styles.subtitle}>
-          Where are you on the path to agentic development mastery? Claim the levels you've reached
-          and see what's next.
+          Where are you with AI coding? Mark your level on each path — your class appears as you go.
         </p>
       )}
-      <div className={styles.progressSummary} aria-live="polite">
-        {AXIS_IDS.map((id) => {
-          const axis = skillTreeData.axes[id]
-          return (
-            <span key={id} className={styles.progressChip}>
-              <span className={styles.chipDot} style={{ background: axis.color }} />
-              {axis.name}:{' '}
-              <span className={styles.chipLevel}>
-                {state[id]}/{axis.levels.length}
-              </span>
-            </span>
-          )
-        })}
-      </div>
     </section>
   )
 }

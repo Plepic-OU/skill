@@ -113,10 +113,9 @@ describe('loadState', () => {
   })
 
   it('accepts value exactly at maxLevel', () => {
-    // parallelExecution has 5 levels, autonomy 6, skillUsage 6
     const state: SkillState = {
       autonomy: 6,
-      parallelExecution: 5,
+      parallelExecution: 6,
       skillUsage: 6,
       safetyZone: 'sandbox',
     }

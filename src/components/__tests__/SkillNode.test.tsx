@@ -85,13 +85,15 @@ describe('SkillNode', () => {
     render(
       <SkillNode {...defaultProps} nodeState="claimed" isHighestClaimed={true} isExpanded={true} />,
     )
-    const unclaimBtn = screen.getByText('Not here yet')
+    const unclaimBtn = screen.getByText('Step back one')
     expect(unclaimBtn).toBeInTheDocument()
     fireEvent.click(unclaimBtn)
     expect(defaultProps.onUnclaim).toHaveBeenCalledWith('autonomy', 2)
   })
 
-  it('does not show action button for lower claimed nodes', () => {
+  // Lower claimed nodes expose the claim button so users can drop directly to that level
+  // (multi-level demote in one click).
+  it('shows claim button on lower claimed nodes for direct demotion', () => {
     render(
       <SkillNode
         {...defaultProps}
@@ -100,8 +102,11 @@ describe('SkillNode', () => {
         isExpanded={true}
       />,
     )
-    expect(screen.queryByText('This is me')).not.toBeInTheDocument()
-    expect(screen.queryByText('Not here yet')).not.toBeInTheDocument()
+    const claimBtn = screen.getByText('This is me')
+    expect(claimBtn).toBeInTheDocument()
+    expect(screen.queryByText('Step back one')).not.toBeInTheDocument()
+    fireEvent.click(claimBtn)
+    expect(defaultProps.onClaim).toHaveBeenCalledWith('autonomy', 2)
   })
 
   it('hides claim button when readonly', () => {
@@ -119,7 +124,7 @@ describe('SkillNode', () => {
         readonly
       />,
     )
-    expect(screen.queryByText('Not here yet')).not.toBeInTheDocument()
+    expect(screen.queryByText('Step back one')).not.toBeInTheDocument()
   })
 
   it('still allows toggling in readonly mode', () => {

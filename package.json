@@ -16,7 +16,7 @@
     "test:run": "vitest run",
     "lint": "eslint src/",
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
-    "emulators": "firebase emulators:start",
+    "emulators": "./scripts/dev-emulators.sh",
     "test:e2e": "bddgen && playwright test",
     "test:e2e:emulator": "firebase emulators:exec 'pnpm test:e2e'",
     "test:mutate": "[ \"$SKILL_ENV\" != \"claude_web\" ] && stryker run || echo 'Skipped: mutation testing runs in CI, not in cloud'",

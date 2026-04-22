@@ -5,6 +5,37 @@
   padding: var(--space-3xl) var(--space-xl) var(--space-lg);
 }
 
+/* On mobile, the hero owns the upper portion of the first viewport; the
+   FirstRunHint and sticky PathNav fill in below it. The min-height reserves
+   room for: 56px sticky header + ~160px for hint + nav + breathing, so the
+   nav lands around ~70% down the screen with clear space beneath it.
+   Desktop keeps its natural block layout — the three-column tree is
+   already in view below. */
+@media (max-width: 819px) {
+  .hero {
+    min-height: calc(100svh - 280px);
+    padding-top: var(--space-2xl);
+    padding-bottom: var(--space-md);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  @supports not (min-height: 100svh) {
+    .hero {
+      min-height: calc(100vh - 280px);
+    }
+  }
+}
+
+/* On profile pages the crest carries the headline, so the hero title becomes
+   a smaller kicker — same words, drastically less visual weight. Profile
+   hero doesn't fill the first viewport — the crest does. */
+.heroProfile {
+  padding: var(--space-xl) var(--space-xl) var(--space-xs);
+  min-height: 0;
+  justify-content: flex-start;
+}
+
 .title {
   font-family: var(--font-display);
   font-size: clamp(2rem, 1.5rem + 3vw, 3.2rem);
@@ -13,15 +44,8 @@
   margin-bottom: var(--space-xs);
   letter-spacing: -0.02em;
   line-height: 1.1;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
-  background: linear-gradient(
-    180deg,
-    var(--ink) 40%,
-    color-mix(in srgb, var(--green-dark) 60%, var(--ink)) 100%
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  /* Subtle letterpress highlight — parchment feel, not a gradient. */
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
 }
 
 /* Decorative flourish under hero title */
@@ -43,12 +67,85 @@
   -webkit-text-fill-color: initial;
 }
 
+.heroProfile .title {
+  font-size: clamp(0.8rem, 0.7rem + 0.4vw, 0.95rem);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  margin-bottom: 0;
+  line-height: 1.2;
+}
+.heroProfile .title::after {
+  display: none;
+}
+
+@media (max-width: 520px) {
+  .hero {
+    padding: var(--space-2xl) var(--space-md) var(--space-md);
+  }
+  .heroProfile {
+    padding: var(--space-lg) var(--space-md) var(--space-xs);
+  }
+  .title::after {
+    width: 120px;
+    margin-top: 0.6rem;
+  }
+}
+
 .subtitle {
   color: var(--text-2);
-  font-size: 1rem;
-  max-width: 480px;
+  font-size: clamp(0.92rem, 0.88rem + 0.2vw, 1.05rem);
+  max-width: 440px;
   margin: var(--space-md) auto 0;
-  line-height: 1.6;
+  line-height: 1.55;
+  padding: 0 var(--space-sm);
+}
+
+/* Visitor identity — a tight name tag, not a ceremony. Small avatar inline
+   with the name on a single row, so the LevelCrest below lands as the
+   hero of the page (which is the whole point on a shared profile). */
+.heroVisitor {
+  padding: var(--space-md) var(--space-md) 0;
+  min-height: 0;
+}
+.visitorIdentity {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0 auto;
+  padding: 0.3rem 0.8rem 0.3rem 0.35rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--parchment) 60%, transparent);
+  border: 1px solid color-mix(in srgb, var(--parchment-edge) 60%, transparent);
+}
+.visitorAvatar,
+.visitorAvatarFallback {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.visitorAvatar {
+  object-fit: cover;
+}
+.visitorAvatarFallback {
+  background: var(--green-brand);
+  color: white;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: grid;
+  place-items: center;
+}
+.visitorName {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.1;
+  letter-spacing: -0.005em;
 }
 
 .progressSummary {

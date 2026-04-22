@@ -6,7 +6,10 @@ import { auth } from '../firebase'
 import demoAccountsData from '../../preview/demo-accounts.json'
 import styles from './SignInModal.module.css'
 
-const DEMO_ACCOUNTS = import.meta.env.VITE_EMULATOR_HOST ? demoAccountsData : []
+// Shown in preview (VITE_EMULATOR_HOST) and local vite dev (import.meta.env.DEV);
+// stripped from production builds.
+const DEMO_ACCOUNTS =
+  import.meta.env.VITE_EMULATOR_HOST || import.meta.env.DEV ? demoAccountsData : []
 
 interface SignInModalProps {
   open: boolean
@@ -90,7 +93,7 @@ export default function SignInModal({ open, onClose }: SignInModalProps) {
         </div>
         {DEMO_ACCOUNTS.length > 0 && (
           <div className={styles.demoSection}>
-            <p className={styles.demoLabel}>Preview demo accounts</p>
+            <p className={styles.demoLabel}>Demo accounts</p>
             <div className={styles.buttons}>
               {DEMO_ACCOUNTS.map((account) => (
                 <button

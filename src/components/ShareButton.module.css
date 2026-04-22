@@ -20,3 +20,8 @@
   outline: 2px solid var(--green-vivid);
   outline-offset: 2px;
 }
+
+.shareIcon {
+  font-size: 1rem;
+  line-height: 1;
+}

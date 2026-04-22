@@ -27,7 +27,7 @@ done
 
 # Seed demo data
 echo "Seeding demo data..."
-/app/preview/seed.sh
+node /app/preview/seed.mjs
 
 # Start nginx in background and wait — keeps the shell alive to handle signals
 echo "Starting nginx..."
