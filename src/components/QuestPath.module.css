@@ -5,6 +5,15 @@
   /* Header 56 + sticky PathNav ~50 + breathing. Applies when users tap a
      nav tile and we scrollIntoView this section. */
   scroll-margin-top: 120px;
+  /* --axis-color is passed in via inline style from axis.color (the
+     warm neutral). --node-color is the one the nodes + ribbon consume,
+     and we set it in CSS so the :hover rule below can override it.
+     (Inline style would beat a class selector; CSS-set doesn't.) */
+  --node-color: var(--axis-color, var(--text-3));
+}
+.questPath:hover,
+.questPath:focus-within {
+  --node-color: var(--green-brand);
 }
 
 /* ── Path Header with Ribbon ── */
@@ -21,7 +30,9 @@
 .pathIcon {
   font-size: 2.2rem;
   margin-bottom: 0.4rem;
+  color: var(--node-color, var(--text-3));
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  transition: color var(--transition-base);
 }
 .pathIcon .material-symbols-rounded {
   font-size: inherit;

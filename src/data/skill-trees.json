@@ -4,7 +4,7 @@
       "name": "Autonomy",
       "description": "How much you delegate to AI and what verification strategy replaces human review at each level.",
       "icon": "swap_horiz",
-      "color": "#137b30",
+      "color": "#6b6b60",
       "levels": [
         {
           "level": 1,
@@ -123,7 +123,7 @@
       "name": "Parallelism",
       "description": "How many concurrent AI tasks you manage and how they're coordinated.",
       "icon": "bolt",
-      "color": "#0d5822",
+      "color": "#6b6b60",
       "levels": [
         {
           "level": 1,
@@ -234,7 +234,7 @@
       "name": "Skill Usage",
       "description": "How sophisticated your AI tooling is — from using what's built in to creating self-improving tool chains.",
       "icon": "build",
-      "color": "#00c638",
+      "color": "#6b6b60",
       "levels": [
         {
           "level": 1,

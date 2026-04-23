@@ -133,6 +133,9 @@
   /* allow truncation at the class name, prefix drops first */
 }
 
+/* "Sign in to save" — lead-capture CTA. Understated accent-orange resting
+   state signals the one-per-viewport moment, then swaps to brand green on
+   hover/focus so the interaction rewards with Plepic identity. */
 .btnLogin {
   display: inline-flex;
   align-items: center;
@@ -141,13 +144,16 @@
   font-weight: 600;
   font-size: 0.82rem;
   background: transparent;
-  border: 1.5px solid var(--green-brand);
-  color: var(--green-brand);
+  border: 1.5px solid var(--accent);
+  color: var(--accent);
   padding: 0.4rem 0.9rem;
   border-radius: 10px;
   cursor: pointer;
   text-decoration: none;
-  transition: opacity var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
 }
 
 /* Visitor-view "try it yourself" link. Quiet on purpose — a visitor's primary
@@ -172,9 +178,14 @@
   outline-offset: 2px;
 }
 .btnLogin:hover {
-  opacity: 0.8;
+  background: color-mix(in srgb, var(--green-brand) 10%, transparent);
+  border-color: var(--green-brand);
+  color: var(--green-brand);
 }
 .btnLogin:focus-visible {
+  background: color-mix(in srgb, var(--green-brand) 10%, transparent);
+  border-color: var(--green-brand);
+  color: var(--green-brand);
   outline: 2px solid var(--green-vivid);
   outline-offset: 2px;
 }

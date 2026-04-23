@@ -49,6 +49,10 @@
   font-family: var(--font-body);
   font-size: 0.82rem;
   color: var(--text-2);
+  /* --axis-color comes from the inline style (the quiet neutral).
+     --tile-color is what the tile's color-mix rules consume, and we
+     set it via CSS so :hover and .tileActive can override it. */
+  --tile-color: var(--axis-color, var(--text-3));
   transition:
     background var(--transition-fast),
     border-color var(--transition-fast),
@@ -60,15 +64,22 @@
   outline-offset: 2px;
 }
 
-/* Hover tint only on hover-capable devices — avoids sticky :hover on touch. */
+/* Hover tint only on hover-capable devices — avoids sticky :hover on touch.
+   Hovering any tile promotes its --tile-color to the brand green, so the
+   single tile the user is interacting with lights up against the other two. */
 @media (hover: hover) {
   .tile:hover {
+    --tile-color: var(--green-brand);
     background: color-mix(in srgb, var(--tile-color) 8%, transparent);
     color: var(--ink);
   }
 }
 
+/* The active tile — whichever path is currently in view on mobile — also
+   swaps to brand green so "active" always reads as Plepic green, not the
+   quiet neutral that the non-active tiles inherit from axis.color. */
 .tileActive {
+  --tile-color: var(--green-brand);
   background: color-mix(in srgb, var(--tile-color) 20%, var(--surface));
   border-color: color-mix(in srgb, var(--tile-color) 70%, transparent);
   color: var(--ink);

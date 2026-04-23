@@ -132,10 +132,10 @@ export default function QuestPath({
       ref={containerRef}
       className={styles.questPath}
       data-quest-path={axisId}
-      style={{ '--node-color': axis.color } as React.CSSProperties}
+      style={{ '--axis-color': axis.color } as React.CSSProperties}
     >
       <div className={styles.pathHeader}>
-        <div className={styles.pathIcon} style={{ color: axis.color }}>
+        <div className={styles.pathIcon}>
           <span className="material-symbols-rounded">{axis.icon}</span>
         </div>
         <div className={styles.ribbonBanner}>
