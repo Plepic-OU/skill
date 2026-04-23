@@ -155,8 +155,8 @@
 .solid .vineLine {
   background: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--node-color) 65%, #8b7355) 0%,
-    color-mix(in srgb, var(--node-color) 45%, #6b5035) 100%
+    color-mix(in srgb, var(--node-color) 65%, var(--text-3)) 0%,
+    color-mix(in srgb, var(--node-color) 45%, var(--text-2)) 100%
   );
   box-shadow:
     -1px 0 0 color-mix(in srgb, var(--node-color) 30%, rgba(80, 50, 20, 0.3)),
@@ -181,8 +181,8 @@
 .dashed .vineLine {
   background: repeating-linear-gradient(
     to bottom,
-    color-mix(in srgb, var(--node-color) 55%, #8b7355) 0px,
-    color-mix(in srgb, var(--node-color) 55%, #8b7355) 8px,
+    color-mix(in srgb, var(--node-color) 55%, var(--text-3)) 0px,
+    color-mix(in srgb, var(--node-color) 55%, var(--text-3)) 8px,
     transparent 8px,
     transparent 14px
   );

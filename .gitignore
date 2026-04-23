@@ -39,3 +39,6 @@ reports/mutation/
 
 # Coverage
 coverage/
+
+# Local review artifacts
+screenshots/

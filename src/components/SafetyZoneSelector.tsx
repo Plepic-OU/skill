@@ -10,10 +10,14 @@ interface SafetyZoneSelectorProps {
 }
 
 function getZoneStyle(isActive: boolean, zone: { color: string }): React.CSSProperties {
+  // Inactive labels use a darkened variant of the zone color so text clears
+  // WCAG AA on the warm cream background — zone.color alone is tuned for
+  // fill/border, not for text on light.
+  const inactiveText = `color-mix(in srgb, ${zone.color} 75%, black)`
   return {
     '--zone-color': zone.color,
     borderColor: zone.color,
-    color: isActive ? 'white' : zone.color,
+    color: isActive ? 'white' : inactiveText,
     background: isActive ? zone.color : 'transparent',
     boxShadow: isActive ? `0 3px 12px ${zone.color}4d` : 'none',
     fontWeight: isActive ? 700 : 600,

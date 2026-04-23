@@ -97,7 +97,7 @@
   box-shadow:
     0 3px 12px var(--seal-shadow),
     0 1px 4px rgba(0, 0, 0, 0.15),
-    0 0 0 2.5px color-mix(in srgb, var(--node-color) 75%, #4a2000),
+    0 0 0 2.5px color-mix(in srgb, var(--node-color) 75%, var(--green-dark)),
     0 0 18px color-mix(in srgb, var(--node-color) 20%, transparent),
     inset 0 2px 5px rgba(255, 255, 255, 0.35),
     inset 0 -2px 5px rgba(0, 0, 0, 0.25);
@@ -115,7 +115,7 @@
   box-shadow:
     0 4px 16px var(--seal-shadow),
     0 2px 6px rgba(0, 0, 0, 0.18),
-    0 0 0 2.5px color-mix(in srgb, var(--node-color) 80%, #4a2000),
+    0 0 0 2.5px color-mix(in srgb, var(--node-color) 80%, var(--green-dark)),
     0 0 24px color-mix(in srgb, var(--node-color) 28%, transparent),
     inset 0 2px 5px rgba(255, 255, 255, 0.4),
     inset 0 -2px 5px rgba(0, 0, 0, 0.25);
