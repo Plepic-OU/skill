@@ -1,35 +1,45 @@
 /*
- * QuestPath card — one per axis. White surface, subtle border, a single
- * left-edge stripe that varies by axis to carry identity without pulling
- * accent-orange or requiring hover to tell them apart.
+ * QuestPath card — one per axis. White surface, subtle border. Only ONE
+ * card is "active" at any moment; the other two sit quiet so the user's
+ * attention lands where the focus actually is.
  *
- * Colour strategy (aligns with public-web DS tokens):
- *   autonomy         → --green-brand  (signature Plepic green)
- *   parallelExecution→ --green-vivid  (decorative on light — fill only)
- *   skillUsage       → --green-dark   (deepest green, reserved for body text,
- *                                       used here as a stripe accent)
+ * Default active: the first card (Autonomy) — drawing the eye to the
+ * left-to-right starting point.
+ * On hover or focus-within any card: that card becomes active, and the
+ * default-first card drops back to muted so we never have two greens at
+ * once. Implemented purely in CSS via :first-child + :has() so no
+ * additional React state is needed.
+ *
+ * Card titles (h2) stay --green-brand regardless of state — they are the
+ * permanent identity of each path, not a state signal.
  *
  * --node-color stays uniform at --green-brand so the claimed-node seals
- * across all three paths share one "claim" tone. Differentiation lives in
- * the stripe + icon + subtle card hover, not in the node fills.
+ * across all three paths share one "claim" tone.
  */
 
 .questPath {
-  /* Card shell — mirrors public-web .panel (surface bg, 1px border, 16px
-     radius, xl padding). */
-  background: var(--surface);
+  /* ── Skin variables — flipped atomically when active ── */
+  --stripe: var(--border);
+  --card-bg: var(--surface);
+  --card-shadow: none;
+  --icon-color: var(--text-3);
+
+  /* Card shell — mirrors public-web .panel shape (surface, border, radius
+     16, padding xl). Left border is 4px wide always; only its colour
+     tracks the active state. */
+  background: var(--card-bg);
   border: 1px solid var(--border);
-  border-left-width: 4px;
-  border-left-color: var(--axis-stripe, var(--green-brand));
+  border-left: 4px solid var(--stripe);
   border-radius: 16px;
   padding: var(--space-xl);
   display: flex;
   flex-direction: column;
   width: 100%;
   scroll-margin-top: 120px;
+  box-shadow: var(--card-shadow);
 
-  /* Nodes across every axis share the same brand green. The stripe + icon
-     tell you which card you're in; nodes just read as "claimed = Plepic". */
+  /* Nodes across every axis share the same brand green. The active state
+     highlights a whole card, not its nodes. */
   --node-color: var(--green-brand);
 
   transition:
@@ -38,6 +48,7 @@
     border-color var(--transition-base);
 }
 
+/* ── Per-axis stripe colour (only applied when the card is active) ── */
 .questPath[data-axis='autonomy'] {
   --axis-stripe: var(--green-brand);
 }
@@ -48,12 +59,28 @@
   --axis-stripe: var(--green-dark);
 }
 
+/* ── Active skin — applied by :first-child default + :hover/:focus-within ── */
+.questPath:first-child,
 .questPath:hover,
 .questPath:focus-within {
-  background: var(--green-surface);
-  box-shadow: 0 4px 16px rgba(19, 123, 48, 0.08);
-  border-color: var(--green-light);
-  border-left-color: var(--axis-stripe, var(--green-brand));
+  --stripe: var(--axis-stripe, var(--green-brand));
+  --card-bg: var(--green-surface);
+  --card-shadow: 0 4px 16px rgba(19, 123, 48, 0.08);
+  --icon-color: var(--axis-stripe, var(--green-brand));
+}
+
+/* ── Revert first-child to muted when another card is the real active ──
+   When the grid contains a hovered/focused sibling that isn't the first
+   card, the first card releases its default-active styling. :has() is the
+   piece that makes the whole "one at a time" rule CSS-only. */
+:global(#questMap):has(.questPath:nth-child(n + 2):hover)
+  .questPath:first-child:not(:hover):not(:focus-within),
+:global(#questMap):has(.questPath:nth-child(n + 2):focus-within)
+  .questPath:first-child:not(:hover):not(:focus-within) {
+  --stripe: var(--border);
+  --card-bg: var(--surface);
+  --card-shadow: none;
+  --icon-color: var(--text-3);
 }
 
 /* ── Path header: icon · title/subtitle · level badge ── */
@@ -70,12 +97,15 @@
 .pathIcon {
   font-size: 1.85rem;
   line-height: 1;
-  color: var(--axis-stripe, var(--green-brand));
+  /* Tints green when the card is active (from --icon-color), fades to
+     --text-3 when muted. Title stays green-brand regardless. */
+  color: var(--icon-color, var(--text-3));
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 1.85rem;
   height: 1.85rem;
+  transition: color var(--transition-base);
 }
 .pathIcon .material-symbols-rounded {
   font-size: inherit;
