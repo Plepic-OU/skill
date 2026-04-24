@@ -23,6 +23,11 @@
   --card-bg: var(--surface);
   --card-shadow: none;
   --icon-color: var(--text-3);
+  /* --node-color drives every coloured element inside the card (claim
+     seals, frontier "UP NEXT" ribbon, vine connectors). When the card is
+     muted it collapses to a warm neutral so the whole card reads quiet;
+     the active state promotes it to --green-brand. */
+  --node-color: var(--text-3);
 
   /* Card shell — mirrors public-web .panel shape (surface, border, radius
      16, padding xl). Left border is 4px wide always; only its colour
@@ -37,10 +42,6 @@
   width: 100%;
   scroll-margin-top: 120px;
   box-shadow: var(--card-shadow);
-
-  /* Nodes across every axis share the same brand green. The active state
-     highlights a whole card, not its nodes. */
-  --node-color: var(--green-brand);
 
   transition:
     background var(--transition-base),
@@ -67,6 +68,7 @@
   --card-bg: var(--green-surface);
   --card-shadow: 0 4px 16px rgba(19, 123, 48, 0.08);
   --icon-color: var(--axis-stripe, var(--green-brand));
+  --node-color: var(--green-brand);
 }
 
 /* ── Revert first-child to muted when another card is the real active ──
@@ -81,6 +83,7 @@
   --card-bg: var(--surface);
   --card-shadow: none;
   --icon-color: var(--text-3);
+  --node-color: var(--text-3);
 }
 
 /* ── Path header: icon · title/subtitle · level badge ── */
@@ -191,15 +194,15 @@
 }
 
 .solid .vineLine {
-  background: var(--green-brand);
+  background: var(--node-color);
   opacity: 0.7;
 }
 
 .dashed .vineLine {
   background: repeating-linear-gradient(
     to bottom,
-    var(--green-brand) 0px,
-    var(--green-brand) 6px,
+    var(--node-color) 0px,
+    var(--node-color) 6px,
     transparent 6px,
     transparent 12px
   );
