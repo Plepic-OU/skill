@@ -9,16 +9,19 @@ interface SafetyZoneSelectorProps {
   onSelect: (zone: SafetyZoneId) => void
 }
 
-function getZoneStyle(isActive: boolean, zone: { color: string }): React.CSSProperties {
-  // Inactive labels use a darkened variant of the zone color so text clears
-  // WCAG AA on the warm cream background — zone.color alone is tuned for
-  // fill/border, not for text on light.
-  const inactiveText = `color-mix(in srgb, ${zone.color} 75%, black)`
+function getZoneStyle(
+  isActive: boolean,
+  zone: { color: string; activeText: string },
+): React.CSSProperties {
+  // Active tile fills with the zone colour (the Sandbox→Impossible green
+  // progression: light → vivid → brand → dark), with an explicit activeText
+  // paired to each for WCAG AA. Inactive tiles keep Plepic's near-black text
+  // on a white card, carrying their identity via the zone-coloured border.
   return {
     '--zone-color': zone.color,
     borderColor: zone.color,
-    color: isActive ? 'white' : inactiveText,
-    background: isActive ? zone.color : 'transparent',
+    color: isActive ? zone.activeText : 'var(--text)',
+    background: isActive ? zone.color : 'var(--surface)',
     boxShadow: isActive ? `0 3px 12px ${zone.color}4d` : 'none',
     fontWeight: isActive ? 700 : 600,
   } as React.CSSProperties

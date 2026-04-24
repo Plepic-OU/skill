@@ -93,7 +93,7 @@ export default function PathNav({ state }: PathNavProps) {
               <button
                 type="button"
                 className={tileClasses}
-                style={{ '--axis-color': axis.color } as React.CSSProperties}
+                data-axis={id}
                 onClick={() => handleTileClick(id)}
                 aria-current={isActive ? 'location' : undefined}
               >

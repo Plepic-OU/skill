@@ -13,27 +13,40 @@
   justify-content: space-between;
 }
 
-.logo {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.15rem;
-  color: var(--green-brand);
-  display: flex;
+/* Plepic logo lockup — butterfly + wordmark, matching the public-web DS
+   pattern (css/styles.css .logo-lockup). "Skill" is the product suffix,
+   hidden on narrow phones so the Plepic mark + butterfly stay intact. */
+.logoLockup {
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: 0.5rem;
+  line-height: normal;
+  text-decoration: none;
+  color: inherit;
 }
-
-.logoIcon {
-  width: 26px;
-  height: 26px;
-  background: var(--green-brand);
-  border-radius: 7px;
-  display: grid;
-  place-items: center;
-  color: white;
-  font-size: 0.75rem;
-  font-family: var(--font-body);
-  font-weight: 700;
+.logoButterfly {
+  display: block;
+  shape-rendering: crispEdges;
+  flex-shrink: 0;
+}
+.logoWordmark {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.25rem;
+  letter-spacing: 0.01em;
+  color: var(--green-brand);
+  line-height: normal;
+}
+.logoSuffix {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.25rem;
+  color: var(--text-2);
+  line-height: normal;
+  padding-left: 0.15rem;
+  border-left: 1px solid var(--border);
+  margin-left: 0.35rem;
+  padding-left: 0.55rem;
 }
 
 .authArea {
@@ -133,27 +146,30 @@
   /* allow truncation at the class name, prefix drops first */
 }
 
-/* "Sign in to save" — lead-capture CTA. Understated accent-orange resting
-   state signals the one-per-viewport moment, then swaps to brand green on
-   hover/focus so the interaction rewards with Plepic identity. */
+/* "Sign in to save" — lead-capture CTA. Matches the public-web DS
+   .btn.btn-primary.btn-sm pattern exactly: solid accent fill, dark text
+   (5.25:1 AA on orange), brightness-on-hover — no color swap. This is
+   the one-per-viewport accent; the stakes ladder now uses a green
+   progression, so orange never has to compete with itself on screen. */
 .btnLogin {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  justify-content: center;
+  gap: 0.5rem;
   font-family: var(--font-body);
   font-weight: 600;
-  font-size: 0.82rem;
-  background: transparent;
-  border: 1.5px solid var(--accent);
-  color: var(--accent);
-  padding: 0.4rem 0.9rem;
-  border-radius: 10px;
+  font-size: 0.8rem;
+  line-height: normal;
+  background: var(--accent);
+  border: 1.5px solid transparent;
+  color: var(--text);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
   cursor: pointer;
   text-decoration: none;
   transition:
-    background var(--transition-fast),
-    border-color var(--transition-fast),
-    color var(--transition-fast);
+    filter var(--transition-fast),
+    background var(--transition-fast);
 }
 
 /* Visitor-view "try it yourself" link. Quiet on purpose — a visitor's primary
@@ -178,14 +194,9 @@
   outline-offset: 2px;
 }
 .btnLogin:hover {
-  background: color-mix(in srgb, var(--green-brand) 10%, transparent);
-  border-color: var(--green-brand);
-  color: var(--green-brand);
+  filter: brightness(0.92);
 }
 .btnLogin:focus-visible {
-  background: color-mix(in srgb, var(--green-brand) 10%, transparent);
-  border-color: var(--green-brand);
-  color: var(--green-brand);
   outline: 2px solid var(--green-vivid);
   outline-offset: 2px;
 }
@@ -258,14 +269,6 @@
   to {
     opacity: 0;
   }
-}
-
-.logoLink {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  text-decoration: none;
-  color: inherit;
 }
 
 .btnViewProfile {
@@ -363,14 +366,18 @@
 
 /* ── Responsive ── */
 
-/* Compact phones: hide wordmark + Share label. Keep the P icon + primary CTA. */
+/* Compact phones: drop the "Skill" suffix + Share label. Keep the butterfly
+   + Plepic wordmark intact — that's the brand anchor. */
 @media (max-width: 560px) {
   .header {
     padding: 0 var(--space-md);
     gap: var(--space-xs);
   }
-  .logoWordmark {
+  .logoSuffix {
     display: none;
+  }
+  .logoWordmark {
+    font-size: 1.1rem;
   }
   .btnShareLabel {
     display: none;

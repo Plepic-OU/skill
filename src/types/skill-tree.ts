@@ -24,9 +24,10 @@ export interface SafetyZone {
   label: string
   icon: string
   hint: string
+  /** Fill color when this zone is selected; also the border accent when unselected. */
   color: string
-  bg: string
-  border: string
+  /** Text color on the selected-state fill (must clear WCAG AA on .color). */
+  activeText: string
   desc: string
 }
 

@@ -49,14 +49,23 @@
   font-family: var(--font-body);
   font-size: 0.82rem;
   color: var(--text-2);
-  /* --axis-color comes from the inline style (the quiet neutral).
-     --tile-color is what the tile's color-mix rules consume, and we
-     set it via CSS so :hover and .tileActive can override it. */
-  --tile-color: var(--axis-color, var(--text-3));
+  /* --tile-color maps to the same green-scale the QuestPath cards use:
+     Autonomy brand, Parallelism vivid, Skill Usage dark. Hover / active
+     rules below can still override to brand-green uniformly. */
+  --tile-color: var(--green-brand);
   transition:
     background var(--transition-fast),
     border-color var(--transition-fast),
     color var(--transition-fast);
+}
+.tile[data-axis='autonomy'] {
+  --tile-color: var(--green-brand);
+}
+.tile[data-axis='parallelExecution'] {
+  --tile-color: var(--green-vivid);
+}
+.tile[data-axis='skillUsage'] {
+  --tile-color: var(--green-dark);
 }
 
 .tile:focus-visible {

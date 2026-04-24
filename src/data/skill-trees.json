@@ -4,7 +4,7 @@
       "name": "Autonomy",
       "description": "How much you delegate to AI and what verification strategy replaces human review at each level.",
       "icon": "swap_horiz",
-      "color": "#6b6b60",
+      "color": "#137b30",
       "levels": [
         {
           "level": 1,
@@ -123,7 +123,7 @@
       "name": "Parallelism",
       "description": "How many concurrent AI tasks you manage and how they're coordinated.",
       "icon": "bolt",
-      "color": "#6b6b60",
+      "color": "#137b30",
       "levels": [
         {
           "level": 1,
@@ -234,7 +234,7 @@
       "name": "Skill Usage",
       "description": "How sophisticated your AI tooling is — from using what's built in to creating self-improving tool chains.",
       "icon": "build",
-      "color": "#6b6b60",
+      "color": "#137b30",
       "levels": [
         {
           "level": 1,
@@ -346,36 +346,32 @@
         "label": "Sandbox",
         "icon": "potted_plant",
         "hint": "hobby projects",
-        "color": "#137b30",
-        "bg": "#edfcf1",
-        "border": "#c5f6d3",
+        "color": "#c5f6d3",
+        "activeText": "#1c1c1a",
         "desc": "Hobby projects, personal tools, static sites. Mistakes are annoying but recoverable."
       },
       "normal": {
         "label": "Normal",
         "icon": "groups",
         "hint": "real users",
-        "color": "#4a4a45",
-        "bg": "#f3efe7",
-        "border": "#e5e2dc",
+        "color": "#00c638",
+        "activeText": "#1c1c1a",
         "desc": "Production systems with real users. Mistakes stop the service, but the blast radius stays bounded."
       },
       "hardcore": {
         "label": "Hardcore",
         "icon": "bolt",
         "hint": "business-critical",
-        "color": "#e26c45",
-        "bg": "#fdeee6",
-        "border": "#f4c9b5",
+        "color": "#137b30",
+        "activeText": "#ffffff",
         "desc": "Business-critical systems. Failures cascade to downstream services and customers."
       },
       "impossible": {
         "label": "Impossible",
         "icon": "skull",
         "hint": "lives at stake",
-        "color": "#1c1c1a",
-        "bg": "#eeeae3",
-        "border": "#c9c4bc",
+        "color": "#0d5822",
+        "activeText": "#ffffff",
         "desc": "Life-safety domains — medical devices, autonomous vehicles, critical infrastructure. The highest stakes."
       }
     }
