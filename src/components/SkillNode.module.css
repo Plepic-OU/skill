@@ -156,6 +156,9 @@
   padding: calc(var(--space-md) + 0.25rem) calc(var(--space-lg) + 0.1rem);
   transform: scale(1.02);
   animation: frontierBreath 3.2s ease-in-out infinite;
+  /* Pulse only when the host QuestPath card is the active one — muted
+     cards keep the same look but pause the breathing. */
+  animation-play-state: var(--node-anim, running);
   box-shadow:
     0 6px 28px -2px color-mix(in srgb, var(--node-color) 28%, rgba(80, 50, 10, 0.15)),
     0 2px 6px color-mix(in srgb, var(--node-color) 15%, rgba(0, 0, 0, 0.06)),
@@ -221,6 +224,7 @@
   );
   color: var(--node-color);
   animation: sealPulse 2.5s ease-in-out infinite;
+  animation-play-state: var(--node-anim, running);
   border: 2.5px dashed color-mix(in srgb, var(--node-color) 65%, transparent);
   box-shadow:
     0 0 14px color-mix(in srgb, var(--node-color) 22%, transparent),

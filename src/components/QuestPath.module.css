@@ -28,6 +28,10 @@
      muted it collapses to a warm neutral so the whole card reads quiet;
      the active state promotes it to --green-brand. */
   --node-color: var(--text-3);
+  /* --node-anim gates the infinite breathing / pulsing animations on
+     frontier nodes (SkillNode reads it via animation-play-state). Muted
+     cards hold still; the active card breathes. */
+  --node-anim: paused;
 
   /* Card shell — mirrors public-web .panel shape (surface, border, radius
      16, padding xl). Left border is 4px wide always; only its colour
@@ -69,6 +73,7 @@
   --card-shadow: 0 4px 16px rgba(19, 123, 48, 0.08);
   --icon-color: var(--axis-stripe, var(--green-brand));
   --node-color: var(--green-brand);
+  --node-anim: running;
 }
 
 /* ── Revert first-child to muted when another card is the real active ──
@@ -84,6 +89,7 @@
   --card-shadow: none;
   --icon-color: var(--text-3);
   --node-color: var(--text-3);
+  --node-anim: paused;
 }
 
 /* ── Path header: icon · title/subtitle · level badge ── */
