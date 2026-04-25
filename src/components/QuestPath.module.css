@@ -54,13 +54,13 @@
 }
 
 /* ── Per-axis stripe colour (only applied when the card is active) ── */
-.questPath[data-axis='autonomy'] {
+.questPath[data-quest-path='autonomy'] {
   --axis-stripe: var(--green-brand);
 }
-.questPath[data-axis='parallelExecution'] {
+.questPath[data-quest-path='parallelExecution'] {
   --axis-stripe: var(--green-vivid);
 }
-.questPath[data-axis='skillUsage'] {
+.questPath[data-quest-path='skillUsage'] {
   --axis-stripe: var(--green-dark);
 }
 

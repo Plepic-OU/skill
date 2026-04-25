@@ -128,12 +128,7 @@ export default function QuestPath({
   const levelMax = axis.levels.length
 
   return (
-    <div
-      ref={containerRef}
-      className={styles.questPath}
-      data-quest-path={axisId}
-      data-axis={axisId}
-    >
+    <div ref={containerRef} className={styles.questPath} data-quest-path={axisId}>
       <div className={styles.pathHeader}>
         <div className={styles.pathIcon}>
           <span className="material-symbols-rounded">{axis.icon}</span>
