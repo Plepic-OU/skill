@@ -4,8 +4,6 @@ _An RPG-style self-assessment for agentic coding skills._
 
 🌐 **Live:** [skill.plepic.com](https://skill.plepic.com)
 
-![Plepic Skill — claim levels across three paths and watch your class change](docs/readme-hero.gif)
-
 ## What is this?
 
 A self-assessment app for developers exploring **agentic coding** — claim the skills you've reached across three axes (**autonomy**, **parallelism**, **skill usage**), level up, unlock classes, and share your profile.
