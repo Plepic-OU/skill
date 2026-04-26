@@ -239,6 +239,31 @@
     width: 1.6rem;
     height: 1.6rem;
   }
+
+  /* Mobile has no hover; touch users can't drive the desktop :hover/:focus-
+     within rules. Kill the :first-child default so Autonomy isn't stuck-on,
+     then let `data-active-axis` on the parent (set by useActiveAxis based on
+     scroll position) flip whichever card the user is currently reading into
+     active. Specificity beats both :first-child and :focus-within. */
+  .questPath:first-child {
+    --stripe: var(--border);
+    --card-bg: var(--surface);
+    --card-shadow: none;
+    --icon-color: var(--text-3);
+    --node-color: var(--text-3);
+    --node-anim: paused;
+  }
+  :global(#questMap[data-active-axis='autonomy']) .questPath[data-quest-path='autonomy'],
+  :global(#questMap[data-active-axis='parallelExecution'])
+    .questPath[data-quest-path='parallelExecution'],
+  :global(#questMap[data-active-axis='skillUsage']) .questPath[data-quest-path='skillUsage'] {
+    --stripe: var(--axis-stripe, var(--green-brand));
+    --card-bg: var(--green-surface);
+    --card-shadow: 0 4px 16px rgba(19, 123, 48, 0.08);
+    --icon-color: var(--axis-stripe, var(--green-brand));
+    --node-color: var(--green-brand);
+    --node-anim: running;
+  }
 }
 
 @media (max-width: 480px) {
