@@ -409,9 +409,15 @@
 
 @media (max-width: 520px) {
   .crest {
-    margin-top: var(--space-sm);
-    padding: var(--space-lg) var(--space-lg) var(--space-md);
+    /* Bigger margin-top so the level seal (absolutely positioned at -0.9rem)
+       has clear breathing room from whatever sits above the crest — the
+       hero kicker on the owner page or the visitor name pill on shared
+       profiles. Padding-top also grows so the seal stays clear of the
+       italic stakes prefix sitting just below it. */
+    margin-top: var(--space-md);
+    padding: var(--space-xl) var(--space-lg) var(--space-md);
     max-width: 100%;
+    gap: 0.65rem;
   }
   /* Tighten parchment inset so bar + breakdown have clear margin from the edge */
   .crest::before {
@@ -428,16 +434,20 @@
   /* Stack the "By path" items so Skill Usage doesn't orphan onto its own line */
   .breakdown {
     max-width: 86%;
+    gap: 0.5rem;
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
   }
   .breakdownRow {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.3rem;
+    gap: 0.45rem;
     width: 100%;
   }
   .breakdownItem {
     width: 100%;
     justify-content: space-between;
+    font-size: 0.85rem;
   }
   .breakdownLevel {
     margin-left: auto;
