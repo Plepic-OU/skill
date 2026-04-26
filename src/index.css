@@ -4,11 +4,16 @@
   /* Opt out of automatic dark-mode inversion (e.g. Samsung Internet's
      "dark theme for websites") — the warm-cream brand is light-only by design. */
   color-scheme: light;
-  --parchment: #f5f0e6;
-  --parchment-dark: #e8dece;
-  --parchment-edge: #d4c8b4;
-  --ink: #3d3222;
-  --seal-shadow: rgba(80, 40, 10, 0.3);
+
+  /* Legacy parchment/ink aliases map onto the Plepic design system tokens
+     that ship via CDN (see design-system.css). Kept so component CSS can keep
+     using --parchment/--ink without rippling changes through every module. */
+  --parchment: var(--bg-alt, #f3efe7);
+  --parchment-dark: var(--border, #e5e2dc);
+  --parchment-edge: var(--border, #e5e2dc);
+  --ink: var(--text, #1c1c1a);
+  --ink-muted: var(--text-2, #4a4a45);
+  --seal-shadow: rgba(19, 123, 48, 0.18);
 }
 
 *,

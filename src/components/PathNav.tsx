@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { skillTreeData } from '../data/skill-trees'
+import { useActiveAxis } from '../hooks/useActiveAxis'
 import type { AxisId, SkillState } from '../types/skill-tree'
 import styles from './PathNav.module.css'
 
@@ -29,46 +30,16 @@ function useIsDesktop(): boolean {
 
 /**
  * Sticky top nav — three tiles, one per skill path. Clicking a tile smooth-
- * scrolls to that path section. An IntersectionObserver tracks which section
- * is most in view and highlights the matching tile.
+ * scrolls to that path section. The active tile follows scroll via
+ * `useActiveAxis`, the same hook that drives the active-card skin so tile
+ * and card stay in sync.
  *
  * Returns null on desktop rather than using display:none, so the tile text
  * doesn't shadow the QuestPath ribbon text in visibility queries.
  */
 export default function PathNav({ state }: PathNavProps) {
   const isDesktop = useIsDesktop()
-  const [activeAxis, setActiveAxis] = useState<AxisId>(AXIS_IDS[0])
-
-  useEffect(() => {
-    if (typeof IntersectionObserver === 'undefined') return
-    const sections = AXIS_IDS.map((id) =>
-      document.querySelector<HTMLElement>(`[data-quest-path="${id}"]`),
-    ).filter((el): el is HTMLElement => el !== null)
-    if (sections.length === 0) return
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        // Prefer the section closest to the top of the viewport among those
-        // currently intersecting.
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
-        if (visible.length === 0) return
-        const top = visible[0].target as HTMLElement
-        const axis = top.dataset.questPath as AxisId | undefined
-        if (axis) setActiveAxis(axis)
-      },
-      {
-        // Treat the band under the sticky header+nav as "the viewport".
-        // Bottom margin keeps the switch happening near the top, not when a
-        // section first appears at the bottom edge.
-        rootMargin: '-120px 0px -45% 0px',
-        threshold: 0,
-      },
-    )
-    sections.forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
-  }, [])
+  const activeAxis = useActiveAxis()
 
   const handleTileClick = useCallback((axisId: AxisId) => {
     const section = document.querySelector<HTMLElement>(`[data-quest-path="${axisId}"]`)
@@ -93,7 +64,7 @@ export default function PathNav({ state }: PathNavProps) {
               <button
                 type="button"
                 className={tileClasses}
-                style={{ '--tile-color': axis.color } as React.CSSProperties}
+                data-axis={id}
                 onClick={() => handleTileClick(id)}
                 aria-current={isActive ? 'location' : undefined}
               >

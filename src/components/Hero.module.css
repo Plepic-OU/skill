@@ -29,9 +29,11 @@
 
 /* On profile pages the crest carries the headline, so the hero title becomes
    a smaller kicker — same words, drastically less visual weight. Profile
-   hero doesn't fill the first viewport — the crest does. */
+   hero doesn't fill the first viewport — the crest does. Bottom padding
+   keeps the kicker clear of the crest's level seal pill (which sits at
+   top:-0.9rem on the crest below). */
 .heroProfile {
-  padding: var(--space-xl) var(--space-xl) var(--space-xs);
+  padding: var(--space-xl) var(--space-xl) var(--space-sm);
   min-height: 0;
   justify-content: flex-start;
 }
@@ -85,7 +87,12 @@
     padding: var(--space-2xl) var(--space-md) var(--space-md);
   }
   .heroProfile {
-    padding: var(--space-lg) var(--space-md) var(--space-xs);
+    padding: var(--space-lg) var(--space-md) var(--space-sm);
+  }
+  /* Bottom padding clears the crest's absolutely-positioned level seal
+     (top:-0.9rem) so the visitor pill and the seal don't collide on mobile. */
+  .heroVisitor {
+    padding-bottom: var(--space-md);
   }
   .title::after {
     width: 120px;

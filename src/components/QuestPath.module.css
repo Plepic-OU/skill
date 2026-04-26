@@ -1,124 +1,172 @@
+/*
+ * QuestPath card — one per axis. White surface, subtle border. Only ONE
+ * card is "active" at any moment; the other two sit quiet so the user's
+ * attention lands where the focus actually is.
+ *
+ * Default active: the first card (Autonomy) — drawing the eye to the
+ * left-to-right starting point.
+ * On hover or focus-within any card: that card becomes active, and the
+ * default-first card drops back to muted so we never have two greens at
+ * once. Implemented purely in CSS via :first-child + :has() so no
+ * additional React state is needed.
+ *
+ * Card titles (h2) stay --green-brand regardless of state — they are the
+ * permanent identity of each path, not a state signal.
+ *
+ * --node-color stays uniform at --green-brand so the claimed-node seals
+ * across all three paths share one "claim" tone.
+ */
+
 .questPath {
+  /* ── Skin variables — flipped atomically when active ── */
+  --stripe: var(--border);
+  --card-bg: var(--surface);
+  --card-shadow: none;
+  --icon-color: var(--text-3);
+  /* --node-color drives every coloured element inside the card (claim
+     seals, frontier "UP NEXT" ribbon, vine connectors). When the card is
+     muted it collapses to a warm neutral so the whole card reads quiet;
+     the active state promotes it to --green-brand. */
+  --node-color: var(--text-3);
+  /* --node-anim gates the infinite breathing / pulsing animations on
+     frontier nodes (SkillNode reads it via animation-play-state). Muted
+     cards hold still; the active card breathes. */
+  --node-anim: paused;
+
+  /* Card shell — mirrors public-web .panel shape (surface, border, radius
+     16, padding xl). Left border is 4px wide always; only its colour
+     tracks the active state. */
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--stripe);
+  border-radius: 16px;
+  padding: var(--space-xl);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  /* Header 56 + sticky PathNav ~50 + breathing. Applies when users tap a
-     nav tile and we scrollIntoView this section. */
+  width: 100%;
   scroll-margin-top: 120px;
+  box-shadow: var(--card-shadow);
+
+  transition:
+    background var(--transition-base),
+    box-shadow var(--transition-base),
+    border-color var(--transition-base);
 }
 
-/* ── Path Header with Ribbon ── */
+/* ── Per-axis stripe colour (only applied when the card is active) ── */
+.questPath[data-quest-path='autonomy'] {
+  --axis-stripe: var(--green-brand);
+}
+.questPath[data-quest-path='parallelExecution'] {
+  --axis-stripe: var(--green-vivid);
+}
+.questPath[data-quest-path='skillUsage'] {
+  --axis-stripe: var(--green-dark);
+}
+
+/* ── Active skin — applied by :first-child default + :hover/:focus-within ── */
+.questPath:first-child,
+.questPath:hover,
+.questPath:focus-within {
+  --stripe: var(--axis-stripe, var(--green-brand));
+  --card-bg: var(--green-surface);
+  --card-shadow: 0 4px 16px rgba(19, 123, 48, 0.08);
+  --icon-color: var(--axis-stripe, var(--green-brand));
+  --node-color: var(--green-brand);
+  --node-anim: running;
+}
+
+/* ── Revert first-child to muted when another card is the real active ──
+   When the grid contains a hovered/focused sibling that isn't the first
+   card, the first card releases its default-active styling. :has() is the
+   piece that makes the whole "one at a time" rule CSS-only. */
+:global(#questMap):has(.questPath:nth-child(n + 2):hover)
+  .questPath:first-child:not(:hover):not(:focus-within),
+:global(#questMap):has(.questPath:nth-child(n + 2):focus-within)
+  .questPath:first-child:not(:hover):not(:focus-within) {
+  --stripe: var(--border);
+  --card-bg: var(--surface);
+  --card-shadow: none;
+  --icon-color: var(--text-3);
+  --node-color: var(--text-3);
+  --node-anim: paused;
+}
+
+/* ── Path header: icon · title/subtitle · level badge ── */
 .pathHeader {
-  text-align: center;
-  margin-bottom: var(--space-xl);
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  column-gap: var(--space-md);
+  align-items: start;
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--space-lg);
 }
 
 .pathIcon {
-  font-size: 2.2rem;
-  margin-bottom: 0.4rem;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  font-size: 1.85rem;
+  line-height: 1;
+  /* Tints green when the card is active (from --icon-color), fades to
+     --text-3 when muted. Title stays green-brand regardless. */
+  color: var(--icon-color, var(--text-3));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  transition: color var(--transition-base);
 }
 .pathIcon .material-symbols-rounded {
   font-size: inherit;
 }
 
-.ribbonBanner {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.55rem 2.5rem;
-  margin: 0 auto 0.4rem;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--node-color, var(--green-brand)) 85%, white) 0%,
-    var(--node-color, var(--green-brand)) 40%,
-    color-mix(in srgb, var(--node-color, var(--green-brand)) 90%, black) 100%
-  );
-  color: white;
+.pathTitleGroup {
+  min-width: 0;
+}
+
+.pathTitle {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.15rem;
-  letter-spacing: 0.02em;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
-  box-shadow:
-    0 4px 14px rgba(0, 0, 0, 0.18),
-    0 2px 4px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.15);
-}
-.ribbonBanner::before,
-.ribbonBanner::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  width: 0;
-  height: 0;
-  border-style: solid;
-}
-.ribbonBanner::before {
-  left: -14px;
-  border-width: 0 14px 50% 0;
-  border-color: transparent var(--node-color, var(--green-brand)) transparent transparent;
-}
-.ribbonBanner::after {
-  right: -14px;
-  border-width: 0 0 50% 14px;
-  border-color: transparent transparent transparent var(--node-color, var(--green-brand));
-}
-
-.ribbonName {
-  font-weight: inherit;
-}
-
-.ribbonMeta {
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  padding: 0.1rem 0.5rem;
-  background: color-mix(in srgb, white 25%, transparent);
-  border-radius: 999px;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, white 30%, transparent);
-  font-variant-numeric: tabular-nums;
-  text-shadow: none;
-}
-
-.ribbonFoldLeft,
-.ribbonFoldRight {
-  position: absolute;
-  bottom: 0;
-  width: 0;
-  height: 0;
-  border-style: solid;
-}
-.ribbonFoldLeft {
-  left: -14px;
-  border-width: 50% 14px 0 0;
-  border-color: transparent color-mix(in srgb, var(--node-color, var(--green-brand)) 80%, black)
-    transparent transparent;
-}
-.ribbonFoldRight {
-  right: -14px;
-  border-width: 50% 0 0 14px;
-  border-color: transparent transparent transparent
-    color-mix(in srgb, var(--node-color, var(--green-brand)) 80%, black);
+  font-size: 1.3rem;
+  letter-spacing: -0.005em;
+  line-height: 1.15;
+  color: var(--green-brand);
+  margin: 0 0 0.2rem 0;
 }
 
 .pathSubtitle {
-  font-size: 0.75rem;
-  color: var(--text-3);
-  max-width: 220px;
-  line-height: 1.4;
-  margin: 0.3rem auto 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--text-2);
+  margin: 0;
 }
 
-/* ── Node List ── */
+/* Level badge — matches public-web .badge.badge-default pattern (green
+   surface fill, green-dark text, green-light border, asymmetric radius). */
+.pathLevelBadge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  padding: 0.2rem 0.65rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: normal;
+  background: var(--green-surface);
+  color: var(--green-dark);
+  border: 1px solid var(--green-light);
+  border-radius: 20px 4px 16px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.pathLevelLabel {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.62rem;
+}
+
+/* ── Node list + vine connectors ── */
 .nodeList {
   display: flex;
   flex-direction: column;
@@ -132,7 +180,6 @@
   position: relative;
 }
 
-/* ── Trail Connectors ── */
 .trailConnector {
   width: 100%;
   height: 28px;
@@ -145,7 +192,7 @@
 
 .vineLine {
   position: absolute;
-  width: 7px;
+  width: 5px;
   height: 100%;
   left: 50%;
   transform: translateX(-50%);
@@ -153,74 +200,86 @@
 }
 
 .solid .vineLine {
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--node-color) 65%, #8b7355) 0%,
-    color-mix(in srgb, var(--node-color) 45%, #6b5035) 100%
-  );
-  box-shadow:
-    -1px 0 0 color-mix(in srgb, var(--node-color) 30%, rgba(80, 50, 20, 0.3)),
-    1px 0 0 color-mix(in srgb, var(--node-color) 30%, rgba(80, 50, 20, 0.3)),
-    0 0 8px color-mix(in srgb, var(--node-color) 25%, transparent);
-  opacity: 0.85;
-}
-.solid .vineLine::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    -45deg,
-    transparent 0px,
-    transparent 3px,
-    rgba(255, 255, 255, 0.15) 3px,
-    rgba(255, 255, 255, 0.15) 5px
-  );
-  border-radius: 3px;
+  background: var(--node-color);
+  opacity: 0.7;
 }
 
 .dashed .vineLine {
   background: repeating-linear-gradient(
     to bottom,
-    color-mix(in srgb, var(--node-color) 55%, #8b7355) 0px,
-    color-mix(in srgb, var(--node-color) 55%, #8b7355) 8px,
-    transparent 8px,
-    transparent 14px
+    var(--node-color) 0px,
+    var(--node-color) 6px,
+    transparent 6px,
+    transparent 12px
   );
-  opacity: 0.6;
-  box-shadow: 0 0 10px color-mix(in srgb, var(--node-color) 15%, transparent);
+  opacity: 0.55;
 }
 
 .faded .vineLine {
   background: repeating-linear-gradient(
     to bottom,
-    var(--parchment-edge) 0px,
-    var(--parchment-edge) 4px,
+    var(--border) 0px,
+    var(--border) 4px,
     transparent 4px,
     transparent 10px
   );
-  opacity: 0.3;
+  opacity: 0.7;
 }
 
 /* ── Responsive ── */
 @media (max-width: 819px) {
-  .ribbonBanner {
-    padding: 0.35rem 1.5rem;
-    font-size: 0.95rem;
+  .questPath {
+    padding: var(--space-lg);
   }
-  .ribbonBanner::before {
-    left: -10px;
-    border-width: 0 10px 50% 0;
+  .pathTitle {
+    font-size: 1.15rem;
   }
-  .ribbonBanner::after {
-    right: -10px;
-    border-width: 0 0 50% 10px;
+  .pathIcon {
+    font-size: 1.6rem;
+    width: 1.6rem;
+    height: 1.6rem;
   }
-  .ribbonFoldLeft {
-    left: -10px;
-    border-width: 50% 10px 0 0;
+
+  /* Mobile has no hover; touch users can't drive the desktop :hover/:focus-
+     within rules. Kill the :first-child default so Autonomy isn't stuck-on,
+     then let `data-active-axis` on the parent (set by useActiveAxis based on
+     scroll position) flip whichever card the user is currently reading into
+     active. Specificity beats both :first-child and :focus-within. */
+  .questPath:first-child {
+    --stripe: var(--border);
+    --card-bg: var(--surface);
+    --card-shadow: none;
+    --icon-color: var(--text-3);
+    --node-color: var(--text-3);
+    --node-anim: paused;
   }
-  .ribbonFoldRight {
-    right: -10px;
-    border-width: 50% 0 0 10px;
+  :global(#questMap[data-active-axis='autonomy']) .questPath[data-quest-path='autonomy'],
+  :global(#questMap[data-active-axis='parallelExecution'])
+    .questPath[data-quest-path='parallelExecution'],
+  :global(#questMap[data-active-axis='skillUsage']) .questPath[data-quest-path='skillUsage'] {
+    --stripe: var(--axis-stripe, var(--green-brand));
+    --card-bg: var(--green-surface);
+    --card-shadow: 0 4px 16px rgba(19, 123, 48, 0.08);
+    --icon-color: var(--axis-stripe, var(--green-brand));
+    --node-color: var(--green-brand);
+    --node-anim: running;
+  }
+}
+
+@media (max-width: 480px) {
+  .pathHeader {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    row-gap: 0.3rem;
+  }
+  /* Level badge drops to its own row under the title on narrow mobile. */
+  .pathLevelBadge {
+    grid-column: 2 / 3;
+    justify-self: end;
+    grid-row: 1 / 2;
+  }
+  .pathTitleGroup {
+    grid-column: 1 / 3;
+    grid-row: 2 / 3;
   }
 }

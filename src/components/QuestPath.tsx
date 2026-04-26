@@ -128,25 +128,21 @@ export default function QuestPath({
   const levelMax = axis.levels.length
 
   return (
-    <div
-      ref={containerRef}
-      className={styles.questPath}
-      data-quest-path={axisId}
-      style={{ '--node-color': axis.color } as React.CSSProperties}
-    >
+    <div ref={containerRef} className={styles.questPath} data-quest-path={axisId}>
       <div className={styles.pathHeader}>
-        <div className={styles.pathIcon} style={{ color: axis.color }}>
+        <div className={styles.pathIcon}>
           <span className="material-symbols-rounded">{axis.icon}</span>
         </div>
-        <div className={styles.ribbonBanner}>
-          <span className={styles.ribbonName}>{axis.name}</span>
-          <span className={styles.ribbonMeta}>
-            Lv {claimedLevel}/{levelMax}
-          </span>
-          <span className={styles.ribbonFoldLeft} />
-          <span className={styles.ribbonFoldRight} />
+        <div className={styles.pathTitleGroup}>
+          <h2 className={styles.pathTitle}>{axis.name}</h2>
+          <p className={styles.pathSubtitle}>{axis.description}</p>
         </div>
-        <div className={styles.pathSubtitle}>{axis.description}</div>
+        <span className={styles.pathLevelBadge} aria-label={`Level ${claimedLevel} of ${levelMax}`}>
+          <span className={styles.pathLevelLabel}>Lv</span>
+          <span className={styles.pathLevelValue}>
+            {claimedLevel}/{levelMax}
+          </span>
+        </span>
       </div>
 
       <div className={styles.nodeList}>
