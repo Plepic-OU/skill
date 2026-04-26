@@ -4,9 +4,7 @@ _An RPG-style self-assessment for agentic coding skills._
 
 🌐 **Live:** [skill.plepic.com](https://skill.plepic.com)
 
-<!-- TODO: replace this static screenshot with an animated GIF showing the skill-claim interaction (level up + class change + celebration). -->
-
-![Plepic Skill — map your agentic skills across three paths](docs/readme-hero.png)
+![Plepic Skill — claim levels across three paths and watch your class change](docs/readme-hero.gif)
 
 ## What is this?
 
