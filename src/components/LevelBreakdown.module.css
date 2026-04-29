@@ -1,0 +1,75 @@
+/* ── Axis breakdown ("By path") — clearly secondary to the class + level ── */
+
+.breakdown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
+  width: 100%;
+  max-width: 460px;
+  border-top: 1px dashed color-mix(in srgb, var(--parchment-edge) 70%, transparent);
+}
+.breakdownLabel {
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--text-2) 80%, var(--green-dark));
+}
+.breakdownRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem 1.1rem;
+}
+.breakdownItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+.breakdownDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 3px currentColor;
+}
+.breakdownName {
+  font-weight: 500;
+}
+.breakdownLevel {
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 480px) {
+  /* Stack the "By path" items so Skill Usage doesn't orphan onto its own line */
+  .breakdown {
+    max-width: 86%;
+    gap: 0.5rem;
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+  }
+  .breakdownRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.45rem;
+    width: 100%;
+  }
+  .breakdownItem {
+    width: 100%;
+    justify-content: space-between;
+    font-size: 0.85rem;
+  }
+  .breakdownLevel {
+    margin-left: auto;
+  }
+}
