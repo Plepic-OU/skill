@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react'
-import StakesSelector from '../StakesSelector'
+import SafetyZoneSelector from '../SafetyZoneSelector'
 
-describe('StakesSelector', () => {
+describe('SafetyZoneSelector', () => {
   const defaultProps = {
     selected: 'sandbox' as const,
     onSelect: vi.fn(),
@@ -12,7 +12,7 @@ describe('StakesSelector', () => {
   })
 
   it('renders all four zone buttons', () => {
-    render(<StakesSelector {...defaultProps} />)
+    render(<SafetyZoneSelector {...defaultProps} />)
     expect(screen.getByText('Sandbox')).toBeInTheDocument()
     expect(screen.getByText('Normal')).toBeInTheDocument()
     expect(screen.getByText('Hardcore')).toBeInTheDocument()
@@ -20,7 +20,7 @@ describe('StakesSelector', () => {
   })
 
   it('marks the selected zone as aria-checked', () => {
-    render(<StakesSelector {...defaultProps} />)
+    render(<SafetyZoneSelector {...defaultProps} />)
     expect(screen.getByText('Sandbox').closest('[role="radio"]')).toHaveAttribute(
       'aria-checked',
       'true',
@@ -32,13 +32,13 @@ describe('StakesSelector', () => {
   })
 
   it('calls onSelect when a zone is clicked', () => {
-    render(<StakesSelector {...defaultProps} />)
+    render(<SafetyZoneSelector {...defaultProps} />)
     fireEvent.click(screen.getByText('Hardcore'))
     expect(defaultProps.onSelect).toHaveBeenCalledWith('hardcore')
   })
 
   it('shows a non-empty description for the selected zone', () => {
-    render(<StakesSelector {...defaultProps} />)
+    render(<SafetyZoneSelector {...defaultProps} />)
     // The sandbox zone should display its description text
     const radios = screen.getAllByRole('radio')
     const selectedRadio = radios.find((r) => r.getAttribute('aria-checked') === 'true')
@@ -51,11 +51,11 @@ describe('StakesSelector', () => {
   })
 
   it('updates description when selection changes', () => {
-    const { rerender } = render(<StakesSelector {...defaultProps} />)
+    const { rerender } = render(<SafetyZoneSelector {...defaultProps} />)
     const radiogroup = screen.getByRole('radiogroup')
     const initialDesc = radiogroup.nextElementSibling?.textContent
 
-    rerender(<StakesSelector {...defaultProps} selected="hardcore" />)
+    rerender(<SafetyZoneSelector {...defaultProps} selected="hardcore" />)
 
     const updatedDesc = radiogroup.nextElementSibling?.textContent
     expect(updatedDesc?.length).toBeGreaterThan(0)

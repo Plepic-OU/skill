@@ -19,8 +19,7 @@ export interface FirestoreUserRead {
   skills: SkillLevels
 }
 
-export function hasValidSkills(data: Record<string, unknown>): boolean {
-  const skills = data.skills
+function hasValidSkills(skills: unknown): skills is SkillLevels {
   return (
     typeof skills === 'object' &&
     skills !== null &&
@@ -30,10 +29,17 @@ export function hasValidSkills(data: Record<string, unknown>): boolean {
   )
 }
 
-export function toSkillState(data: {
-  skills: SkillLevels
-  safetyZone: SkillState['safetyZone']
-}): SkillState {
+/**
+ * Parse a raw Firestore user document into a typed read shape, or null if the
+ * skills payload is missing/malformed. Single source of truth for both
+ * syncOnLogin and readPublicProfile.
+ */
+export function parseFirestoreUser(data: Record<string, unknown>): FirestoreUserRead | null {
+  if (!hasValidSkills(data.skills)) return null
+  return data as unknown as FirestoreUserRead
+}
+
+export function toSkillState(data: FirestoreUserRead): SkillState {
   return {
     autonomy: data.skills.autonomy,
     parallelExecution: data.skills.parallelExecution,
@@ -55,9 +61,11 @@ export async function syncOnLogin(user: User): Promise<SkillState> {
   const userRef = doc(db, 'users', user.uid)
   const snapshot = await getDoc(userRef)
 
-  const raw = snapshot.exists() ? (snapshot.data() as Record<string, unknown>) : null
-  if (raw && hasValidSkills(raw)) {
-    const data = raw as unknown as FirestoreUserRead
+  const parsed = snapshot.exists()
+    ? parseFirestoreUser(snapshot.data() as Record<string, unknown>)
+    : null
+
+  if (parsed) {
     // Update profile info (may have changed since last login)
     await setDoc(
       userRef,
@@ -67,12 +75,12 @@ export async function syncOnLogin(user: User): Promise<SkillState> {
       },
       { merge: true },
     )
-    return toSkillState(data)
-  } else {
-    const local = loadState()
-    await writeAssessment(user.uid, local, user)
-    return local
+    return toSkillState(parsed)
   }
+
+  const local = loadState()
+  await writeAssessment(user.uid, local, user)
+  return local
 }
 
 export async function writeAssessment(

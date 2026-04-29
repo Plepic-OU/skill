@@ -1,10 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
 import { computeProgression } from '../data/progression'
-import { skillTreeData } from '../data/skill-trees'
-import type { AxisId, SkillState } from '../types/skill-tree'
+import { useLevelUpCelebration } from '../hooks/useLevelUpCelebration'
+import type { SkillState } from '../types/skill-tree'
+import LevelBreakdown from './LevelBreakdown'
 import styles from './LevelCrest.module.css'
-
-const AXIS_IDS = Object.keys(skillTreeData.axes) as AxisId[]
 
 interface LevelCrestProps {
   state: SkillState
@@ -20,7 +18,7 @@ interface ProgressViewProps {
   barPercent: number
 }
 
-function renderProgress({
+function ProgressView({
   isMaxLevel,
   justReached,
   unifiedLevel,
@@ -71,8 +69,46 @@ function renderProgress({
   )
 }
 
-export default function LevelCrest({ state, visitor }: LevelCrestProps) {
-  const progression = computeProgression(state)
+interface CrestStatsProps {
+  isMaxLevel: boolean
+  visitor: boolean
+  completedSkills: number
+  xpRemaining: number
+  unifiedLevel: number
+}
+
+function CrestStats({
+  isMaxLevel,
+  visitor,
+  completedSkills,
+  xpRemaining,
+  unifiedLevel,
+}: CrestStatsProps) {
+  if (isMaxLevel || visitor) {
+    return (
+      <div className={styles.stats}>
+        <span>
+          <b>{completedSkills} of 18</b> skills
+        </span>
+      </div>
+    )
+  }
+  return (
+    <div className={styles.stats}>
+      <span>
+        <b>{xpRemaining} XP</b> to Lv {unifiedLevel + 1}
+      </span>
+      <span className={styles.sep} aria-hidden="true">
+        ·
+      </span>
+      <span>
+        <b>{completedSkills}</b> of 18 skills
+      </span>
+    </div>
+  )
+}
+
+export default function LevelCrest({ state, visitor = false }: LevelCrestProps) {
   const {
     unifiedLevel,
     classInfo,
@@ -81,27 +117,9 @@ export default function LevelCrest({ state, visitor }: LevelCrestProps) {
     xpIntoLevel,
     xpForNextLevel,
     isMaxLevel,
-  } = progression
+  } = computeProgression(state)
 
-  const [celebrate, setCelebrate] = useState(false)
-  const prevLevelRef = useRef<number | null>(null)
-  const prevClassRef = useRef<number | null>(null)
-
-  useEffect(() => {
-    const prevLevel = prevLevelRef.current
-    const prevClass = prevClassRef.current
-    const levelledUp = prevLevel !== null && unifiedLevel > prevLevel
-    const classChanged = prevClass !== null && classInfo.index !== prevClass
-    if (!visitor && (levelledUp || classChanged)) {
-      setCelebrate(true)
-      const t = setTimeout(() => setCelebrate(false), 900)
-      prevLevelRef.current = unifiedLevel
-      prevClassRef.current = classInfo.index
-      return () => clearTimeout(t)
-    }
-    prevLevelRef.current = unifiedLevel
-    prevClassRef.current = classInfo.index
-  }, [unifiedLevel, classInfo.index, visitor])
+  const celebrate = useLevelUpCelebration(unifiedLevel, classInfo.index, visitor)
 
   const barPercent = isMaxLevel ? 100 : (xpIntoLevel / xpForNextLevel) * 100
   const xpRemaining = xpForNextLevel - xpIntoLevel
@@ -135,53 +153,26 @@ export default function LevelCrest({ state, visitor }: LevelCrestProps) {
       </h2>
       <p className={styles.tagline}>{classInfo.tagline}</p>
 
-      {!visitor &&
-        renderProgress({
-          isMaxLevel,
-          justReached,
-          unifiedLevel,
-          xpIntoLevel,
-          xpForNextLevel,
-          barPercent,
-        })}
+      {!visitor && (
+        <ProgressView
+          isMaxLevel={isMaxLevel}
+          justReached={justReached}
+          unifiedLevel={unifiedLevel}
+          xpIntoLevel={xpIntoLevel}
+          xpForNextLevel={xpForNextLevel}
+          barPercent={barPercent}
+        />
+      )}
 
-      <div className={styles.stats}>
-        {isMaxLevel || visitor ? (
-          <span>
-            <b>{completedSkills} of 18</b> skills
-          </span>
-        ) : (
-          <>
-            <span>
-              <b>{xpRemaining} XP</b> to Lv {unifiedLevel + 1}
-            </span>
-            <span className={styles.sep} aria-hidden="true">
-              ·
-            </span>
-            <span>
-              <b>{completedSkills}</b> of 18 skills
-            </span>
-          </>
-        )}
-      </div>
+      <CrestStats
+        isMaxLevel={isMaxLevel}
+        visitor={visitor}
+        completedSkills={completedSkills}
+        xpRemaining={xpRemaining}
+        unifiedLevel={unifiedLevel}
+      />
 
-      <div className={styles.breakdown} aria-live="polite">
-        <span className={styles.breakdownLabel}>By path</span>
-        <div className={styles.breakdownRow}>
-          {AXIS_IDS.map((id) => {
-            const axis = skillTreeData.axes[id]
-            return (
-              <span key={id} className={styles.breakdownItem} data-axis={id}>
-                <span className={styles.breakdownDot} style={{ background: axis.color }} />
-                <span className={styles.breakdownName}>{axis.name}</span>
-                <span className={styles.breakdownLevel}>
-                  {state[id]} / {axis.levels.length}
-                </span>
-              </span>
-            )
-          })}
-        </div>
-      </div>
+      <LevelBreakdown state={state} />
     </section>
   )
 }

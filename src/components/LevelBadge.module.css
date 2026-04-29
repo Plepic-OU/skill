@@ -1,0 +1,91 @@
+/* ── Compact level badge — persistent level/class readout in the header.
+      Clicking it jumps to the LevelCrest section. ── */
+
+.levelBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+  flex: 0 1 auto;
+  font-family: var(--font-display);
+  padding: 0.25rem var(--space-xs);
+  /* Reset button defaults */
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  cursor: pointer;
+  color: inherit;
+  text-align: left;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+.levelBadge:hover {
+  background: color-mix(in srgb, var(--green-brand) 7%, transparent);
+  border-color: color-mix(in srgb, var(--green-brand) 25%, transparent);
+}
+.levelBadge:active {
+  transform: translateY(0.5px);
+}
+.levelBadge:focus-visible {
+  outline: 2px solid var(--green-vivid);
+  outline-offset: 2px;
+}
+
+.levelSeal {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.15rem;
+  padding: 0.12rem 0.5rem 0.14rem;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--green-brand) 85%, white) 0%,
+    var(--green-brand) 50%,
+    var(--green-dark) 100%
+  );
+  color: #fff;
+  border-radius: 999px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.15),
+    0 1px 3px rgba(19, 123, 48, 0.35);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+.levelSealLabel {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+.levelSealNumber {
+  font-size: 0.9rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.levelClass {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+  line-height: 1.2;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.levelPrefix {
+  color: var(--green-dark);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 0.72rem;
+  margin-right: 0.3em;
+  letter-spacing: 0.01em;
+}
+.levelClassName {
+  /* allow truncation at the class name, prefix drops first */
+}

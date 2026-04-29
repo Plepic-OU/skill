@@ -1,7 +1,7 @@
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '../firebase'
 import type { SkillState } from '../types/skill-tree'
-import { hasValidSkills, toSkillState, type FirestoreUserRead } from './sync'
+import { parseFirestoreUser, toSkillState } from './sync'
 
 // Stryker disable BlockStatement: catch returns false but undefined (falsy) has same effect in callers
 function isHttpUrl(url: string): boolean {
@@ -23,13 +23,12 @@ export async function readPublicProfile(userId: string): Promise<PublicProfile |
   const userRef = doc(db, 'users', userId)
   const snapshot = await getDoc(userRef)
   if (!snapshot.exists()) return null
-  const raw = snapshot.data() as Record<string, unknown>
-  if (!hasValidSkills(raw)) return null
-  const data = raw as unknown as FirestoreUserRead
+  const parsed = parseFirestoreUser(snapshot.data() as Record<string, unknown>)
+  if (!parsed) return null
   return {
-    ...toSkillState(data),
-    displayName: data.displayName ?? 'Anonymous',
+    ...toSkillState(parsed),
+    displayName: parsed.displayName ?? 'Anonymous',
     // Stryker disable next-line StringLiteral: any truthy fallback still fails isHttpUrl when avatarUrl is undefined
-    avatarUrl: isHttpUrl(data.avatarUrl ?? '') ? (data.avatarUrl as string) : '',
+    avatarUrl: isHttpUrl(parsed.avatarUrl ?? '') ? (parsed.avatarUrl as string) : '',
   }
 }
