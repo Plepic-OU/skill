@@ -8,7 +8,6 @@ export function useAuthActions() {
   const openModal = useCallback(() => setIsModalOpen(true), [])
   const closeModal = useCallback(() => setIsModalOpen(false), [])
 
-  const openConfirm = useCallback(() => setIsConfirmOpen(true), [])
   const closeConfirm = useCallback(() => setIsConfirmOpen(false), [])
 
   const handleSignOut = useCallback(() => {
@@ -25,7 +24,6 @@ export function useAuthActions() {
     openModal,
     closeModal,
     isConfirmOpen,
-    openConfirm,
     closeConfirm,
     handleSignOut,
     confirmSignOut,
