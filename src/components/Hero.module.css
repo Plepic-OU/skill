@@ -102,10 +102,21 @@
 
 .subtitle {
   color: var(--text-2);
-  font-size: clamp(0.92rem, 0.88rem + 0.2vw, 1.05rem);
+  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.15rem);
   max-width: 440px;
   margin: var(--space-md) auto 0;
   line-height: 1.55;
+  padding: 0 var(--space-sm);
+}
+
+.subtitleHint {
+  font-size: 0.88rem;
+  color: var(--text-3);
+  margin-top: 0.3rem;
+  line-height: 1.5;
+  max-width: 440px;
+  margin-left: auto;
+  margin-right: auto;
   padding: 0 var(--space-sm);
 }
 
