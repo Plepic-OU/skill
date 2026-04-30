@@ -132,7 +132,7 @@
 
 .tagline {
   font-family: var(--font-body);
-  font-size: 0.88rem;
+  font-size: clamp(0.92rem, 0.9rem + 0.15vw, 1rem);
   color: var(--text-2);
   text-align: center;
   max-width: 440px;
@@ -185,7 +185,7 @@
   display: flex;
   gap: 0.8rem;
   font-family: var(--font-body);
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   color: var(--text-2);
   flex-wrap: wrap;
   justify-content: center;
@@ -206,16 +206,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.5rem;
   margin-top: var(--space-sm);
-  padding-top: var(--space-sm);
+  padding-top: var(--space-md);
   width: 100%;
   max-width: 460px;
   border-top: 1px dashed color-mix(in srgb, var(--parchment-edge) 70%, transparent);
 }
 .breakdownLabel {
   font-family: var(--font-display);
-  font-size: 0.68rem;
+  font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -225,14 +225,14 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.4rem 1.1rem;
+  gap: 0.55rem 1.4rem;
 }
 .breakdownItem {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
   font-family: var(--font-body);
-  font-size: 0.78rem;
+  font-size: 0.88rem;
   color: var(--text-2);
   font-variant-numeric: tabular-nums;
 }
@@ -424,7 +424,7 @@
     inset: 0.2rem 0.4rem;
   }
   .stats {
-    font-size: 0.72rem;
+    font-size: 0.82rem;
     gap: 0.6rem;
   }
   /* Cap the bar narrower than the content area so it feels framed, not edge-to-edge */

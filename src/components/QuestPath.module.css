@@ -135,10 +135,11 @@
 }
 
 .pathSubtitle {
-  font-size: 0.82rem;
+  font-size: clamp(0.88rem, 0.85rem + 0.2vw, 0.95rem);
   line-height: 1.45;
   color: var(--text-2);
   margin: 0;
+  max-width: 260px;
 }
 
 /* Level badge — matches public-web .badge.badge-default pattern (green

@@ -41,9 +41,12 @@ export default function Hero({ visitorName, visitorAvatarUrl, variant = 'landing
     <section className={heroClass}>
       <h1 className={styles.title}>Map Your Agentic Skills</h1>
       {!isProfile && (
-        <p className={styles.subtitle}>
-          Where are you with AI coding? Mark your level on each path — your class appears as you go.
-        </p>
+        <>
+          <p className={styles.subtitle}>Where are you with AI coding?</p>
+          <p className={styles.subtitleHint}>
+            Mark your level on each path. Your class appears as you go.
+          </p>
+        </>
       )}
     </section>
   )

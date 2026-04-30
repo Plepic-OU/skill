@@ -18,7 +18,7 @@
 .label {
   font-family: var(--font-body);
   font-weight: 400;
-  font-size: 0.82rem;
+  font-size: clamp(0.9rem, 0.88rem + 0.15vw, 1rem);
   color: var(--text-3);
   text-align: center;
   margin-bottom: var(--space-2xs);
@@ -26,7 +26,7 @@
 
 .hint {
   font-family: var(--font-body);
-  font-size: 0.72rem;
+  font-size: 0.85rem;
   font-style: italic;
   color: color-mix(in srgb, var(--text-3) 85%, transparent);
   text-align: center;
@@ -45,7 +45,7 @@
   align-items: center;
   gap: 0.25rem;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.85rem;
   font-weight: 600;
   padding: 0.55rem 0.7rem 0.45rem;
   border-radius: 12px;
@@ -71,13 +71,13 @@
 }
 
 .btnLabel {
-  font-size: 0.72rem;
+  font-size: 0.85rem;
   line-height: 1.2;
 }
 
 .btnHint {
   font-family: var(--font-body);
-  font-size: 0.65rem;
+  font-size: 0.78rem;
   font-weight: 400;
   opacity: 0.8;
   line-height: 1.2;
@@ -85,10 +85,10 @@
 
 .desc {
   text-align: center;
-  font-size: 0.78rem;
+  font-size: 0.92rem;
   color: var(--text-3);
   margin-top: var(--space-sm);
-  min-height: 3em;
+  min-height: 2.4em;
   font-style: italic;
 }
 
@@ -99,17 +99,18 @@
     gap: var(--space-xs);
   }
   .btn {
-    font-size: 0.7rem;
+    font-size: 0.82rem;
     padding: 0.45rem 0.6rem 0.4rem;
   }
 }
 
+/* smallest supported viewport — 4-up grid forces a tight floor */
 @media (max-width: 340px) {
   .btn {
-    font-size: 0.65rem;
+    font-size: 0.78rem;
     padding: 0.4rem 0.45rem 0.35rem;
   }
   .btnHint {
-    font-size: 0.58rem;
+    font-size: 0.72rem;
   }
 }
