@@ -94,7 +94,7 @@ export function useSyncState(
       skipNextWrite.current = false
       return
     }
-    writeAssessment(user.uid, state)
+    writeAssessment(user.uid, state, user)
       .then(() => showSaved())
       .catch((err) => {
         console.error('Failed to write assessment:', err)
