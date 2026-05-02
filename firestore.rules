@@ -14,7 +14,7 @@ service cloud.firestore {
         && request.resource.data.displayName is string
         && request.resource.data.displayName.size() <= 200
         && request.resource.data.avatarUrl is string
-        && request.resource.data.avatarUrl.size() <= 500
+        && request.resource.data.avatarUrl.size() <= 2000
         && (request.resource.data.avatarUrl == '' || request.resource.data.avatarUrl.matches('^https://.*'))
         && request.resource.data.safetyZone in ['sandbox', 'normal', 'hardcore', 'impossible']
         && request.resource.data.skills is map
