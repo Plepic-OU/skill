@@ -1,5 +1,5 @@
 import type { User } from 'firebase/auth'
-import { Link, useLocation } from 'react-router'
+import { Link } from 'react-router'
 import { useAuth } from '../contexts/AuthContext'
 import { useAuthActions } from '../hooks/useAuthActions'
 import { computeProgression } from '../data/progression'
@@ -140,7 +140,6 @@ function LandingControls({ onSignIn }: LandingControlsProps) {
 
 export default function Header({ syncStatus = 'idle', mode = 'landing', state }: HeaderProps) {
   const { user, loading } = useAuth()
-  const location = useLocation()
   const {
     isModalOpen,
     openModal,
@@ -150,21 +149,6 @@ export default function Header({ syncStatus = 'idle', mode = 'landing', state }:
     confirmSignOut,
     closeConfirm,
   } = useAuthActions()
-
-  const handleLogoClick = (e: React.MouseEvent) => {
-    // Mobile: logo taps scroll to the top of the current page instead of navigating,
-    // since mobile browsers lack a scroll-thumb affordance. Desktop keeps Link nav.
-    if (typeof window !== 'undefined' && window.innerWidth <= 560) {
-      e.preventDefault()
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-      return
-    }
-    // On desktop, if we're already on the home route, also scroll up rather than no-op.
-    if (location.pathname === '/') {
-      e.preventDefault()
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-  }
 
   function renderAuthControls() {
     if (loading) return null
@@ -194,12 +178,7 @@ export default function Header({ syncStatus = 'idle', mode = 'landing', state }:
 
   return (
     <header className={styles.header}>
-      <Link
-        to="/"
-        className={styles.logoLockup}
-        aria-label="Plepic Skill home"
-        onClick={handleLogoClick}
-      >
+      <a href="https://plepic.com" className={styles.logoLockup} aria-label="Plepic home">
         <svg
           className={styles.logoButterfly}
           xmlns="http://www.w3.org/2000/svg"
@@ -359,7 +338,7 @@ export default function Header({ syncStatus = 'idle', mode = 'landing', state }:
         <span className={styles.logoSuffix} aria-hidden="true">
           Skill
         </span>
-      </Link>
+      </a>
       {state && hasAnyProgress(state) && mode !== 'visitor' && <LevelBadge state={state} />}
       <div className={styles.authArea}>
         {!loading && user && (
