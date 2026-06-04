@@ -43,18 +43,39 @@ jobs:
 
   mutation-tests:
     runs-on: ubuntu-latest
+    # Stryker only mutates the data layer (see stryker.config.json), so it can
+    # only find anything new when src/data/** (or its Stryker/Vitest config)
+    # changes. The job always runs and reports — safe as a required check — but
+    # the ~7-minute Stryker run is gated behind a path filter so the vast
+    # majority of PRs skip it in seconds.
     steps:
       - uses: actions/checkout@v4
+      - name: Detect data-layer changes
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            data:
+              - 'src/data/**'
+              - 'stryker.config.json'
+              - 'vite.config.ts'
       - uses: pnpm/action-setup@v4
+        if: steps.filter.outputs.data == 'true'
       - uses: actions/setup-node@v4
+        if: steps.filter.outputs.data == 'true'
         with:
           node-version-file: package.json
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+        if: steps.filter.outputs.data == 'true'
         env:
           HUSKY: "0"
       - name: Mutation tests (Stryker)
+        if: steps.filter.outputs.data == 'true'
         run: pnpm test:mutate
+      - name: Skip notice
+        if: steps.filter.outputs.data != 'true'
+        run: echo "No src/data changes — skipping mutation tests."
 
   e2e-tests:
     runs-on: ubuntu-latest
