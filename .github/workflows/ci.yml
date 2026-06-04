@@ -58,6 +58,12 @@ jobs:
 
   e2e-tests:
     runs-on: ubuntu-latest
+    # Run inside the official Playwright image so Chromium is pre-installed and we
+    # never hit the `playwright install` browser download, which intermittently
+    # stalls after reaching 100% against cdn.playwright.dev and hangs the job.
+    # Keep this tag in lockstep with the @playwright/test version in pnpm-lock.yaml.
+    container:
+      image: mcr.microsoft.com/playwright:v1.59.1-noble
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -72,7 +78,5 @@ jobs:
         with:
           distribution: temurin
           java-version: "21"
-      - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps chromium
       - name: E2E tests
         run: pnpm test:e2e:emulator
