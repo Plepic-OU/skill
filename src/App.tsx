@@ -16,7 +16,8 @@ export default function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <footer className={styles.footer}>
-        Built by <strong>Plepic</strong> &mdash; helping developers level up with AI &middot;{' '}
+        Built by <a href="https://plepic.com">Plepic</a> &middot; helping developers level up with
+        AI &middot;{' '}
         <a href="https://github.com/Plepic-OU/skill" target="_blank" rel="noopener noreferrer">
           View on GitHub
         </a>
