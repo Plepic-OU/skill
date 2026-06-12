@@ -13,6 +13,38 @@
   justify-content: space-between;
 }
 
+/* Left cluster — back-link to the parent site + the product logo, grouped
+   so the header keeps its logo / level / auth three-column distribution. */
+.leftCluster {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+/* "← plepic.com" — quiet back-navigation to the main site. Secondary to the
+   bold product logo: muted resting color, brand green on hover. Hidden on
+   narrow phones, where the footer link carries the back-navigation. */
+.backToMain {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.78rem;
+  line-height: normal;
+  color: var(--text-2);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--transition-fast);
+}
+.backToMain:hover {
+  color: var(--green-brand);
+}
+.backToMain:focus-visible {
+  outline: 2px solid var(--green-vivid);
+  outline-offset: 2px;
+}
+
 /* Plepic logo lockup — butterfly + wordmark, matching the public-web DS
    pattern (css/styles.css .logo-lockup). "Skill" is the product suffix,
    hidden on narrow phones so the Plepic mark + butterfly stay intact. */
@@ -372,6 +404,9 @@
   .header {
     padding: 0 var(--space-md);
     gap: var(--space-xs);
+  }
+  .backToMain {
+    display: none;
   }
   .logoSuffix {
     display: none;
