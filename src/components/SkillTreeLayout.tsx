@@ -42,12 +42,13 @@ export default function SkillTreeLayout({
   visitorAvatarUrl,
 }: SkillTreeLayoutProps) {
   // Layout hierarchy:
-  //   Landing  — Hero → (FirstRunHint) → Tree → Crest → Stakes
-  //   Profile  — Hero → Crest → Tree → Stakes
-  // Rationale: on landing, the crest is a payoff and sits after interaction.
-  // On profile pages the crest IS the identity and belongs right below the
-  // hero. Stakes is cosmetic (flavors the title only) and always sits after
-  // the tree so it never competes with the primary interaction.
+  //   Claimable (landing + own profile) — Hero → (FirstRunHint) → Tree → Crest → Stakes
+  //   Visitor                           — Hero → Crest → Tree → Stakes
+  // Rationale: the crest is a payoff, so wherever the tree can be claimed it
+  // sits after the interaction that earns it. A visitor came to look, not to
+  // claim, so for them the crest IS the identity and leads. Stakes is cosmetic
+  // (flavors the title only) and always sits after the tree so it never
+  // competes with the primary interaction.
   const isLanding = headerMode === 'landing'
   const crest = <LevelCrest state={state} visitor={readOnly} />
   const stakes =
@@ -70,11 +71,11 @@ export default function SkillTreeLayout({
         visitorAvatarUrl={visitorAvatarUrl}
         variant={isLanding ? 'landing' : 'profile'}
       />
-      {!isLanding && crest}
+      {readOnly && crest}
       {showFirstRunHint && <FirstRunHint />}
       <PathNav state={state} />
       <SkillTree state={state} onClaim={onClaim} onUnclaim={onUnclaim} readonly={readOnly} />
-      {isLanding && crest}
+      {!readOnly && crest}
       {stakes}
     </>
   )
