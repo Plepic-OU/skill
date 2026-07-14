@@ -8,6 +8,7 @@ import PathNav from './PathNav'
 import SafetyZoneSelector from './SafetyZoneSelector'
 import SafetyZoneBadge from './SafetyZoneBadge'
 import SkillTree from './SkillTree'
+import TrainingCTA from './TrainingCTA'
 
 interface SkillTreeLayoutProps {
   headerMode: 'landing' | 'owner' | 'visitor'
@@ -76,6 +77,7 @@ export default function SkillTreeLayout({
       <PathNav state={state} />
       <SkillTree state={state} onClaim={onClaim} onUnclaim={onUnclaim} readonly={readOnly} />
       {!readOnly && crest}
+      {headerMode === 'owner' && <TrainingCTA />}
       {stakes}
     </>
   )
