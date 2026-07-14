@@ -86,22 +86,26 @@ export default function LevelCrest({ state, visitor }: LevelCrestProps) {
   const [celebrate, setCelebrate] = useState(false)
   const prevLevelRef = useRef<number | null>(null)
   const prevClassRef = useRef<number | null>(null)
+  const prevSkillsRef = useRef<number | null>(null)
 
   useEffect(() => {
     const prevLevel = prevLevelRef.current
     const prevClass = prevClassRef.current
+    const prevSkills = prevSkillsRef.current
     const levelledUp = prevLevel !== null && unifiedLevel > prevLevel
     const classChanged = prevClass !== null && classInfo.index !== prevClass
-    if (!visitor && (levelledUp || classChanged)) {
-      setCelebrate(true)
-      const t = setTimeout(() => setCelebrate(false), 900)
-      prevLevelRef.current = unifiedLevel
-      prevClassRef.current = classInfo.index
-      return () => clearTimeout(t)
-    }
+    // "Step back one" can also change level or class. A downgrade must not
+    // get the level-up celebration, so only celebrate changes that add a skill.
+    const progressed = prevSkills !== null && completedSkills > prevSkills
     prevLevelRef.current = unifiedLevel
     prevClassRef.current = classInfo.index
-  }, [unifiedLevel, classInfo.index, visitor])
+    prevSkillsRef.current = completedSkills
+    if (!visitor && progressed && (levelledUp || classChanged)) {
+      setCelebrate(true)
+      const t = setTimeout(() => setCelebrate(false), 900)
+      return () => clearTimeout(t)
+    }
+  }, [unifiedLevel, classInfo.index, completedSkills, visitor])
 
   const barPercent = isMaxLevel ? 100 : (xpIntoLevel / xpForNextLevel) * 100
   const xpRemaining = xpForNextLevel - xpIntoLevel
