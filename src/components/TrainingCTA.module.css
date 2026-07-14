@@ -1,0 +1,71 @@
+/*
+ * TrainingCTA — the skill-tree-to-training bridge, shown after the owner's
+ * crest. Ember button recipe matches Header's .btnLogin so the app keeps a
+ * single actionable accent per viewport.
+ */
+
+.cta {
+  position: relative;
+  z-index: 1;
+  max-width: 480px;
+  margin: 0 auto var(--space-xl);
+  padding: 0 var(--space-xl);
+  text-align: center;
+}
+
+.lead {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+  margin: 0 0 0.35rem;
+}
+
+.sub {
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  color: var(--text-2);
+  line-height: 1.55;
+  margin: 0 0 var(--space-md);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.85rem;
+  line-height: normal;
+  background: var(--accent);
+  border: 1.5px solid transparent;
+  color: var(--text);
+  padding: 0.6rem 1.25rem;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: filter var(--transition-fast);
+}
+
+.btn:hover {
+  filter: brightness(0.92);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--green-vivid);
+  outline-offset: 2px;
+}
+
+@media (max-width: 520px) {
+  .cta {
+    padding: 0 var(--space-md);
+  }
+  .lead {
+    font-size: 0.98rem;
+  }
+  .sub {
+    font-size: 0.82rem;
+  }
+}
