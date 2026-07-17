@@ -2,9 +2,12 @@ import { Routes, Route, Navigate } from 'react-router'
 import LandingPage from './pages/LandingPage'
 import ProfilePage from './pages/ProfilePage'
 import Toast from './components/Toast'
+import { usePageViewTracking } from './hooks/usePageViewTracking'
 import styles from './App.module.css'
 
 export default function App() {
+  usePageViewTracking()
+
   return (
     <div className={styles.app}>
       <a href="#questMap" className="skip-link">
