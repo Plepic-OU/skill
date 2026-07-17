@@ -35,7 +35,7 @@ export function isAnalyticsEnabled(hostname: string, doNotTrack: string | null):
 
 /** Route paths are reported as-is, except profile URLs: usernames stay out of GA4. */
 export function normalizePath(path: string): string {
-  return PROFILE_ROUTE.test(path) ? '/profile/:username' : path
+  return PROFILE_ROUTE.test(path) ? '/profile/:userId' : path
 }
 
 function readDoNotTrack(): string | null {

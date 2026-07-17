@@ -34,7 +34,7 @@ describe('isAnalyticsEnabled', () => {
 
 describe('normalizePath', () => {
   it('replaces the username in profile paths', () => {
-    expect(normalizePath('/profile/demo-alice')).toBe('/profile/:username')
+    expect(normalizePath('/profile/demo-alice')).toBe('/profile/:userId')
   })
 
   it('passes the landing path through', () => {
@@ -74,8 +74,8 @@ describe('initAnalytics', () => {
       'event',
       'page_view',
       {
-        page_path: '/profile/:username',
-        page_location: 'https://skill.plepic.com/profile/:username',
+        page_path: '/profile/:userId',
+        page_location: 'https://skill.plepic.com/profile/:userId',
       },
     ])
   })
