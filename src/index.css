@@ -1,6 +1,17 @@
 /* Global resets and body defaults. Design tokens come from CDN stylesheet. */
 
+@import './fonts.css';
+
 :root {
+  /* The CDN design-system stylesheet is pinned to a public-web commit from
+     before the 2026-07-23 type revision, and that file has since been deleted
+     from public-web main, so the pin cannot be advanced. Override the three
+     font tokens here to match what plepic.com actually renders today; the
+     colour and spacing tokens still come from the CDN. */
+  --font-display: 'Bitter', 'Bitter Fallback', Georgia, serif;
+  --font-body: 'Hanken Grotesk', 'Hanken Fallback', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Mono Fallback', monospace;
+
   /* Opt out of automatic dark-mode inversion (e.g. Samsung Internet's
      "dark theme for websites") — the warm-cream brand is light-only by design. */
   color-scheme: light;

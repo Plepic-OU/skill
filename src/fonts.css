@@ -1,0 +1,117 @@
+/* Plepic brand faces, self-hosted.
+ *
+ * These are byte-identical copies of the subsets plepic.com serves from
+ * public-web/fonts/, so the two properties render the same shapes rather than
+ * two similar-looking approximations. Paths are absolute because Vite copies
+ * public/ to the deploy root; the source stylesheet's relative ../fonts/ would
+ * not survive that move.
+ *
+ * The design-system stylesheet this app loads from CDN is pinned to a
+ * public-web commit that predates the 2026-07-23 type revision, and that file
+ * no longer exists on main, so the pin cannot be advanced. Until token
+ * distribution is resolved, the three font tokens are overridden here.
+ */
+
+@font-face {
+  font-family: Bitter;
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/bitter.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: Bitter;
+  font-style: italic;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url('/fonts/bitter-italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/hanken.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/hanken-italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/jetbrains-mono.woff2') format('woff2');
+}
+
+/* Metric-matched local fallbacks, carried over verbatim from public-web: text
+   shown before the webfont arrives occupies the same space, so the swap causes
+   no layout shift. Values were tuned empirically in-browser there; do not
+   adjust them here without re-tuning both properties together. */
+
+@font-face {
+  font-family: 'Bitter Fallback';
+  font-style: normal;
+  font-weight: 400 500;
+  src: local('Georgia');
+  size-adjust: 102.71%;
+  ascent-override: 91.03%;
+  descent-override: 25.8%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Bitter Fallback';
+  font-style: normal;
+  font-weight: 600 700;
+  src: local('Georgia Bold'), local('Georgia-Bold');
+  size-adjust: 90.38%;
+  ascent-override: 103.45%;
+  descent-override: 29.32%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Hanken Fallback';
+  font-style: normal;
+  font-weight: 400 500;
+  src: local('Arial');
+  size-adjust: 100.32%;
+  ascent-override: 99.68%;
+  descent-override: 30.2%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  /* Arial Bold's caps run wider than Hanken's relative to lowercase, so Avenir
+     Next Bold is the closer first choice; see the note in public-web's
+     css/styles.css for the full derivation. */
+  font-family: 'Hanken Fallback';
+  font-style: normal;
+  font-weight: 600 700;
+  src:
+    local('Avenir Next Bold'), local('AvenirNext-Bold'), local('Arial Bold'), local('Arial-BoldMT');
+  size-adjust: 92%;
+  ascent-override: 108.7%;
+  descent-override: 32.93%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Mono Fallback';
+  font-style: normal;
+  font-weight: 400 700;
+  src: local('Courier New');
+  size-adjust: 99.98%;
+  ascent-override: 102.02%;
+  descent-override: 30.01%;
+  line-gap-override: 0%;
+}
