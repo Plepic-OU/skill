@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { useAuthActions } from '../hooks/useAuthActions'
 import { computeProgression } from '../data/progression'
 import { hasAnyProgress } from '../data/state'
+import { trainingUrl } from '../data/links'
 import SignInModal from './SignInModal'
 import ConfirmDialog from './ConfirmDialog'
 import ShareButton from './ShareButton'
@@ -195,9 +196,19 @@ export default function Header({ syncStatus = 'idle', mode = 'landing', state }:
   return (
     <header className={styles.header}>
       <div className={styles.leftCluster}>
-        <a href="https://plepic.com" className={styles.backToMain}>
-          <span aria-hidden="true">←</span> plepic.com
-        </a>
+        <nav className={styles.parentNav} aria-label="Plepic main site">
+          <a href="https://plepic.com" className={styles.backToMain}>
+            <span aria-hidden="true">←</span> plepic.com
+          </a>
+          <a
+            href={trainingUrl('header_nav')}
+            className={styles.parentNavLink}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Training
+          </a>
+        </nav>
         <Link
           to="/"
           className={styles.logoLockup}

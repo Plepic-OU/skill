@@ -11,6 +11,38 @@
   padding: var(--space-2xl) var(--space-xl);
   color: var(--text-3);
   font-size: 0.78rem;
-  font-style: italic;
   border-top: 1px solid var(--border);
+}
+
+/* Real navigation, so it is upright rather than the italic credit line this
+   used to be. On phones it is the only way back to the main site. */
+.footerNav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-sm) var(--space-lg);
+  margin-bottom: var(--space-md);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.footerNav a {
+  color: var(--text-2);
+  text-decoration: none;
+  /* Comfortable tap target without stretching the row's visual rhythm. */
+  padding: 0.35rem 0;
+  transition: color var(--transition-fast);
+}
+.footerNav a:hover {
+  color: var(--green-brand);
+}
+.footerNav a:focus-visible {
+  outline: 2px solid var(--green-vivid);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+.footerNote {
+  font-style: italic;
+  margin: 0;
 }

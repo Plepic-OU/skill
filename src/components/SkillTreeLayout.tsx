@@ -77,7 +77,8 @@ export default function SkillTreeLayout({
       <PathNav state={state} />
       <SkillTree state={state} onClaim={onClaim} onUnclaim={onUnclaim} readonly={readOnly} />
       {!readOnly && crest}
-      {headerMode === 'owner' && <TrainingCTA />}
+      {headerMode === 'owner' && <TrainingCTA variant="owner" />}
+      {headerMode === 'visitor' && <TrainingCTA variant="visitor" />}
       {stakes}
     </>
   )
