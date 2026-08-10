@@ -10,7 +10,9 @@ Gamified web app where developers self-assess agentic coding skills via an RPG-s
 
 - **Frontend:** React + React Router v7 + Vite + TypeScript SPA, deployed to GitHub Pages from `web/`
 - **Backend:** Firebase (Auth with Google/GitHub, Firestore for user data) — no custom API
-- **Styling:** Plepic design system ([HTML](https://github.com/Plepic-OU/public-web/raw/refs/heads/main/design-system.html), [CSS](https://github.com/Plepic-OU/public-web/raw/refs/heads/main/design-system.css)). Main color is green; orange used sparingly only
+- **Styling:** Plepic design system, canonical at [design-system.html](https://github.com/Plepic-OU/public-web/blob/main/design-system.html) + [css/styles.css](https://github.com/Plepic-OU/public-web/blob/main/css/styles.css) in `public-web`. Main color is green; orange used sparingly only, one per viewport.
+  - **Colour and spacing tokens arrive from a CDN pin that cannot be advanced.** `index.html` loads `design-system.css` from public-web commit `1fbf2e0` (2026-04-03); that file was later folded into `css/styles.css` and deleted from `main`, so there is no newer commit to point at. Fixing this means choosing a distribution mechanism (vendor the tokens here with a CI diff against public-web's `:root`, or publish a tagged artifact from public-web), not bumping the pin.
+  - **Fonts are already realigned** and no longer depend on that pin: Bitter / Hanken Grotesk / JetBrains Mono are self-hosted in `public/fonts/`, declared in `src/fonts.css`, with the three font tokens overridden in `src/index.css`. The files are byte-identical copies of public-web's subsets. Do not reintroduce Zilla Slab or Plus Jakarta Sans.
 - **Infra:** Terraform for Firebase provisioning; Firebase CLI for security rules/indexes. Before running Terraform: `export GOOGLE_OAUTH_ACCESS_TOKEN=$(gcloud auth print-access-token)`
 - **Preview Environments:** Each PR gets a Cloud Run service (`preview-pr-{number}`) running SPA + Firebase emulators via nginx reverse proxy. See `docs/superpowers/specs/2026-04-16-preview-environments-design.md`
 - **Package manager:** pnpm (not npm)

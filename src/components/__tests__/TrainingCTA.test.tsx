@@ -30,6 +30,23 @@ describe('TrainingCTA', () => {
     expect(link).toHaveAttribute('rel', 'noopener noreferrer')
   })
 
+  // The two placements must stay separable in analytics: a visitor who followed
+  // someone else's shared profile is a different signal from an owner who just
+  // finished their own assessment.
+  it('tags the visitor variant separately from the owner variant', () => {
+    render(<TrainingCTA variant="visitor" />)
+    const url = new URL(
+      screen.getByRole('link', { name: /see the training/i }).getAttribute('href') ?? '',
+    )
+    expect(url.searchParams.get('utm_content')).toBe('visitor_crest')
+  })
+
+  it('addresses a visitor rather than assuming they assessed themselves', () => {
+    render(<TrainingCTA variant="visitor" />)
+    expect(screen.getByText(/this is the map/i)).toBeInTheDocument()
+    expect(screen.queryByText(/you've mapped where you stand/i)).not.toBeInTheDocument()
+  })
+
   it('renders in owner mode, after the assessment payoff', () => {
     renderLayout({ headerMode: 'owner', onClaim: vi.fn(), onUnclaim: vi.fn() })
     expect(screen.getByRole('complementary', { name: /training offer/i })).toBeInTheDocument()
@@ -40,8 +57,11 @@ describe('TrainingCTA', () => {
     expect(screen.queryByRole('complementary', { name: /training offer/i })).not.toBeInTheDocument()
   })
 
-  it('does not render on a visitor profile', () => {
+  // Changed deliberately: a shared profile is the one path a prospect sent a
+  // colleague's link actually walks, and it used to dead-end with no route to
+  // the training at all.
+  it('renders on a visitor profile', () => {
     renderLayout({ headerMode: 'visitor', readOnly: true, visitorName: 'Ada' })
-    expect(screen.queryByRole('complementary', { name: /training offer/i })).not.toBeInTheDocument()
+    expect(screen.getByRole('complementary', { name: /training offer/i })).toBeInTheDocument()
   })
 })
