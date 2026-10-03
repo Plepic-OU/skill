@@ -33,8 +33,13 @@ export default function SafetyZoneSelector({ selected, onSelect }: SafetyZoneSel
   return (
     <section className={styles.stakes}>
       <div className={styles.heading}>Stakes</div>
-      <div className={styles.label}>How costly is a mistake in your work?</div>
-      <div className={styles.hint}>Flavors your title. XP and level are unaffected.</div>
+      <div className={styles.label}>
+        First, how costly is a mistake in the work you are rating yourself on?
+      </div>
+      <div className={styles.hint}>
+        The right level of autonomy depends on it. It flavors your title; XP and level are
+        unaffected.
+      </div>
       <div className={styles.options} role="radiogroup" aria-label="Stakes selection">
         {ZONE_IDS.map((id) => {
           const zone = zones[id]

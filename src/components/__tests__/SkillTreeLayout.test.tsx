@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import SkillTreeLayout from '../SkillTreeLayout'
 import { DEFAULT_STATE } from '../../data/state'
@@ -50,5 +50,55 @@ describe('SkillTreeLayout crest placement', () => {
         <SkillTreeLayout headerMode="visitor" state={DEFAULT_STATE} readOnly visitorName="Ada" />,
       ),
     ).toBe(true)
+  })
+
+  // The stakes are the context an answer is given in, so the answerer picks
+  // them before rating and a reader learns them right after the crest.
+  it('puts the stakes before the tree wherever the tree can be claimed', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <SkillTreeLayout
+          headerMode="landing"
+          state={DEFAULT_STATE}
+          onClaim={vi.fn()}
+          onUnclaim={vi.fn()}
+          onSafetyZone={vi.fn()}
+        />
+      </MemoryRouter>,
+    )
+    const stakes = screen.getByRole('radiogroup', { name: 'Stakes selection' })
+    const tree = container.querySelector('#questMap')
+    expect(tree).not.toBeNull()
+    expect(
+      stakes.compareDocumentPosition(tree as Node) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
+  })
+
+  it('puts the stakes badge between the crest and the tree for a reader', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <SkillTreeLayout headerMode="visitor" state={DEFAULT_STATE} readOnly visitorName="Ada" />
+      </MemoryRouter>,
+    )
+    const crest = container.querySelector('#level-crest') as Node
+    const badge = screen.getByText('Stakes').parentElement as Node
+    const tree = container.querySelector('#questMap') as Node
+    expect(crest.compareDocumentPosition(badge) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(badge.compareDocumentPosition(tree) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it('keeps the first-run hint after the stakes are picked but before any claim', () => {
+    render(
+      <MemoryRouter>
+        <SkillTreeLayout
+          headerMode="landing"
+          state={{ ...DEFAULT_STATE, safetyZone: 'hardcore' }}
+          onClaim={vi.fn()}
+          onUnclaim={vi.fn()}
+          onSafetyZone={vi.fn()}
+        />
+      </MemoryRouter>,
+    )
+    expect(screen.getByRole('note')).toBeInTheDocument()
   })
 })

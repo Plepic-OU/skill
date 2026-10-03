@@ -1,4 +1,4 @@
-import { DEFAULT_STATE, hasAnyProgress } from '../data/state'
+import { hasAnyProgress } from '../data/state'
 import type { AxisId, SafetyZoneId, SkillState, SyncStatus } from '../types/skill-tree'
 import FirstRunHint from './FirstRunHint'
 import Header from './Header'
@@ -29,15 +29,6 @@ function heroVariant(isLanding: boolean, shared?: boolean): 'landing' | 'profile
   return isLanding ? 'landing' : 'profile'
 }
 
-function isPristineState(state: SkillState): boolean {
-  return (
-    state.autonomy === DEFAULT_STATE.autonomy &&
-    state.parallelExecution === DEFAULT_STATE.parallelExecution &&
-    state.skillUsage === DEFAULT_STATE.skillUsage &&
-    state.safetyZone === DEFAULT_STATE.safetyZone
-  )
-}
-
 export default function SkillTreeLayout({
   headerMode,
   syncStatus,
@@ -51,13 +42,15 @@ export default function SkillTreeLayout({
   visitorAvatarUrl,
 }: SkillTreeLayoutProps) {
   // Layout hierarchy:
-  //   Claimable (landing + own profile) — Hero → (FirstRunHint) → Tree → Crest → Stakes
-  //   Visitor                           — Hero → Crest → Tree → Stakes
-  // Rationale: the crest is a payoff, so wherever the tree can be claimed it
-  // sits after the interaction that earns it. A visitor came to look, not to
-  // claim, so for them the crest IS the identity and leads. Stakes is cosmetic
-  // (flavors the title only) and always sits after the tree so it never
-  // competes with the primary interaction.
+  //   Claimable (landing + own profile) — Hero → Stakes → (FirstRunHint) → Tree → Crest → CTA
+  //   Read-only (visitor, shared)       — Hero → Crest → Stakes → Tree → CTA
+  // Rationale: the stakes are the context the answer is given in. The right
+  // autonomy level depends on them (full autopilot on a hobby project and
+  // every edit reviewed on a payment system are both good practice), so the
+  // answerer picks them before rating, and a reader learns them right after
+  // the crest, before the levels. The crest is a payoff, so wherever the tree
+  // can be claimed it sits after the interaction that earns it; a reader came
+  // to look, so for them the crest is the identity and leads.
   const isLanding = headerMode === 'landing'
   const crest = <LevelCrest state={state} visitor={readOnly} />
   const stakes =
@@ -66,10 +59,10 @@ export default function SkillTreeLayout({
     ) : (
       <SafetyZoneSelector selected={state.safetyZone} onSelect={onSafetyZone} />
     )
-  // Whisper-light first-run nudge above the tree, visible only while state is
-  // untouched. Any claim or stake change dismisses it naturally — no storage
-  // needed, no user friction.
-  const showFirstRunHint = isLanding && !readOnly && isPristineState(state)
+  // Whisper-light first-run nudge above the tree, visible until the first
+  // claim. Picking the stakes first must not dismiss it: no level has been
+  // tapped yet.
+  const showFirstRunHint = isLanding && !readOnly && !hasAnyProgress(state)
   // The bridge to a conversation follows the crest everywhere a result exists.
   // On the landing page that is once any level is claimed: before that there
   // is no result to level up from.
@@ -86,12 +79,12 @@ export default function SkillTreeLayout({
         variant={heroVariant(isLanding, shared)}
       />
       {readOnly && crest}
+      {stakes}
       {showFirstRunHint && <FirstRunHint />}
       <PathNav state={state} />
       <SkillTree state={state} onClaim={onClaim} onUnclaim={onUnclaim} readonly={readOnly} />
       {!readOnly && crest}
       {showCta && <TrainingCTA variant={ctaVariant} state={state} />}
-      {stakes}
     </>
   )
 }
