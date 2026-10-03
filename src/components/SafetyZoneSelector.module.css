@@ -1,60 +1,62 @@
+/*
+ * SafetyZoneSelector — the stakes row between the headline and the paths.
+ * Compact by design: on desktop the label and the four pills share one line
+ * so the three path cards stay inside the first viewport.
+ */
+
 .stakes {
   position: relative;
   z-index: 1;
-  max-width: 580px;
-  margin: var(--space-lg) auto var(--space-2xl);
-  padding: 0 var(--space-xl);
-}
-
-.heading {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.2rem;
-  color: var(--text-1);
-  text-align: center;
-  margin-bottom: var(--space-2xs);
+  max-width: 1440px;
+  margin: var(--space-sm) auto var(--space-md);
+  padding: 0 var(--space-md);
+  /* Label and pills share one row; the description spans both. */
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: center;
+  align-items: center;
+  column-gap: var(--space-lg);
+  row-gap: var(--space-xs);
 }
 
 .label {
+  margin: 0;
   font-family: var(--font-body);
   font-weight: 400;
   font-size: clamp(0.9rem, 0.88rem + 0.15vw, 1rem);
   color: var(--text-3);
   text-align: center;
-  margin-bottom: var(--space-2xs);
 }
 
-.hint {
-  font-family: var(--font-body);
-  font-size: 0.85rem;
-  font-style: italic;
-  color: color-mix(in srgb, var(--text-3) 85%, transparent);
-  text-align: center;
-  margin-bottom: var(--space-md);
+.heading {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text-1);
+  margin-right: 0.5rem;
 }
 
 .options {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: var(--space-sm);
 }
 
 .btn {
-  display: flex;
-  flex-direction: column;
+  display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.4rem;
   font-family: var(--font-mono);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  padding: 0.55rem 0.7rem 0.45rem;
-  border-radius: 12px;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
   border: 2px solid;
   cursor: pointer;
   transition: all var(--transition-fast);
   background: transparent;
-  /* Width is controlled by the grid so every option is visually equal. */
-  min-width: 0;
+  white-space: nowrap;
 }
 .btn:hover {
   transform: translateY(-2px) !important;
@@ -66,51 +68,63 @@
 }
 
 .btnIcon {
-  font-size: 1.2rem;
+  font-size: 1.05rem;
   line-height: 1;
 }
 
 .btnLabel {
-  font-size: 0.85rem;
   line-height: 1.2;
 }
 
 .btnHint {
   font-family: var(--font-body);
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   font-weight: 400;
   opacity: 0.8;
   line-height: 1.2;
 }
 
 .desc {
+  grid-column: 1 / -1;
   text-align: center;
-  font-size: 0.92rem;
+  font-size: 0.85rem;
   color: var(--text-3);
-  margin-top: var(--space-sm);
-  min-height: 2.4em;
+  margin: var(--space-xs) 0 0;
+  min-height: 1.4em;
   font-style: italic;
+  line-height: 1.45;
 }
 
-/* Drop to 2×2 on narrow mobile — 4-across gets too cramped for "Impossible". */
+.hint {
+  color: color-mix(in srgb, var(--text-3) 85%, transparent);
+}
+
+/* Until the label and all four pills fit one line, the label takes its own row. */
+@media (max-width: 1399px) {
+  .stakes {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Narrow mobile: 2×2 pills with label only; the description line below
+   explains the selected zone, so the per-pill hint can go. */
 @media (max-width: 480px) {
   .options {
+    display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-xs);
+    width: 100%;
   }
   .btn {
-    font-size: 0.82rem;
-    padding: 0.45rem 0.6rem 0.4rem;
-  }
-}
-
-/* smallest supported viewport — 4-up grid forces a tight floor */
-@media (max-width: 340px) {
-  .btn {
-    font-size: 0.78rem;
-    padding: 0.4rem 0.45rem 0.35rem;
+    justify-content: center;
+    border-radius: 12px;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.8rem;
   }
   .btnHint {
-    font-size: 0.72rem;
+    display: none;
+  }
+  .desc {
+    font-size: 0.8rem;
   }
 }

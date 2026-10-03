@@ -2,7 +2,9 @@
   position: relative;
   z-index: 1;
   text-align: center;
-  padding: var(--space-3xl) var(--space-xl) var(--space-lg);
+  /* Tight on purpose: the stakes row and the three path cards must share
+     the first viewport with this headline. */
+  padding: var(--space-xl) var(--space-xl) var(--space-sm);
 }
 
 /* On profile pages the crest carries the headline, so the hero title becomes
@@ -87,15 +89,6 @@
   }
 }
 
-.subtitle {
-  color: var(--text-2);
-  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.15rem);
-  max-width: 440px;
-  margin: var(--space-md) auto 0;
-  line-height: 1.55;
-  padding: 0 var(--space-sm);
-}
-
 .subtitleHint {
   font-size: 0.88rem;
   color: var(--text-3);
@@ -104,6 +97,14 @@
   max-width: 440px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.subtitle {
+  color: var(--text-2);
+  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.15rem);
+  max-width: 440px;
+  margin: var(--space-sm) auto 0;
+  line-height: 1.55;
   padding: 0 var(--space-sm);
 }
 

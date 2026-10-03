@@ -1,7 +1,9 @@
 .questMap {
   position: relative;
   z-index: 1;
-  max-width: var(--max-width);
+  /* Wider than the site container on purpose: three path cards side by side
+     need the room, and a regular desktop otherwise shows empty margins. */
+  max-width: 1440px;
   margin: 0 auto;
   padding: var(--space-md) var(--space-md) var(--space-3xl);
   display: grid;
