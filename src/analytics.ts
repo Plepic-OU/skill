@@ -5,6 +5,7 @@ const MEASUREMENT_ID = 'G-65CCEV6RS9'
 const PRODUCTION_HOSTNAME = 'skill.plepic.com'
 const DO_NOT_TRACK_ENABLED = '1'
 const PROFILE_ROUTE = /^\/profile\/[^/]+$/
+const SHARED_ROUTE = /^\/shared\/[^/]+$/
 
 type GtagArgs =
   | ['js', Date]
@@ -33,9 +34,14 @@ export function isAnalyticsEnabled(hostname: string, doNotTrack: string | null):
   return hostname === PRODUCTION_HOSTNAME && doNotTrack !== DO_NOT_TRACK_ENABLED
 }
 
-/** Route paths are reported as-is, except profile URLs: usernames stay out of GA4. */
+/**
+ * Route paths are reported as-is, except profile URLs (usernames stay out of
+ * GA4) and shared-result URLs (one row per route, not one per level mix).
+ */
 export function normalizePath(path: string): string {
-  return PROFILE_ROUTE.test(path) ? '/profile/:userId' : path
+  if (PROFILE_ROUTE.test(path)) return '/profile/:userId'
+  if (SHARED_ROUTE.test(path)) return '/shared/:levels'
+  return path
 }
 
 function readDoNotTrack(): string | null {
@@ -54,8 +60,11 @@ export function initAnalytics(): void {
   document.head.appendChild(script)
 
   const dataLayer = (window.dataLayer ??= [])
-  window.gtag = (...args: GtagArgs) => {
-    dataLayer.push(args)
+  // gtag.js executes only `arguments` objects pushed to the dataLayer; an array
+  // is stored and silently ignored, so no hit ever reaches GA4.
+  window.gtag = function () {
+    // eslint-disable-next-line prefer-rest-params
+    dataLayer.push(arguments)
   }
   window.gtag('js', new Date())
   // send_page_view: false — the router owns page views (see usePageViewTracking),
@@ -71,4 +80,20 @@ export function trackPageView(path: string): void {
     // Set explicitly: GA4 otherwise reads the raw URL off window.location.
     page_location: `${window.location.origin}${normalized}`,
   })
+}
+
+export type CtaRoute = 'book_call' | 'email' | 'training_page'
+export type CtaPlacement = 'landing' | 'owner' | 'visitor' | 'shared'
+
+/** A click on one of the three conversation routes under the crest. */
+export function trackCtaClick(route: CtaRoute, placement: CtaPlacement): void {
+  if (!enabled) return
+  window.gtag?.('event', 'cta_click', { cta_route: route, cta_placement: placement })
+}
+
+export type ShareMethod = 'result_link' | 'profile_link'
+
+export function trackShare(method: ShareMethod): void {
+  if (!enabled) return
+  window.gtag?.('event', 'share', { method, content_type: 'skill_tree' })
 }

@@ -3,11 +3,12 @@ import { Link, useLocation } from 'react-router'
 import { useAuth } from '../contexts/AuthContext'
 import { useAuthActions } from '../hooks/useAuthActions'
 import { computeProgression } from '../data/progression'
-import { hasAnyProgress } from '../data/state'
+import { DEFAULT_STATE, hasAnyProgress } from '../data/state'
 import { trainingUrl } from '../data/links'
+import { shareUrl } from '../data/share'
 import SignInModal from './SignInModal'
 import ConfirmDialog from './ConfirmDialog'
-import ShareButton from './ShareButton'
+import ShareButton, { copyLink } from './ShareButton'
 import type { SkillState, SyncStatus } from '../types/skill-tree'
 import styles from './Header.module.css'
 
@@ -120,18 +121,27 @@ function VisitorControls({ user, onSignOut, onSignIn }: VisitorControlsProps) {
 
 interface LandingControlsProps {
   onSignIn: () => void
+  onShare: () => void
+  /** Whether sign-in is the viewport's one ember accent. */
+  accent: boolean
 }
 
-function LandingControls({ onSignIn }: LandingControlsProps) {
+// Share needs no account: the link carries the three levels and the stakes,
+// nothing personal, so a visitor can post a result without signing in.
+//
+// Sign-in is the ember accent only while the tree is untouched. Once a level is
+// claimed, the "How to level up from here" block below the crest holds the
+// accent, and this sticky header must not carry a second one.
+function LandingControls({ onSignIn, onShare, accent }: LandingControlsProps) {
   return (
     <>
-      <button className={styles.btnShare} onClick={onSignIn} aria-label="Share">
+      <button className={styles.btnShare} onClick={onShare} aria-label="Copy result link">
         <span className={`material-symbols-rounded ${styles.btnShareIcon}`} aria-hidden="true">
           share
         </span>
         <span className={styles.btnShareLabel}>Share</span>
       </button>
-      <button className={styles.btnLogin} onClick={onSignIn}>
+      <button className={accent ? styles.btnLogin : styles.btnSignInSecondary} onClick={onSignIn}>
         <span className={styles.btnLoginFull}>Sign in to save</span>
         <span className={styles.btnLoginShort}>Sign in</span>
       </button>
@@ -183,7 +193,15 @@ export default function Header({ syncStatus = 'idle', mode = 'landing', state }:
             </button>
           )
         }
-        return <LandingControls onSignIn={openModal} />
+        return (
+          <LandingControls
+            onSignIn={openModal}
+            onShare={() =>
+              copyLink(shareUrl(window.location.origin, state ?? DEFAULT_STATE), 'result_link')
+            }
+            accent={!state || !hasAnyProgress(state)}
+          />
+        )
       default:
         return !user ? (
           <button className={styles.btnLogin} onClick={openModal}>

@@ -130,7 +130,7 @@ export default function SkillNode({
 
         {level.howToProgress.length > 0 && (
           <>
-            <div className={styles.sectionTitle}>How to reach this level</div>
+            <div className={styles.sectionTitle}>How to level up from here</div>
             <ul className={styles.detailList}>
               {level.howToProgress.map((h, i) => (
                 <li key={i}>{h}</li>

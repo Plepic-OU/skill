@@ -34,6 +34,11 @@ When('I click the share button', async ({ page }) => {
   await page.getByRole('button', { name: 'Copy profile link' }).click()
 })
 
+When('I click the result share button', async ({ page }) => {
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write'])
+  await page.getByRole('button', { name: 'Copy result link' }).click()
+})
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- playwright-bdd requires destructured fixtures
 Given('a user exists with skills claimed', async ({ page }) => {
   // Create user and set up profile in Firestore emulator

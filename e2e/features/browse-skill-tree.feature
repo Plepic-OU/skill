@@ -9,7 +9,7 @@ Feature: Browse skill tree
   Scenario: Expand a node to see details
     Given I open the skill tree page
     When I click on the "Autocomplete" node
-    Then I should see the node detail with "How to reach this level"
+    Then I should see the node detail with "How to level up from here"
 
   Scenario: Collapse an expanded node
     Given I open the skill tree page

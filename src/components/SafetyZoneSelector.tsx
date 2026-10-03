@@ -13,10 +13,10 @@ function getZoneStyle(
   isActive: boolean,
   zone: { color: string; activeText: string },
 ): React.CSSProperties {
-  // Active tile fills with the zone colour (the Sandbox→Impossible green
+  // Active pill fills with the zone colour (the Sandbox→Impossible green
   // progression: light → vivid → brand → dark), with an explicit activeText
-  // paired to each for WCAG AA. Inactive tiles keep Plepic's near-black text
-  // on a white card, carrying their identity via the zone-coloured border.
+  // paired to each for WCAG AA. Inactive pills keep Plepic's near-black text
+  // on a white surface, carrying their identity via the zone-coloured border.
   return {
     '--zone-color': zone.color,
     borderColor: zone.color,
@@ -27,14 +27,20 @@ function getZoneStyle(
   } as React.CSSProperties
 }
 
+// One compact row above the paths: the stakes are the context an answer is
+// given in, so they come first, but they must not push the tree out of the
+// first viewport. Desktop keeps label and pills on one line.
 export default function SafetyZoneSelector({ selected, onSelect }: SafetyZoneSelectorProps) {
   const zones = skillTreeData.safety.zones
 
   return (
-    <section className={styles.stakes}>
-      <div className={styles.heading}>Stakes</div>
-      <div className={styles.label}>How costly is a mistake in your work?</div>
-      <div className={styles.hint}>Flavors your title. XP and level are unaffected.</div>
+    <section className={styles.stakes} aria-labelledby="stakes-heading">
+      <p className={styles.label}>
+        <span id="stakes-heading" className={styles.heading}>
+          Stakes
+        </span>
+        First, how costly is a mistake in the work you are rating yourself on?
+      </p>
       <div className={styles.options} role="radiogroup" aria-label="Stakes selection">
         {ZONE_IDS.map((id) => {
           const zone = zones[id]
@@ -48,14 +54,22 @@ export default function SafetyZoneSelector({ selected, onSelect }: SafetyZoneSel
               onClick={() => onSelect(id)}
               style={getZoneStyle(isActive, zone)}
             >
-              <span className={`material-symbols-rounded ${styles.btnIcon}`}>{zone.icon}</span>
+              <span className={`material-symbols-rounded ${styles.btnIcon}`} aria-hidden="true">
+                {zone.icon}
+              </span>
               <span className={styles.btnLabel}>{zone.label}</span>
               <span className={styles.btnHint}>{zone.hint}</span>
             </button>
           )
         })}
       </div>
-      <div className={styles.desc}>{zones[selected].desc}</div>
+      <p className={styles.desc}>
+        <span className={styles.hint}>
+          The right level of autonomy depends on it. It flavors your title; XP and level are
+          unaffected.
+        </span>{' '}
+        {zones[selected].desc}
+      </p>
     </section>
   )
 }

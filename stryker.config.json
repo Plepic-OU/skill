@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/stryker-mutator/stryker/master/packages/core/schema/stryker-core.schema.json",
-  "mutate": ["src/data/state.ts", "src/data/sync.ts"],
+  "mutate": ["src/data/state.ts", "src/data/sync.ts", "src/data/share.ts"],
   "testRunner": "vitest",
   "plugins": ["@stryker-mutator/vitest-runner"],
   "coverageAnalysis": "all",

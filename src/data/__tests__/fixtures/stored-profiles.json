@@ -1,0 +1,341 @@
+{
+  "generatedFrom": "origin/main 9b4bbfe, 2026-10-03",
+  "fixtures": [
+    {
+      "name": "untouched default",
+      "localStorage": {
+        "autonomy": 1,
+        "parallelExecution": 1,
+        "skillUsage": 1,
+        "safetyZone": "sandbox"
+      },
+      "firestore": {
+        "skills": {
+          "autonomy": 1,
+          "parallelExecution": 1,
+          "skillUsage": 1
+        },
+        "safetyZone": "sandbox"
+      },
+      "expected": {
+        "unifiedLevel": 1,
+        "classIndex": 0,
+        "className": "Apprentice",
+        "title": "Apprentice",
+        "completedSkills": 3
+      }
+    },
+    {
+      "name": "all zero",
+      "localStorage": {
+        "autonomy": 0,
+        "parallelExecution": 0,
+        "skillUsage": 0,
+        "safetyZone": "sandbox"
+      },
+      "firestore": {
+        "skills": {
+          "autonomy": 0,
+          "parallelExecution": 0,
+          "skillUsage": 0
+        },
+        "safetyZone": "sandbox"
+      },
+      "expected": {
+        "unifiedLevel": 0,
+        "classIndex": 0,
+        "className": "Apprentice",
+        "title": "Apprentice",
+        "completedSkills": 0
+      }
+    },
+    {
+      "name": "exactly one level",
+      "localStorage": {
+        "autonomy": 1,
+        "parallelExecution": 0,
+        "skillUsage": 0,
+        "safetyZone": "sandbox"
+      },
+      "firestore": {
+        "skills": {
+          "autonomy": 1,
+          "parallelExecution": 0,
+          "skillUsage": 0
+        },
+        "safetyZone": "sandbox"
+      },
+      "expected": {
+        "unifiedLevel": 0,
+        "classIndex": 0,
+        "className": "Apprentice",
+        "title": "Apprentice",
+        "completedSkills": 1
+      }
+    },
+    {
+      "name": "level boundary at three skills",
+      "localStorage": {
+        "autonomy": 1,
+        "parallelExecution": 1,
+        "skillUsage": 1,
+        "safetyZone": "normal"
+      },
+      "firestore": {
+        "skills": {
+          "autonomy": 1,
+          "parallelExecution": 1,
+          "skillUsage": 1
+        },
+        "safetyZone": "normal"
+      },
+      "expected": {
+        "unifiedLevel": 1,
+        "classIndex": 0,
+        "className": "Apprentice",
+        "title": "Battle-tested Apprentice",
+        "completedSkills": 3
+      }
+    },
+    {
+      "name": "just below class threshold",
+      "localStorage": {
+        "autonomy": 3,
+        "parallelExecution": 3,
+        "skillUsage": 3,
+        "safetyZone": "hardcore"
+      },
+      "firestore": {
+        "skills": {
+          "autonomy": 3,
+          "parallelExecution": 3,
+          "skillUsage": 3
+        },
+        "safetyZone": "hardcore"
+      },
+      "expected": {
+        "unifiedLevel": 3,
+        "classIndex": 0,
+        "className": "Apprentice",
+        "title": "Hardened Apprentice",
+        "completedSkills": 9
+      }
+    },
+    {
+      "name": "apprentice mixed",
+      "localStorage": {
+        "autonomy": 3,
+        "parallelExecution": 2,
+        "skillUsage": 1,
+        "safetyZone": "normal"
+      },
+      "firestore": {
+        "skills": {
+          "autonomy": 3,
+          "parallelExecution": 2,
+          "skillUsage": 1
+        },
+        "safetyZone": "normal"
+      },
+      "expected": {
+        "unifiedLevel": 2,
+        "classIndex": 0,
+        "className": "Apprentice",
+        "title": "Battle-tested Apprentice",
+        "completedSkills": 6
+      }
+    },
+    {
+      "name": "toolsmith",
+      "localStorage": {
+        "autonomy": 2,
+        "parallelExecution": 1,
+        "skillUsage": 5,
+        "safetyZone": "sandbox"
+      },
+      "firestore": {
+        "skills": {
+          "autonomy": 2,
+          "parallelExecution": 1,
+          "skillUsage": 5
+        },
+        "safetyZone": "sandbox"
+      },
+      "expected": {
+        "unifiedLevel": 2,
+        "classIndex": 1,
+        "className": "Toolsmith",
+        "title": "Toolsmith",
+        "completedSkills": 8
+      }
+    },
+    {
+      "name": "swarm wrangler",
+      "localStorage": {
+        "autonomy": 2,
+        "parallelExecution": 4,
+        "skillUsage": 2,
+        "safetyZone": "normal"
+      },
+      "firestore": {
+        "skills": {
+          "autonomy": 2,
+          "parallelExecution": 4,
+          "skillUsage": 2
+        },
+        "safetyZone": "normal"
+      },
+      "expected": {
+        "unifiedLevel": 2,
+        "classIndex": 2,
+        "className": "Swarm Wrangler",
+        "title": "Battle-tested Swarm Wrangler",
+        "completedSkills": 8
+      }
+    },
+    {
+      "name": "operator",
+      "localStorage": {
+        "autonomy": 3,
+        "parallelExecution": 4,
+        "skillUsage": 4,
+        "safetyZone": "hardcore"
+      },
+      "firestore": {
+        "skills": {
+          "autonomy": 3,
+          "parallelExecution": 4,
+          "skillUsage": 4
+        },
+        "safetyZone": "hardcore"
+      },
+      "expected": {
+        "unifiedLevel": 3,
+        "classIndex": 3,
+        "className": "Operator",
+        "title": "Hardened Operator",
+        "completedSkills": 11
+      }
+    },
+    {
+      "name": "sentinel",
+      "localStorage": {
+        "autonomy": 5,
+        "parallelExecution": 1,
+        "skillUsage": 2,
+        "safetyZone": "impossible"
+      },
+      "firestore": {
+        "skills": {
+          "autonomy": 5,
+          "parallelExecution": 1,
+          "skillUsage": 2
+        },
+        "safetyZone": "impossible"
+      },
+      "expected": {
+        "unifiedLevel": 2,
+        "classIndex": 4,
+        "className": "Sentinel",
+        "title": "Legendary Sentinel",
+        "completedSkills": 8
+      }
+    },
+    {
+      "name": "architect",
+      "localStorage": {
+        "autonomy": 4,
+        "parallelExecution": 2,
+        "skillUsage": 5,
+        "safetyZone": "normal"
+      },
+      "firestore": {
+        "skills": {
+          "autonomy": 4,
+          "parallelExecution": 2,
+          "skillUsage": 5
+        },
+        "safetyZone": "normal"
+      },
+      "expected": {
+        "unifiedLevel": 3,
+        "classIndex": 5,
+        "className": "Architect",
+        "title": "Battle-tested Architect",
+        "completedSkills": 11
+      }
+    },
+    {
+      "name": "commander",
+      "localStorage": {
+        "autonomy": 6,
+        "parallelExecution": 4,
+        "skillUsage": 3,
+        "safetyZone": "hardcore"
+      },
+      "firestore": {
+        "skills": {
+          "autonomy": 6,
+          "parallelExecution": 4,
+          "skillUsage": 3
+        },
+        "safetyZone": "hardcore"
+      },
+      "expected": {
+        "unifiedLevel": 4,
+        "classIndex": 6,
+        "className": "Commander",
+        "title": "Hardened Commander",
+        "completedSkills": 13
+      }
+    },
+    {
+      "name": "overseer below max",
+      "localStorage": {
+        "autonomy": 4,
+        "parallelExecution": 4,
+        "skillUsage": 4,
+        "safetyZone": "sandbox"
+      },
+      "firestore": {
+        "skills": {
+          "autonomy": 4,
+          "parallelExecution": 4,
+          "skillUsage": 4
+        },
+        "safetyZone": "sandbox"
+      },
+      "expected": {
+        "unifiedLevel": 4,
+        "classIndex": 7,
+        "className": "Overseer",
+        "title": "Overseer",
+        "completedSkills": 12
+      }
+    },
+    {
+      "name": "max level",
+      "localStorage": {
+        "autonomy": 6,
+        "parallelExecution": 6,
+        "skillUsage": 6,
+        "safetyZone": "impossible"
+      },
+      "firestore": {
+        "skills": {
+          "autonomy": 6,
+          "parallelExecution": 6,
+          "skillUsage": 6
+        },
+        "safetyZone": "impossible"
+      },
+      "expected": {
+        "unifiedLevel": 6,
+        "classIndex": 7,
+        "className": "Overseer",
+        "title": "Legendary Overseer",
+        "completedSkills": 18
+      }
+    }
+  ]
+}

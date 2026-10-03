@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router'
 import LandingPage from './pages/LandingPage'
 import ProfilePage from './pages/ProfilePage'
+import SharedResultPage from './pages/SharedResultPage'
 import Toast from './components/Toast'
 import { usePageViewTracking } from './hooks/usePageViewTracking'
 import { FOOTER_LINKS, MAIN_SITE } from './data/links'
@@ -17,6 +18,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/profile/:userId" element={<ProfilePage />} />
+        <Route path="/shared/:code" element={<SharedResultPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       {/* The header's back-link is hidden on narrow phones, so on mobile this

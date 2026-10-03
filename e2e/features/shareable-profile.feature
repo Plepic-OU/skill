@@ -14,6 +14,19 @@ Feature: Shareable profile
     When I click the share button
     Then I should see "Link copied!"
 
+  Scenario: Share on the landing page copies a result link without signing in
+    Given I open the skill tree page
+    And I claim the "Review Every Edit" level
+    When I click the result share button
+    Then I should see "Link copied!"
+
+  Scenario: View a shared result link
+    When I navigate to "/shared/3-2-1-normal"
+    Then I should see "A shared skill map"
+    And I see their skill tree in read-only mode
+    And I do not see claim or unclaim buttons
+    And I see an "Assess your own skills" link
+
   Scenario: View a shared profile as visitor
     Given a user exists with skills claimed
     When I navigate to their profile URL

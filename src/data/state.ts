@@ -13,7 +13,7 @@ export const DEFAULT_STATE: SkillState = {
   safetyZone: 'sandbox',
 }
 
-function isValidState(data: unknown): data is SkillState {
+export function isValidState(data: unknown): data is SkillState {
   // Stryker disable next-line ConditionalExpression,LogicalOperator: defense-in-depth; downstream checks catch same inputs
   if (typeof data !== 'object' || data === null) return false
   const obj = data as Record<string, unknown>
