@@ -34,6 +34,8 @@ describe('share code', () => {
     ['3-2-4-normal-extra', 'a trailing segment'],
     ['3-2-4-Normal', 'an upper-case zone'],
     ['a-2-4-normal', 'a non-numeric level'],
+    ['x3-2-4-normal', 'a leading character'],
+    ['13-2-4-normal', 'a two-digit level'],
     ['', 'an empty code'],
   ])('rejects %s (%s)', (code) => {
     expect(decodeShareCode(code)).toBeNull()
