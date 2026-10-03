@@ -122,11 +122,17 @@ function VisitorControls({ user, onSignOut, onSignIn }: VisitorControlsProps) {
 interface LandingControlsProps {
   onSignIn: () => void
   onShare: () => void
+  /** Whether sign-in is the viewport's one ember accent. */
+  accent: boolean
 }
 
 // Share needs no account: the link carries the three levels and the stakes,
 // nothing personal, so a visitor can post a result without signing in.
-function LandingControls({ onSignIn, onShare }: LandingControlsProps) {
+//
+// Sign-in is the ember accent only while the tree is untouched. Once a level is
+// claimed, the "How to level up from here" block below the crest holds the
+// accent, and this sticky header must not carry a second one.
+function LandingControls({ onSignIn, onShare, accent }: LandingControlsProps) {
   return (
     <>
       <button className={styles.btnShare} onClick={onShare} aria-label="Copy result link">
@@ -135,7 +141,7 @@ function LandingControls({ onSignIn, onShare }: LandingControlsProps) {
         </span>
         <span className={styles.btnShareLabel}>Share</span>
       </button>
-      <button className={styles.btnLogin} onClick={onSignIn}>
+      <button className={accent ? styles.btnLogin : styles.btnSignInSecondary} onClick={onSignIn}>
         <span className={styles.btnLoginFull}>Sign in to save</span>
         <span className={styles.btnLoginShort}>Sign in</span>
       </button>
@@ -193,6 +199,7 @@ export default function Header({ syncStatus = 'idle', mode = 'landing', state }:
             onShare={() =>
               copyLink(shareUrl(window.location.origin, state ?? DEFAULT_STATE), 'result_link')
             }
+            accent={!state || !hasAnyProgress(state)}
           />
         )
       default:

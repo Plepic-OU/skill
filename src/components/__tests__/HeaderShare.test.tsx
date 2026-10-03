@@ -28,4 +28,28 @@ describe('landing Share', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     vi.unstubAllGlobals()
   })
+
+  // One ember accent per viewport: the header is sticky, so once the CTA below
+  // the crest exists, sign-in must step down to the quiet style.
+  it('hands the accent to the CTA once a level is claimed', () => {
+    const { rerender } = render(
+      <MemoryRouter>
+        <Header
+          mode="landing"
+          state={{ ...STATE, autonomy: 1, parallelExecution: 1, skillUsage: 1 }}
+        />
+      </MemoryRouter>,
+    )
+    const pristine = screen.getByRole('button', { name: /sign in/i })
+    expect(pristine.className).toContain('btnLogin')
+
+    rerender(
+      <MemoryRouter>
+        <Header mode="landing" state={STATE} />
+      </MemoryRouter>,
+    )
+    const progressed = screen.getByRole('button', { name: /sign in/i })
+    expect(progressed.className).toContain('btnSignInSecondary')
+    expect(progressed.className).not.toContain('btnLogin')
+  })
 })
