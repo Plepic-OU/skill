@@ -1,7 +1,8 @@
 /*
- * TrainingCTA — the skill-tree-to-training bridge, shown after the owner's
- * crest. Ember button recipe matches Header's .btnLogin so the app keeps a
- * single actionable accent per viewport.
+ * TrainingCTA — "How to level up from here", the bridge from a result to a
+ * conversation, shown after the crest. Ember button recipe matches Header's
+ * .btnLogin so the app keeps a single actionable accent per viewport; the
+ * email route is outline, the training link is text.
  */
 
 .cta {
@@ -11,6 +12,15 @@
   margin: 0 auto var(--space-xl);
   padding: 0 var(--space-xl);
   text-align: center;
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+  margin: 0 0 var(--space-sm);
 }
 
 .lead {
@@ -30,7 +40,16 @@
   margin: 0 0 var(--space-md);
 }
 
-.btn {
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin: 0 0 var(--space-md);
+}
+
+.btn,
+.btnOutline {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -39,9 +58,6 @@
   font-weight: 600;
   font-size: 0.85rem;
   line-height: normal;
-  background: var(--accent);
-  border: 1.5px solid transparent;
-  color: var(--text);
   padding: 0.6rem 1.25rem;
   border-radius: 8px;
   cursor: pointer;
@@ -49,23 +65,59 @@
   transition: filter var(--transition-fast);
 }
 
-.btn:hover {
+.btn {
+  background: var(--accent);
+  border: 1.5px solid transparent;
+  color: var(--text);
+}
+
+.btnOutline {
+  background: transparent;
+  border: 1.5px solid var(--green-brand);
+  color: var(--green-brand);
+}
+
+.btn:hover,
+.btnOutline:hover {
   filter: brightness(0.92);
 }
 
-.btn:focus-visible {
+.btn:focus-visible,
+.btnOutline:focus-visible,
+.textLink:focus-visible {
   outline: 2px solid var(--green-vivid);
   outline-offset: 2px;
+}
+
+.textLink {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-2);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.textLink:hover {
+  color: var(--text);
 }
 
 @media (max-width: 520px) {
   .cta {
     padding: 0 var(--space-md);
   }
+  .heading {
+    font-size: 1.1rem;
+  }
   .lead {
     font-size: 0.98rem;
   }
   .sub {
     font-size: 0.82rem;
+  }
+  .btn,
+  .btnOutline {
+    width: 100%;
   }
 }

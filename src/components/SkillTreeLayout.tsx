@@ -1,4 +1,4 @@
-import { DEFAULT_STATE } from '../data/state'
+import { DEFAULT_STATE, hasAnyProgress } from '../data/state'
 import type { AxisId, SafetyZoneId, SkillState, SyncStatus } from '../types/skill-tree'
 import FirstRunHint from './FirstRunHint'
 import Header from './Header'
@@ -18,8 +18,15 @@ interface SkillTreeLayoutProps {
   onUnclaim?: (axisId: AxisId, level: number) => void
   onSafetyZone?: (zone: SafetyZoneId) => void
   readOnly?: boolean
+  /** A levels-only result from a share link: nobody's name, nobody's profile. */
+  shared?: boolean
   visitorName?: string
   visitorAvatarUrl?: string
+}
+
+function heroVariant(isLanding: boolean, shared?: boolean): 'landing' | 'profile' | 'shared' {
+  if (shared) return 'shared'
+  return isLanding ? 'landing' : 'profile'
 }
 
 function isPristineState(state: SkillState): boolean {
@@ -39,6 +46,7 @@ export default function SkillTreeLayout({
   onUnclaim,
   onSafetyZone,
   readOnly,
+  shared,
   visitorName,
   visitorAvatarUrl,
 }: SkillTreeLayoutProps) {
@@ -62,6 +70,11 @@ export default function SkillTreeLayout({
   // untouched. Any claim or stake change dismisses it naturally — no storage
   // needed, no user friction.
   const showFirstRunHint = isLanding && !readOnly && isPristineState(state)
+  // The bridge to a conversation follows the crest everywhere a result exists.
+  // On the landing page that is once any level is claimed: before that there
+  // is no result to level up from.
+  const ctaVariant = shared ? 'shared' : headerMode
+  const showCta = !isLanding || hasAnyProgress(state)
 
   return (
     <>
@@ -70,15 +83,14 @@ export default function SkillTreeLayout({
         state={state}
         visitorName={visitorName}
         visitorAvatarUrl={visitorAvatarUrl}
-        variant={isLanding ? 'landing' : 'profile'}
+        variant={heroVariant(isLanding, shared)}
       />
       {readOnly && crest}
       {showFirstRunHint && <FirstRunHint />}
       <PathNav state={state} />
       <SkillTree state={state} onClaim={onClaim} onUnclaim={onUnclaim} readonly={readOnly} />
       {!readOnly && crest}
-      {headerMode === 'owner' && <TrainingCTA variant="owner" />}
-      {headerMode === 'visitor' && <TrainingCTA variant="visitor" />}
+      {showCta && <TrainingCTA variant={ctaVariant} state={state} />}
       {stakes}
     </>
   )

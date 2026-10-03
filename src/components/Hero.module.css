@@ -38,6 +38,14 @@
   justify-content: flex-start;
 }
 
+/* A shared result leads with the crest, like a visitor view, so the hero
+   keeps its headline but gives up the reserved first viewport. */
+.heroShared {
+  padding: var(--space-xl) var(--space-xl) var(--space-sm);
+  min-height: 0;
+  justify-content: flex-start;
+}
+
 .title {
   font-family: var(--font-display);
   font-size: clamp(2rem, 1.5rem + 3vw, 3.2rem);
@@ -86,7 +94,8 @@
   .hero {
     padding: var(--space-2xl) var(--space-md) var(--space-md);
   }
-  .heroProfile {
+  .heroProfile,
+  .heroShared {
     padding: var(--space-lg) var(--space-md) var(--space-sm);
   }
   /* Bottom padding clears the crest's absolutely-positioned level seal

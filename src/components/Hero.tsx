@@ -5,7 +5,7 @@ interface HeroProps {
   state?: SkillState
   visitorName?: string
   visitorAvatarUrl?: string
-  variant?: 'landing' | 'profile'
+  variant?: 'landing' | 'profile' | 'shared'
 }
 
 export default function Hero({ visitorName, visitorAvatarUrl, variant = 'landing' }: HeroProps) {
@@ -30,6 +30,16 @@ export default function Hero({ visitorName, visitorAvatarUrl, variant = 'landing
           )}
           <h1 className={styles.visitorName}>{visitorName}</h1>
         </div>
+      </section>
+    )
+  }
+
+  if (variant === 'shared') {
+    return (
+      <section className={`${styles.hero} ${styles.heroShared}`}>
+        <h1 className={styles.title}>A shared skill map</h1>
+        <p className={styles.subtitle}>Someone mapped their agentic coding skills.</p>
+        <p className={styles.subtitleHint}>This is where they stand. Map your own in a minute.</p>
       </section>
     )
   }

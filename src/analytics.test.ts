@@ -1,4 +1,11 @@
-import { initAnalytics, isAnalyticsEnabled, normalizePath, trackPageView } from './analytics'
+import {
+  initAnalytics,
+  isAnalyticsEnabled,
+  normalizePath,
+  trackCtaClick,
+  trackPageView,
+  trackShare,
+} from './analytics'
 
 const GTAG_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-65CCEV6RS9'
 
@@ -37,6 +44,10 @@ describe('normalizePath', () => {
     expect(normalizePath('/profile/demo-alice')).toBe('/profile/:userId')
   })
 
+  it('collapses shared-result paths to one route', () => {
+    expect(normalizePath('/shared/3-2-4-normal')).toBe('/shared/:levels')
+  })
+
   it('passes the landing path through', () => {
     expect(normalizePath('/')).toBe('/')
   })
@@ -58,10 +69,22 @@ describe('initAnalytics', () => {
 
     const script = document.querySelector<HTMLScriptElement>(`script[src="${GTAG_SRC}"]`)
     expect(script?.async).toBe(true)
-    expect(window.dataLayer).toEqual([
+    expect(window.dataLayer?.map((entry) => Array.from(entry as ArrayLike<unknown>))).toEqual([
       ['js', expect.any(Date)],
       ['config', 'G-65CCEV6RS9', { send_page_view: false }],
     ])
+  })
+
+  // gtag.js runs only `arguments` objects from the dataLayer. Arrays are kept
+  // but never sent: that is why the property had no hit from this host.
+  it('pushes arguments objects, which gtag.js executes, not arrays', () => {
+    vi.stubGlobal('location', { hostname: 'skill.plepic.com', origin: 'https://skill.plepic.com' })
+
+    initAnalytics()
+
+    for (const entry of window.dataLayer ?? []) {
+      expect(Object.prototype.toString.call(entry)).toBe('[object Arguments]')
+    }
   })
 
   it('reports profile page views without the username', () => {
@@ -70,7 +93,7 @@ describe('initAnalytics', () => {
 
     trackPageView('/profile/demo-alice')
 
-    expect(window.dataLayer?.at(-1)).toEqual([
+    expect(Array.from(window.dataLayer?.at(-1) as ArrayLike<unknown>)).toEqual([
       'event',
       'page_view',
       {
@@ -78,5 +101,42 @@ describe('initAnalytics', () => {
         page_location: 'https://skill.plepic.com/profile/:userId',
       },
     ])
+  })
+
+  it('reports conversation-route clicks with their placement', () => {
+    vi.stubGlobal('location', { hostname: 'skill.plepic.com', origin: 'https://skill.plepic.com' })
+    initAnalytics()
+
+    trackCtaClick('book_call', 'landing')
+
+    expect(Array.from(window.dataLayer?.at(-1) as ArrayLike<unknown>)).toEqual([
+      'event',
+      'cta_click',
+      { cta_route: 'book_call', cta_placement: 'landing' },
+    ])
+  })
+
+  it('reports shares by method', () => {
+    vi.stubGlobal('location', { hostname: 'skill.plepic.com', origin: 'https://skill.plepic.com' })
+    initAnalytics()
+
+    trackShare('result_link')
+
+    expect(Array.from(window.dataLayer?.at(-1) as ArrayLike<unknown>)).toEqual([
+      'event',
+      'share',
+      { method: 'result_link', content_type: 'skill_tree' },
+    ])
+  })
+
+  it('stays silent off the production host', () => {
+    vi.stubGlobal('location', { hostname: 'localhost', origin: 'http://localhost' })
+    initAnalytics()
+    const before = window.dataLayer?.length ?? 0
+
+    trackCtaClick('email', 'owner')
+    trackShare('profile_link')
+
+    expect(window.dataLayer?.length ?? 0).toBe(before)
   })
 })
