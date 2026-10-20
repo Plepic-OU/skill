@@ -6,7 +6,7 @@ import { celebrate } from '../components/CelebrationEffect'
  * Adds a CSS class for the seal-stamp animation and fires the confetti effect.
  */
 export function useClaimAnimation(
-  indicatorRef: React.RefObject<HTMLDivElement | null>,
+  indicatorRef: React.RefObject<HTMLElement | null>,
   color: string,
   claimed: boolean,
   justClaimedClass: string,

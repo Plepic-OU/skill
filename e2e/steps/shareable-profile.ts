@@ -7,7 +7,7 @@ import {
   TEST_PASSWORD,
   TEST_DISPLAY_NAME,
 } from '../helpers/emulator'
-import { claimLevel, waitForQuestMap } from '../helpers/claim'
+import { claimLevel, firstNodeHeader, waitForQuestMap } from '../helpers/claim'
 
 const { Given, When, Then } = createBdd()
 
@@ -81,13 +81,13 @@ Then('I see their skill tree in read-only mode', async ({ page }) => {
 Then('I do not see claim or unclaim buttons', async ({ page }) => {
   await waitForQuestMap(page)
   // Expand a node first — claim/unclaim buttons are only visible in expanded nodes
-  const firstNode = page.locator('[data-skill-name]').first()
-  await firstNode.click()
-  await expect(firstNode).toHaveAttribute('aria-expanded', 'true')
+  const firstHeader = firstNodeHeader(page)
+  await firstHeader.click()
+  await expect(firstHeader).toHaveAttribute('aria-expanded', 'true')
   // Now assert that no claim/unclaim buttons are visible within the expanded view
-  const claimBtns = page.getByRole('button', { name: 'This is me' })
+  const claimBtns = page.getByRole('button', { name: /^This is me/ })
   await expect(claimBtns).toHaveCount(0)
-  const unclaimBtns = page.getByRole('button', { name: 'Step back one' })
+  const unclaimBtns = page.getByRole('button', { name: /^Step back one/ })
   await expect(unclaimBtns).toHaveCount(0)
 })
 

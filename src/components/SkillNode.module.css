@@ -12,10 +12,19 @@
 .node:hover {
   transform: translateY(-3px) scale(1.01);
 }
-.node:focus-visible {
+/* Focus lands on the header button; ring the whole card as before. Where
+   :has() is unsupported the button keeps its own default ring. */
+.node:has(.nodeTop:focus-visible) {
   outline: 2px solid var(--node-color, var(--green-brand));
   outline-offset: 2px;
   border-radius: 6px;
+}
+.node:has(.nodeTop:focus-visible) .nodeTop:focus-visible {
+  outline: none;
+}
+/* An open card only toggles from its header, so its details read as text. */
+.expanded {
+  cursor: default;
 }
 
 /* Scroll card base */
@@ -186,9 +195,12 @@
   }
 }
 
-/* "Up next" pennant pinned to the top-right */
+/* "Up next" pennant pinned to the top-right. Decorative: the header button's
+   name already says "up next", so the alt text after the slash is empty;
+   browsers without that syntax keep the first declaration. */
 .frontier::after {
   content: 'Up next';
+  content: 'Up next' / '';
   position: absolute;
   top: -12px;
   right: 14px;
@@ -328,6 +340,16 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
+  /* Native button reset: the header keeps the card's look */
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .indicator {
@@ -350,6 +372,7 @@
 }
 
 .levelLabel {
+  display: block;
   font-family: var(--font-mono);
   font-size: 0.6rem;
   font-weight: 600;
@@ -360,6 +383,7 @@
 }
 
 .nodeName {
+  display: block;
   font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 600;

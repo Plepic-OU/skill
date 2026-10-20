@@ -24,7 +24,7 @@ describe('SharedResultPage', () => {
     ).toBeInTheDocument()
     expect(screen.getByRole('region', { name: 'Class: Operator' })).toBeInTheDocument()
     expect(screen.getByText('Hardened')).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'This is me' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /^This is me/ })).not.toBeInTheDocument()
   })
 
   it('addresses the team lead and offers the own assessment', () => {

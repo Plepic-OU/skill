@@ -89,7 +89,7 @@ This project does not cut corners on E2E tests. All Playwright steps must follow
 
 - **Never use `waitForTimeout`** — always wait for a real condition (`toBeVisible`, `toHaveAttribute`, `toPass`)
 - **Never use `force: true`** on clicks — if Playwright can't click it, the test has a timing bug to fix
-- **Wait for state changes after actions** — after a claim click, wait for the aria-label to reflect the new state (e.g. `[aria-label*="reached"]`) with a generous timeout (10000ms)
+- **Wait for state changes after actions** — after a claim click, wait for the card header's accessible name to end with the new state (e.g. `getByRole('button', { name: /— reached$/ })`; anchor it, because a plain "reached" substring also matches "not yet reached") with a generous timeout (10000ms)
 - **Assert actionability before interacting** — use `expect(btn).toBeVisible()` before clicking buttons that may not be rendered yet
 - **Use `toPass()` with retry intervals** for polling external state (Firestore assertions) instead of fixed delays
 - **Use semantic selectors** — `getByRole`, `getByLabel`, `getByText`, aria attributes. No CSS class selectors
