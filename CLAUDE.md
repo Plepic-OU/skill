@@ -9,7 +9,7 @@ Gamified web app where developers self-assess agentic coding skills via an RPG-s
 ## Tech Stack
 
 - **Frontend:** React + React Router v7 + Vite + TypeScript SPA, deployed to GitHub Pages from `web/`
-- **Backend:** Firebase (Auth with Google/GitHub, Firestore for user data) — no custom API
+- **Backend:** Firebase (Auth with Google, Firestore for user data) — no custom API
 - **Styling:** Plepic design system, canonical at [design-system.html](https://github.com/Plepic-OU/public-web/blob/main/design-system.html) + [css/styles.css](https://github.com/Plepic-OU/public-web/blob/main/css/styles.css) in `public-web`. Main color is green; orange used sparingly only, one per viewport.
   - **Colour and spacing tokens arrive from a CDN pin that cannot be advanced.** `index.html` loads `design-system.css` from public-web commit `1fbf2e0` (2026-04-03); that file was later folded into `css/styles.css` and deleted from `main`, so there is no newer commit to point at. Fixing this means choosing a distribution mechanism (vendor the tokens here with a CI diff against public-web's `:root`, or publish a tagged artifact from public-web), not bumping the pin.
   - **Fonts are already realigned** and no longer depend on that pin: Bitter / Hanken Grotesk / JetBrains Mono are self-hosted in `public/fonts/`, declared in `src/fonts.css`, with the three font tokens overridden in `src/index.css`. The files are byte-identical copies of public-web's subsets. Do not reintroduce Zilla Slab or Plus Jakarta Sans.
@@ -24,11 +24,11 @@ pnpm install          # install dependencies
 pnpm dev              # local dev server (Vite)
 pnpm build            # production build (typecheck + vite build → web/)
 pnpm test             # run unit tests in watch mode (Vitest)
-pnpm test:run         # run unit tests once (42 tests)
+pnpm test:run         # run unit tests once
 pnpm test <file>      # run a single test file
-pnpm emulators        # start Firebase Auth + Firestore emulators (requires Java 11+)
+pnpm emulators        # start Firebase Auth + Firestore emulators (requires Java 21+)
 pnpm test:e2e         # run E2E tests (assumes emulators running)
-pnpm test:e2e:emulator # run E2E tests with auto-managed emulators (25 scenarios)
+pnpm test:e2e:emulator # run E2E tests with auto-managed emulators
 pnpm lint             # ESLint (includes sonarjs complexity/duplication rules)
 pnpm format           # Prettier
 pnpm typecheck        # tsc --noEmit
@@ -36,7 +36,7 @@ pnpm test:mutate      # Stryker mutation testing on data layer (~2 min, manual/C
 ```
 
 Pre-commit hooks (Husky + lint-staged) enforce: ESLint, Prettier, type-check.
-Pre-push hooks run: unit tests + E2E tests (with smart emulator detection).
+Pre-push hook runs unit tests only (`pnpm test:run`); CI runs the E2E tests.
 
 ## Key Directories
 
@@ -130,7 +130,6 @@ The cloud VM has Node.js 22, OpenJDK 21, pnpm, and Docker pre-installed. Network
 - TypeScript with strong types throughout
 - Mobile-first, playful > serious, less is more
 - **No project/user memories** — do not use the Claude Code memory system for this project. All project knowledge belongs in CLAUDE.md or docs/ files checked into git.
-- Pre-push hook runs unit tests only (not E2E — too slow, CI covers them)
 
 ## Preview Environment Gotchas
 
