@@ -6,4 +6,5 @@ infra
 e2e
 docs
 *.md
+gha-creds-*.json
 !preview/**
