@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import { useDialog } from '../hooks/useDialog'
 import styles from './ConfirmDialog.module.css'
 
@@ -21,12 +22,23 @@ export default function ConfirmDialog({
   onCancel,
 }: ConfirmDialogProps) {
   const dialogRef = useDialog(open, onCancel)
+  const titleId = useId()
+  const messageId = useId()
 
   return (
-    <dialog ref={dialogRef} className={styles.dialog}>
+    <dialog
+      ref={dialogRef}
+      className={styles.dialog}
+      aria-labelledby={titleId}
+      aria-describedby={messageId}
+    >
       <div className={styles.content}>
-        <h2 className={styles.title}>{title}</h2>
-        <p className={styles.message}>{message}</p>
+        <h2 id={titleId} className={styles.title}>
+          {title}
+        </h2>
+        <p id={messageId} className={styles.message}>
+          {message}
+        </p>
         <div className={styles.actions}>
           <button className={styles.cancelBtn} onClick={onCancel}>
             {cancelLabel}
