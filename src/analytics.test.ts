@@ -56,6 +56,10 @@ describe('normalizePath', () => {
     expect(normalizePath('/design-system')).toBe('/design-system')
   })
 
+  it('replaces the username in profile paths with a trailing slash', () => {
+    expect(normalizePath('/profile/demo-alice/')).toBe('/profile/:userId')
+  })
+
   it('passes a profile path without a username through', () => {
     expect(normalizePath('/profile/')).toBe('/profile/')
   })
@@ -103,8 +107,12 @@ describe('initAnalytics', () => {
     ])
   })
 
-  it('reports conversation-route clicks with their placement', () => {
-    vi.stubGlobal('location', { hostname: 'skill.plepic.com', origin: 'https://skill.plepic.com' })
+  it('reports conversation-route clicks with their placement and a username-free location', () => {
+    vi.stubGlobal('location', {
+      hostname: 'skill.plepic.com',
+      origin: 'https://skill.plepic.com',
+      pathname: '/profile/demo-alice',
+    })
     initAnalytics()
 
     trackCtaClick('book_call', 'landing')
@@ -112,12 +120,20 @@ describe('initAnalytics', () => {
     expect(Array.from(window.dataLayer?.at(-1) as ArrayLike<unknown>)).toEqual([
       'event',
       'cta_click',
-      { cta_route: 'book_call', cta_placement: 'landing' },
+      {
+        cta_route: 'book_call',
+        cta_placement: 'landing',
+        page_location: 'https://skill.plepic.com/profile/:userId',
+      },
     ])
   })
 
-  it('reports shares by method', () => {
-    vi.stubGlobal('location', { hostname: 'skill.plepic.com', origin: 'https://skill.plepic.com' })
+  it('reports shares by method with a username-free location', () => {
+    vi.stubGlobal('location', {
+      hostname: 'skill.plepic.com',
+      origin: 'https://skill.plepic.com',
+      pathname: '/profile/demo-alice/',
+    })
     initAnalytics()
 
     trackShare('result_link')
@@ -125,8 +141,37 @@ describe('initAnalytics', () => {
     expect(Array.from(window.dataLayer?.at(-1) as ArrayLike<unknown>)).toEqual([
       'event',
       'share',
-      { method: 'result_link', content_type: 'skill_tree' },
+      {
+        method: 'result_link',
+        content_type: 'skill_tree',
+        page_location: 'https://skill.plepic.com/profile/:userId',
+      },
     ])
+  })
+
+  it('normalises a profile URL in the referrer', () => {
+    vi.stubGlobal('location', {
+      hostname: 'skill.plepic.com',
+      origin: 'https://skill.plepic.com',
+      pathname: '/',
+    })
+    vi.spyOn(document, 'referrer', 'get').mockReturnValue(
+      'https://skill.plepic.com/profile/demo-alice?x=1',
+    )
+    initAnalytics()
+
+    trackPageView('/')
+
+    expect(Array.from(window.dataLayer?.at(-1) as ArrayLike<unknown>)).toEqual([
+      'event',
+      'page_view',
+      {
+        page_path: '/',
+        page_location: 'https://skill.plepic.com/',
+        page_referrer: 'https://skill.plepic.com/profile/:userId',
+      },
+    ])
+    vi.restoreAllMocks()
   })
 
   it('stays silent off the production host', () => {
