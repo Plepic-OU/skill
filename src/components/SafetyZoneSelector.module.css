@@ -63,7 +63,7 @@
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08) !important;
 }
 .btn:focus-visible {
-  outline: 2px solid var(--green-vivid);
+  outline: 2px solid var(--green-brand);
   outline-offset: 2px;
 }
 
@@ -96,7 +96,7 @@
 }
 
 .hint {
-  color: color-mix(in srgb, var(--text-3) 85%, transparent);
+  color: var(--text-3);
 }
 
 /* Until the label and all four pills fit one line, the label takes its own row. */

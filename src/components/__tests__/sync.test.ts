@@ -92,6 +92,19 @@ describe('syncOnLogin', () => {
     expect(mockSetDoc).toHaveBeenCalled()
   })
 
+  it('treats a stored profile with an unknown safety zone as no profile', async () => {
+    mockGetDoc.mockResolvedValue(firestoreSnap({ safetyZone: 'volcano' }))
+    mockSetDoc.mockResolvedValue(undefined)
+    localStorage.setItem(
+      'plepic-skill-state',
+      JSON.stringify({ ...DEFAULT_STATE, autonomy: 3, safetyZone: 'normal' }),
+    )
+
+    const result = await syncOnLogin(mockUser())
+
+    expect(result).toEqual({ ...DEFAULT_STATE, autonomy: 3, safetyZone: 'normal' })
+  })
+
   it("reads from the user's document path", async () => {
     mockGetDoc.mockResolvedValue(firestoreSnap())
     mockSetDoc.mockResolvedValue(undefined)

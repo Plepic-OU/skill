@@ -68,7 +68,7 @@
 }
 
 .tile:focus-visible {
-  outline: 2px solid var(--tile-color, var(--green-brand));
+  outline: 2px solid var(--green-brand);
   outline-offset: 2px;
 }
 

@@ -26,6 +26,7 @@ function OwnerProfile() {
     <SkillTreeLayout
       headerMode="owner"
       syncStatus={syncStatus}
+      locked={syncStatus === 'syncing'}
       state={state}
       onClaim={handleClaim}
       onUnclaim={handleUnclaim}
@@ -41,7 +42,7 @@ function VisitorProfile({ userId }: { userId: string | undefined }) {
     return (
       <>
         <Header mode="visitor" />
-        <div className={styles.visitorMessage}>
+        <main id="main-content" className={styles.visitorMessage}>
           {loading ? (
             <p>Loading profile...</p>
           ) : (
@@ -53,7 +54,7 @@ function VisitorProfile({ userId }: { userId: string | undefined }) {
               </Link>
             </>
           )}
-        </div>
+        </main>
       </>
     )
   }
