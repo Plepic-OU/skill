@@ -118,4 +118,17 @@ describe('readPublicProfile', () => {
     const result = await readPublicProfile('uid')
     expect(result?.avatarUrl).toBe('http://example.com/bob.jpg')
   })
+
+  it.each([
+    ['an unknown safety zone', { safetyZone: 'volcano' }],
+    [
+      'a level above the maximum',
+      { skills: { autonomy: 99, parallelExecution: 1, skillUsage: 1 } },
+    ],
+    ['a fractional level', { skills: { autonomy: 1.5, parallelExecution: 1, skillUsage: 1 } }],
+  ])('returns null for a stored profile with %s', async (_name, overrides) => {
+    mockGetDoc.mockResolvedValue(firestoreSnap(overrides))
+
+    expect(await readPublicProfile('uid')).toBeNull()
+  })
 })

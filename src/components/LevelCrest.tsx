@@ -121,10 +121,16 @@ export default function LevelCrest({ state, visitor }: LevelCrestProps) {
   return (
     <section
       id="level-crest"
+      tabIndex={-1}
       className={classes}
       aria-label={visitor ? `Class: ${classInfo.name}` : `Your class: ${classInfo.name}`}
     >
-      <span className={styles.levelSeal} aria-hidden="true">
+      <span
+        className={styles.levelSeal}
+        role={visitor ? 'img' : undefined}
+        aria-label={visitor ? `Level ${unifiedLevel}` : undefined}
+        aria-hidden={visitor ? undefined : true}
+      >
         {isMaxLevel && (
           <span className={styles.sealIcon} aria-hidden="true">
             workspace_premium

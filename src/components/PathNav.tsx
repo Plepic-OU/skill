@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { skillTreeData } from '../data/skill-trees'
 import { useActiveAxis } from '../hooks/useActiveAxis'
 import type { AxisId, SkillState } from '../types/skill-tree'
+import { scrollBehavior } from '../scrollBehavior'
 import styles from './PathNav.module.css'
 
 const AXIS_IDS = Object.keys(skillTreeData.axes) as AxisId[]
@@ -44,7 +45,8 @@ export default function PathNav({ state }: PathNavProps) {
   const handleTileClick = useCallback((axisId: AxisId) => {
     const section = document.querySelector<HTMLElement>(`[data-quest-path="${axisId}"]`)
     if (!section) return
-    section.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    section.scrollIntoView({ behavior: scrollBehavior(), block: 'start' })
+    section.focus({ preventScroll: true })
   }, [])
 
   if (isDesktop) return null

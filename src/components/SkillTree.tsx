@@ -11,17 +11,18 @@ interface SkillTreeProps {
   onClaim?: (axisId: AxisId, level: number) => void
   onUnclaim?: (axisId: AxisId, level: number) => void
   readonly?: boolean
+  locked?: boolean
 }
 
 const noop = () => {}
 
-export default function SkillTree({ state, onClaim, onUnclaim, readonly }: SkillTreeProps) {
+export default function SkillTree({ state, onClaim, onUnclaim, readonly, locked }: SkillTreeProps) {
   // data-active-axis on #questMap drives the active-card skin on mobile (see
   // QuestPath.module.css). Desktop ignores it — :hover/:focus-within still
   // own the active state there, since touch can't hover.
   const activeAxis = useActiveAxis()
   return (
-    <main>
+    <main id="main-content">
       <div
         id="questMap"
         className={styles.questMap}
@@ -38,6 +39,7 @@ export default function SkillTree({ state, onClaim, onUnclaim, readonly }: Skill
             onClaim={onClaim ?? noop}
             onUnclaim={onUnclaim ?? noop}
             readonly={readonly}
+            locked={locked}
           />
         ))}
       </div>

@@ -14,6 +14,8 @@ interface SkillNodeProps {
   onClaim: (axisId: AxisId, level: number) => void
   onUnclaim: (axisId: AxisId, level: number) => void
   readonly?: boolean
+  /** Claiming waits for the sign-in sync, so no edit is made and then replaced. */
+  locked?: boolean
 }
 
 export default function SkillNode({
@@ -27,6 +29,7 @@ export default function SkillNode({
   onClaim,
   onUnclaim,
   readonly,
+  locked,
 }: SkillNodeProps) {
   const indicatorRef = useRef<HTMLSpanElement>(null)
   const detailId = useId()
@@ -156,6 +159,7 @@ export default function SkillNode({
             className={`${styles.actionBtn} ${stepsBack ? styles.unclaimBtn : styles.claimBtn}`}
             aria-label={`${actionLabel}: ${level.name}`}
             onClick={handleAction}
+            disabled={locked}
           >
             {actionLabel}
           </button>

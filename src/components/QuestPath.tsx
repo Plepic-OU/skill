@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import type { Axis, AxisId, Level, NodeState } from '../types/skill-tree'
 import SkillNode from './SkillNode'
+import { scrollBehavior } from '../scrollBehavior'
 import styles from './QuestPath.module.css'
 
 // Sticky header (56px) + sticky PathNav (~50px) + a small breathing gap.
@@ -13,6 +14,7 @@ interface QuestPathProps {
   onClaim: (axisId: AxisId, level: number) => void
   onUnclaim: (axisId: AxisId, level: number) => void
   readonly?: boolean
+  locked?: boolean
 }
 
 interface QuestPathNodeProps {
@@ -28,6 +30,7 @@ interface QuestPathNodeProps {
   onClaim: (axisId: AxisId, level: number) => void
   onUnclaim: (axisId: AxisId, level: number) => void
   readonly?: boolean
+  locked?: boolean
 }
 
 function QuestPathNode({
@@ -43,6 +46,7 @@ function QuestPathNode({
   onClaim,
   onUnclaim,
   readonly,
+  locked,
 }: QuestPathNodeProps) {
   return (
     <div className={styles.nodeWrapper}>
@@ -62,6 +66,7 @@ function QuestPathNode({
         onClaim={onClaim}
         onUnclaim={onUnclaim}
         readonly={readonly}
+        locked={locked}
       />
     </div>
   )
@@ -74,6 +79,7 @@ export default function QuestPath({
   onClaim,
   onUnclaim,
   readonly,
+  locked,
 }: QuestPathProps) {
   const [expandedLevel, setExpandedLevel] = useState<number | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -103,7 +109,7 @@ export default function QuestPath({
     }
 
     const targetY = Math.max(0, newTop - adjustment - HEADER_OFFSET)
-    window.scrollTo({ top: targetY, behavior: 'smooth' })
+    window.scrollTo({ top: targetY, behavior: scrollBehavior() })
   }
 
   const toggleNode = (level: number) => {
@@ -128,10 +134,12 @@ export default function QuestPath({
   const levelMax = axis.levels.length
 
   return (
-    <div ref={containerRef} className={styles.questPath} data-quest-path={axisId}>
+    <div ref={containerRef} className={styles.questPath} data-quest-path={axisId} tabIndex={-1}>
       <div className={styles.pathHeader}>
         <div className={styles.pathIcon}>
-          <span className="material-symbols-rounded">{axis.icon}</span>
+          <span className="material-symbols-rounded" aria-hidden="true">
+            {axis.icon}
+          </span>
         </div>
         <div className={styles.pathTitleGroup}>
           <h2 className={styles.pathTitle}>{axis.name}</h2>
@@ -168,6 +176,7 @@ export default function QuestPath({
               onClaim={onClaim}
               onUnclaim={onUnclaim}
               readonly={readonly}
+              locked={locked}
             />
           )
         })}
