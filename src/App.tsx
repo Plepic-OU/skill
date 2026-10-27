@@ -12,8 +12,8 @@ export default function App() {
 
   return (
     <div className={styles.app}>
-      <a href="#questMap" className="skip-link">
-        Skip to skill tree
+      <a href="#main-content" className="skip-link">
+        Skip to main content
       </a>
       <Routes>
         <Route path="/" element={<LandingPage />} />

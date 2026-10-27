@@ -10,6 +10,7 @@ import SignInModal from './SignInModal'
 import ConfirmDialog from './ConfirmDialog'
 import ShareButton, { copyLink } from './ShareButton'
 import type { SkillState, SyncStatus } from '../types/skill-tree'
+import { scrollBehavior } from '../scrollBehavior'
 import styles from './Header.module.css'
 
 interface HeaderProps {
@@ -25,7 +26,8 @@ interface LevelBadgeProps {
 function scrollToCrest() {
   const crest = document.getElementById('level-crest')
   if (!crest) return
-  crest.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  crest.scrollIntoView({ behavior: scrollBehavior(), block: 'start' })
+  crest.focus({ preventScroll: true })
 }
 
 function LevelBadge({ state }: LevelBadgeProps) {
@@ -61,25 +63,24 @@ interface OwnerControlsProps {
 function OwnerControls({ syncStatus, onSignOut }: OwnerControlsProps) {
   return (
     <>
-      {syncStatus === 'saved' && (
-        <span className={styles.syncBadge} aria-label="Progress saved">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-            <path
-              d="M3 7.5L5.5 10L11 4"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          Saved
-        </span>
-      )}
-      {syncStatus === 'syncing' && (
-        <span className={styles.syncBadge} aria-label="Saving...">
-          Saving...
-        </span>
-      )}
+      {/* Mounted while empty so changes inside it are announced. */}
+      <span className={styles.syncStatus} role="status">
+        {syncStatus === 'saved' && (
+          <span className={styles.syncBadge}>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path
+                d="M3 7.5L5.5 10L11 4"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            Saved
+          </span>
+        )}
+        {syncStatus === 'syncing' && <span className={styles.syncBadge}>Saving...</span>}
+      </span>
       <ShareButton />
       <button className={styles.btnSignOut} onClick={onSignOut}>
         Sign out
@@ -167,13 +168,13 @@ export default function Header({ syncStatus = 'idle', mode = 'landing', state }:
     // since mobile browsers lack a scroll-thumb affordance. Desktop keeps Link nav.
     if (typeof window !== 'undefined' && window.innerWidth <= 560) {
       e.preventDefault()
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      window.scrollTo({ top: 0, behavior: scrollBehavior() })
       return
     }
     // On desktop, if we're already on the home route, also scroll up rather than no-op.
     if (location.pathname === '/') {
       e.preventDefault()
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      window.scrollTo({ top: 0, behavior: scrollBehavior() })
     }
   }
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { useDialog } from '../hooks/useDialog'
 import { signInWithGoogle } from '../data/auth'
@@ -18,6 +18,8 @@ interface SignInModalProps {
 
 export default function SignInModal({ open, onClose }: SignInModalProps) {
   const dialogRef = useDialog(open, onClose)
+  const titleId = useId()
+  const subtitleId = useId()
   const [error, setError] = useState<string | null>(null)
   const [isSigningIn, setIsSigningIn] = useState(false)
 
@@ -48,7 +50,12 @@ export default function SignInModal({ open, onClose }: SignInModalProps) {
   }
 
   return (
-    <dialog ref={dialogRef} className={styles.dialog}>
+    <dialog
+      ref={dialogRef}
+      className={styles.dialog}
+      aria-labelledby={titleId}
+      aria-describedby={subtitleId}
+    >
       <div className={styles.content}>
         <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -60,8 +67,10 @@ export default function SignInModal({ open, onClose }: SignInModalProps) {
             />
           </svg>
         </button>
-        <h2 className={styles.title}>Sign in</h2>
-        <p className={styles.subtitle}>
+        <h2 id={titleId} className={styles.title}>
+          Sign in
+        </h2>
+        <p id={subtitleId} className={styles.subtitle}>
           Save your progress across devices. We only store your skill levels and display name.
         </p>
         <div className={styles.buttons}>
@@ -112,7 +121,11 @@ export default function SignInModal({ open, onClose }: SignInModalProps) {
             </div>
           </div>
         )}
-        {error && <p className={styles.error}>{error}</p>}
+        {error && (
+          <p className={styles.error} role="alert">
+            {error}
+          </p>
+        )}
       </div>
     </dialog>
   )

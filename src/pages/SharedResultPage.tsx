@@ -12,13 +12,13 @@ export default function SharedResultPage() {
     return (
       <>
         <Header mode="visitor" />
-        <div className={styles.visitorMessage}>
+        <main id="main-content" className={styles.visitorMessage}>
           <h2>Result not found</h2>
           <p>This link is incomplete or was changed on the way.</p>
           <Link to="/" className={styles.ctaLink}>
             Assess your own skills
           </Link>
-        </div>
+        </main>
       </>
     )
   }

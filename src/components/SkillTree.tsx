@@ -22,7 +22,7 @@ export default function SkillTree({ state, onClaim, onUnclaim, readonly, locked 
   // own the active state there, since touch can't hover.
   const activeAxis = useActiveAxis()
   return (
-    <main>
+    <main id="main-content">
       <div
         id="questMap"
         className={styles.questMap}

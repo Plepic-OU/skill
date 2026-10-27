@@ -61,4 +61,25 @@ describe('StakesSelector', () => {
     expect(updatedDesc?.length).toBeGreaterThan(0)
     expect(updatedDesc).not.toBe(initialDesc)
   })
+
+  it('puts only the selected zone in the tab order', () => {
+    render(<StakesSelector {...defaultProps} selected="normal" />)
+    const tabindexes = screen.getAllByRole('radio').map((r) => r.getAttribute('tabindex'))
+    expect(tabindexes).toEqual(['-1', '0', '-1', '-1'])
+  })
+
+  it.each([
+    ['ArrowRight', 'sandbox', 'normal'],
+    ['ArrowDown', 'sandbox', 'normal'],
+    ['ArrowLeft', 'normal', 'sandbox'],
+    ['ArrowUp', 'normal', 'sandbox'],
+    ['ArrowRight', 'impossible', 'sandbox'],
+    ['ArrowLeft', 'sandbox', 'impossible'],
+  ])('%s from %s selects %s and moves focus there', (key, from, to) => {
+    render(<StakesSelector {...defaultProps} selected={from as 'sandbox'} />)
+    const radio = (zone: string) => screen.getByRole('radio', { name: new RegExp(`^${zone}`, 'i') })
+    fireEvent.keyDown(radio(from), { key })
+    expect(defaultProps.onSelect).toHaveBeenCalledWith(to)
+    expect(document.activeElement).toBe(radio(to))
+  })
 })

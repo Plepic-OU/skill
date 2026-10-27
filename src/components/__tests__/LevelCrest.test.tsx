@@ -52,3 +52,16 @@ describe('LevelCrest celebration', () => {
     expect(getCrest()).not.toHaveClass(styles.levelUp)
   })
 })
+
+describe('LevelCrest overall level for screen readers', () => {
+  it('announces the level in the visitor and shared view', () => {
+    render(<LevelCrest state={level2} visitor />)
+    expect(screen.getByRole('img', { name: 'Level 2' })).toBeInTheDocument()
+  })
+
+  it('leaves the level to the progress bar on the owner view', () => {
+    render(<LevelCrest state={level2} />)
+    expect(screen.queryByRole('img', { name: /^Level/ })).not.toBeInTheDocument()
+    expect(screen.getByRole('progressbar')).toBeInTheDocument()
+  })
+})

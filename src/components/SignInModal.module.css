@@ -41,7 +41,7 @@
   color: var(--ink);
 }
 .closeBtn:focus-visible {
-  outline: 2px solid var(--green-vivid);
+  outline: 2px solid var(--green-brand);
   outline-offset: 2px;
 }
 
@@ -91,7 +91,7 @@
 }
 
 .providerBtn:focus-visible {
-  outline: 2px solid var(--green-vivid);
+  outline: 2px solid var(--green-brand);
   outline-offset: 2px;
 }
 
