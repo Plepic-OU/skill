@@ -59,10 +59,13 @@ export default function Toast() {
     }
   }, [])
 
-  if (messages.length === 0) return null
-
+  // The live region stays mounted while empty: announcements are most reliable
+  // for changes to a region that already exists, so it is not created together
+  // with its first message. role="status" implies aria-atomic="true", which
+  // asks for the whole region on each change; "false" asks for the changed
+  // content instead.
   return (
-    <div className={styles.container} aria-live="polite">
+    <div className={styles.container} role="status" aria-live="polite" aria-atomic="false">
       {messages.map((msg) => (
         <div
           key={msg.id}

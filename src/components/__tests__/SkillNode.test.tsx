@@ -1,4 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import SkillNode from '../SkillNode'
 import type { Level } from '../../types/skill-tree'
 
@@ -59,16 +60,13 @@ describe('SkillNode', () => {
     expect(defaultProps.onToggle).toHaveBeenCalledTimes(1)
   })
 
-  it('calls onToggle on Enter key', () => {
+  it('calls onToggle on Enter and Space on the card header', async () => {
+    const user = userEvent.setup()
     render(<SkillNode {...defaultProps} />)
-    fireEvent.keyDown(getSkillNodeButton(), { key: 'Enter' })
-    expect(defaultProps.onToggle).toHaveBeenCalledTimes(1)
-  })
-
-  it('calls onToggle on Space key', () => {
-    render(<SkillNode {...defaultProps} />)
-    fireEvent.keyDown(getSkillNodeButton(), { key: ' ' })
-    expect(defaultProps.onToggle).toHaveBeenCalledTimes(1)
+    getSkillNodeButton().focus()
+    await user.keyboard('{Enter}')
+    await user.keyboard(' ')
+    expect(defaultProps.onToggle).toHaveBeenCalledTimes(2)
   })
 
   // Tests both presence and click behavior — splitting would reduce diagnostic value
@@ -139,5 +137,99 @@ describe('SkillNode', () => {
 
     rerender(<SkillNode {...defaultProps} isExpanded={true} />)
     expect(getSkillNodeButton()).toHaveAttribute('aria-expanded', 'true')
+  })
+})
+
+// Keyboard and mouse behaviour of the card versus its action button. These use
+// user-event because the bug they pin lived in the browser's default action:
+// a keydown handler on the card cancelled the button's Enter/Space click.
+describe('SkillNode interaction', () => {
+  const props = {
+    level: mockLevel,
+    axisId: 'autonomy' as const,
+    color: '#4a7c59',
+    nodeState: 'frontier' as const,
+    isHighestClaimed: false,
+    isExpanded: true,
+    onToggle: vi.fn(),
+    onClaim: vi.fn(),
+    onUnclaim: vi.fn(),
+  }
+
+  afterEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it.each([
+    ['Enter', '{Enter}'],
+    ['Space', ' '],
+  ])('claims with %s on "This is me" without toggling the card', async (_, key) => {
+    const user = userEvent.setup()
+    render(<SkillNode {...props} />)
+    screen.getByRole('button', { name: /^This is me/ }).focus()
+    await user.keyboard(key)
+    expect(props.onClaim).toHaveBeenCalledWith('autonomy', 2)
+    expect(props.onToggle).not.toHaveBeenCalled()
+  })
+
+  it('steps back with Enter on "Step back one"', async () => {
+    const user = userEvent.setup()
+    render(<SkillNode {...props} nodeState="claimed" isHighestClaimed />)
+    screen.getByRole('button', { name: /^Step back one/ }).focus()
+    await user.keyboard('{Enter}')
+    expect(props.onUnclaim).toHaveBeenCalledWith('autonomy', 2)
+    expect(props.onToggle).not.toHaveBeenCalled()
+  })
+
+  it('names the action button after its level', () => {
+    render(<SkillNode {...props} />)
+    expect(
+      screen.getByRole('button', { name: 'This is me: Review Every Edit' }),
+    ).toBeInTheDocument()
+  })
+
+  it('keeps focus on the action button when a claim turns it into "Step back one"', async () => {
+    const user = userEvent.setup()
+    const { rerender } = render(<SkillNode {...props} />)
+    screen.getByRole('button', { name: /^This is me/ }).focus()
+    await user.keyboard('{Enter}')
+    rerender(<SkillNode {...props} nodeState="claimed" isHighestClaimed />)
+    expect(screen.getByRole('button', { name: /^Step back one/ })).toHaveFocus()
+  })
+
+  it('makes the details inert while the card is collapsed', () => {
+    const { container, rerender } = render(<SkillNode {...props} isExpanded={false} />)
+    const detail = container.querySelector('[data-detail]')
+    expect(detail).toHaveAttribute('inert')
+    rerender(<SkillNode {...props} isExpanded />)
+    expect(detail).not.toHaveAttribute('inert')
+  })
+
+  it('opens a collapsed card from a click on its preview text', () => {
+    render(<SkillNode {...props} isExpanded={false} />)
+    // The description also sits in the (inert) details; click the preview.
+    const previews = screen
+      .getAllByText(mockLevel.desc)
+      .filter((el) => !el.closest('[data-detail]'))
+    expect(previews).toHaveLength(1)
+    fireEvent.click(previews[0])
+    expect(props.onToggle).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps the card itself out of the tab order', () => {
+    const { container } = render(<SkillNode {...props} />)
+    expect(container.querySelector('[data-skill-name]')).toHaveAttribute('tabindex', '-1')
+  })
+
+  it('toggles once from a click on the header of a collapsed card', () => {
+    render(<SkillNode {...props} isExpanded={false} />)
+    fireEvent.click(getSkillNodeButton())
+    expect(props.onToggle).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not collapse an open card when its details are clicked', () => {
+    render(<SkillNode {...props} />)
+    fireEvent.click(screen.getByText('Human reviews every diff.'))
+    expect(props.onToggle).not.toHaveBeenCalled()
   })
 })

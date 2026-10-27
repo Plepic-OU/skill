@@ -28,7 +28,7 @@
 .success {
   background: var(--green-surface);
   color: var(--green-dark);
-  border: 1px solid var(--green-muted);
+  border: 1px solid var(--green-light);
 }
 
 .error {

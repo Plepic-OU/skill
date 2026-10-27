@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useId, useRef } from 'react'
 import { useClaimAnimation } from '../hooks/useClaimAnimation'
 import type { AxisId, Level, NodeState } from '../types/skill-tree'
 import styles from './SkillNode.module.css'
@@ -28,7 +28,8 @@ export default function SkillNode({
   onUnclaim,
   readonly,
 }: SkillNodeProps) {
-  const indicatorRef = useRef<HTMLDivElement>(null)
+  const indicatorRef = useRef<HTMLSpanElement>(null)
+  const detailId = useId()
   useClaimAnimation(indicatorRef, color, nodeState === 'claimed', styles.justClaimed)
 
   // On the visitor view there's no "you" to be here, so the owner-voiced
@@ -57,57 +58,67 @@ export default function SkillNode({
   }
   const ariaState = ariaStates[nodeState]
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      onToggle()
-    }
-  }
+  // The header is the only toggle and the action button is its sibling, not
+  // its child: a card that is itself a button swallowed the action button's
+  // Enter/Space. One action button whose label changes keeps keyboard focus in
+  // place when a claim turns "This is me" into "Step back one".
+  const stepsBack = nodeState === 'claimed' && isHighestClaimed
+  const showActionBtn = !readonly && (stepsBack || !isHighestClaimed)
+  const actionLabel = stepsBack ? 'Step back one' : 'This is me'
 
-  const handleActionClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    if (nodeState === 'claimed' && isHighestClaimed) {
+  const handleAction = () => {
+    if (stepsBack) {
       onUnclaim(axisId, level.level)
     } else {
       onClaim(axisId, level.level)
     }
   }
 
-  const showClaimBtn = !readonly && !isHighestClaimed
-  const showUnclaimBtn = !readonly && nodeState === 'claimed' && isHighestClaimed
+  const handleHeaderClick = (e: React.MouseEvent) => {
+    // A collapsed card also opens from a click anywhere on it (below); stop
+    // here so a header click does not toggle twice.
+    e.stopPropagation()
+    onToggle()
+  }
 
   return (
     <div
       className={`${styles.node} ${styles[nodeState]} ${isExpanded ? styles.expanded : ''}`}
-      tabIndex={0}
-      role="button"
-      aria-expanded={isExpanded}
-      aria-label={`Level ${level.level}: ${level.name} — ${ariaState}`}
       data-skill-name={level.name}
       data-level={level.level}
-      onClick={onToggle}
-      onKeyDown={handleKeyDown}
+      // Pointer convenience only; the header button is the keyboard route.
+      onClick={isExpanded ? undefined : onToggle}
+      // Not a tab stop, but a click anywhere still focuses the card as before,
+      // so QuestPath's :focus-within "active path" skin outlasts the hover.
+      tabIndex={-1}
     >
-      <div className={styles.nodeTop}>
-        <div className={styles.indicator} data-indicator ref={indicatorRef}>
+      <button
+        type="button"
+        className={styles.nodeTop}
+        aria-expanded={isExpanded}
+        aria-controls={detailId}
+        aria-label={`Level ${level.level}: ${level.name} — ${ariaState}`}
+        onClick={handleHeaderClick}
+      >
+        <span className={styles.indicator} data-indicator ref={indicatorRef}>
           <span className="material-symbols-rounded" aria-hidden="true">
             {level.levelIcon}
           </span>
-        </div>
-        <div className={styles.nodeText}>
-          <div className={styles.levelLabel}>{levelLabel}</div>
-          <div className={styles.nodeName}>{level.name}</div>
-        </div>
+        </span>
+        <span className={styles.nodeText}>
+          <span className={styles.levelLabel}>{levelLabel}</span>
+          <span className={styles.nodeName}>{level.name}</span>
+        </span>
         <span className={styles.expandArrow} aria-hidden="true">
           &#x25BC;
         </span>
-      </div>
+      </button>
 
       {(nodeState === 'claimed' || nodeState === 'frontier') && !isExpanded && (
         <div className={styles.descPreview}>{level.desc}</div>
       )}
 
-      <div className={styles.detail} data-detail>
+      <div id={detailId} className={styles.detail} data-detail inert={!isExpanded}>
         <div className={styles.descFull}>{level.desc}</div>
 
         {level.verification && (
@@ -139,17 +150,14 @@ export default function SkillNode({
           </>
         )}
 
-        {showClaimBtn && (
-          <button className={`${styles.actionBtn} ${styles.claimBtn}`} onClick={handleActionClick}>
-            This is me
-          </button>
-        )}
-        {showUnclaimBtn && (
+        {showActionBtn && (
           <button
-            className={`${styles.actionBtn} ${styles.unclaimBtn}`}
-            onClick={handleActionClick}
+            type="button"
+            className={`${styles.actionBtn} ${stepsBack ? styles.unclaimBtn : styles.claimBtn}`}
+            aria-label={`${actionLabel}: ${level.name}`}
+            onClick={handleAction}
           >
-            Step back one
+            {actionLabel}
           </button>
         )}
       </div>
