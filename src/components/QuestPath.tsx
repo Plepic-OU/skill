@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import type { Axis, AxisId, Level, NodeState } from '../types/skill-tree'
 import SkillNode from './SkillNode'
+import { scrollBehavior } from '../scrollBehavior'
 import styles from './QuestPath.module.css'
 
 // Sticky header (56px) + sticky PathNav (~50px) + a small breathing gap.
@@ -103,7 +104,7 @@ export default function QuestPath({
     }
 
     const targetY = Math.max(0, newTop - adjustment - HEADER_OFFSET)
-    window.scrollTo({ top: targetY, behavior: 'smooth' })
+    window.scrollTo({ top: targetY, behavior: scrollBehavior() })
   }
 
   const toggleNode = (level: number) => {

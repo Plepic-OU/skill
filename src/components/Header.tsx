@@ -10,6 +10,7 @@ import SignInModal from './SignInModal'
 import ConfirmDialog from './ConfirmDialog'
 import ShareButton, { copyLink } from './ShareButton'
 import type { SkillState, SyncStatus } from '../types/skill-tree'
+import { scrollBehavior } from '../scrollBehavior'
 import styles from './Header.module.css'
 
 interface HeaderProps {
@@ -25,7 +26,7 @@ interface LevelBadgeProps {
 function scrollToCrest() {
   const crest = document.getElementById('level-crest')
   if (!crest) return
-  crest.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  crest.scrollIntoView({ behavior: scrollBehavior(), block: 'start' })
   crest.focus({ preventScroll: true })
 }
 
@@ -168,13 +169,13 @@ export default function Header({ syncStatus = 'idle', mode = 'landing', state }:
     // since mobile browsers lack a scroll-thumb affordance. Desktop keeps Link nav.
     if (typeof window !== 'undefined' && window.innerWidth <= 560) {
       e.preventDefault()
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      window.scrollTo({ top: 0, behavior: scrollBehavior() })
       return
     }
     // On desktop, if we're already on the home route, also scroll up rather than no-op.
     if (location.pathname === '/') {
       e.preventDefault()
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      window.scrollTo({ top: 0, behavior: scrollBehavior() })
     }
   }
 

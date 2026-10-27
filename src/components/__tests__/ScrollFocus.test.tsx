@@ -51,4 +51,22 @@ describe('scroll jumps move focus to their target', () => {
     fireEvent.click(screen.getByRole('button', { name: /jump to class details/i }))
     expect(document.activeElement).toBe(screen.getByRole('region', { name: /your class/i }))
   })
+
+  it('jumps instead of smooth-scrolling for users who prefer reduced motion', () => {
+    vi.stubGlobal('matchMedia', (query: string) => ({
+      matches: query === '(prefers-reduced-motion: reduce)',
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    }))
+    render(
+      <MemoryRouter>
+        <Header mode="landing" state={STATE} />
+        <LevelCrest state={STATE} />
+      </MemoryRouter>,
+    )
+    fireEvent.click(screen.getByRole('button', { name: /jump to class details/i }))
+    expect(Element.prototype.scrollIntoView).toHaveBeenCalledWith(
+      expect.objectContaining({ behavior: 'auto' }),
+    )
+  })
 })

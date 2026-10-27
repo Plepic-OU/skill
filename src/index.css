@@ -209,6 +209,10 @@ body::after {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* The CDN design-system stylesheet sets smooth scrolling on html. */
+  html {
+    scroll-behavior: auto;
+  }
   .claim-particle,
   .claim-ripple,
   .claim-flash {
