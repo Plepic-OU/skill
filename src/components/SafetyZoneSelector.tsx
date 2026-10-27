@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { skillTreeData } from '../data/skill-trees'
 import type { SafetyZoneId } from '../types/skill-tree'
 import styles from './SafetyZoneSelector.module.css'
@@ -32,6 +33,17 @@ function getZoneStyle(
 // first viewport. Desktop keeps label and pills on one line.
 export default function SafetyZoneSelector({ selected, onSelect }: SafetyZoneSelectorProps) {
   const zones = skillTreeData.safety.zones
+  const buttons = useRef<(HTMLButtonElement | null)[]>([])
+
+  // Native radio behaviour: arrows move focus and selection together, wrapping.
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key]
+    if (!step) return
+    e.preventDefault()
+    const next = (index + step + ZONE_IDS.length) % ZONE_IDS.length
+    buttons.current[next]?.focus()
+    onSelect(ZONE_IDS[next])
+  }
 
   return (
     <section className={styles.stakes} aria-labelledby="stakes-heading">
@@ -42,16 +54,21 @@ export default function SafetyZoneSelector({ selected, onSelect }: SafetyZoneSel
         First, how costly is a mistake in the work you are rating yourself on?
       </p>
       <div className={styles.options} role="radiogroup" aria-label="Stakes selection">
-        {ZONE_IDS.map((id) => {
+        {ZONE_IDS.map((id, index) => {
           const zone = zones[id]
           const isActive = selected === id
           return (
             <button
               key={id}
+              ref={(el) => {
+                buttons.current[index] = el
+              }}
               className={styles.btn}
               role="radio"
               aria-checked={isActive}
+              tabIndex={isActive ? 0 : -1}
               onClick={() => onSelect(id)}
+              onKeyDown={(e) => handleKeyDown(e, index)}
               style={getZoneStyle(isActive, zone)}
             >
               <span className={`material-symbols-rounded ${styles.btnIcon}`} aria-hidden="true">
