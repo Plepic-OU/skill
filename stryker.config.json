@@ -6,6 +6,7 @@
   "coverageAnalysis": "all",
   "vitest": { "configFile": "vite.config.ts", "related": false, "dir": "src" },
   "reporters": ["clear-text", "html"],
+  "thresholds": { "high": 90, "low": 85, "break": 88 },
   "concurrency": 2,
   "ignorePatterns": [".claude", "coverage", "web", "infra", "docs", "e2e"]
 }
