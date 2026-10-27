@@ -50,7 +50,7 @@
   color: var(--green-brand);
 }
 .backToMain:focus-visible {
-  outline: 2px solid var(--green-vivid);
+  outline: 2px solid var(--green-brand);
   outline-offset: 2px;
 }
 
@@ -131,7 +131,7 @@
   transform: translateY(0.5px);
 }
 .levelBadge:focus-visible {
-  outline: 2px solid var(--green-vivid);
+  outline: 2px solid var(--green-brand);
   outline-offset: 2px;
 }
 
@@ -236,14 +236,14 @@
   opacity: 0.8;
 }
 .btnAssess:focus-visible {
-  outline: 2px solid var(--green-vivid);
+  outline: 2px solid var(--green-brand);
   outline-offset: 2px;
 }
 .btnLogin:hover {
   filter: brightness(0.92);
 }
 .btnLogin:focus-visible {
-  outline: 2px solid var(--green-vivid);
+  outline: 2px solid var(--green-brand);
   outline-offset: 2px;
 }
 
@@ -331,7 +331,7 @@
   opacity: 0.8;
 }
 .btnViewProfile:focus-visible {
-  outline: 2px solid var(--green-vivid);
+  outline: 2px solid var(--green-brand);
   outline-offset: 2px;
 }
 
@@ -354,7 +354,7 @@
   color: var(--ink);
 }
 .btnShare:focus-visible {
-  outline: 2px solid var(--green-vivid);
+  outline: 2px solid var(--green-brand);
   outline-offset: 2px;
 }
 .btnShareIcon {
@@ -378,7 +378,7 @@
   color: var(--ink);
 }
 .btnSignInSecondary:focus-visible {
-  outline: 2px solid var(--green-vivid);
+  outline: 2px solid var(--green-brand);
   outline-offset: 2px;
 }
 
@@ -398,7 +398,7 @@
   color: var(--ink);
 }
 .btnSignOut:focus-visible {
-  outline: 2px solid var(--green-vivid);
+  outline: 2px solid var(--green-brand);
   outline-offset: 2px;
 }
 

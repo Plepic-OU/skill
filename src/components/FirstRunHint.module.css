@@ -22,7 +22,7 @@
 .sub {
   font-family: var(--font-body);
   font-size: 0.78rem;
-  color: color-mix(in srgb, var(--text-3) 90%, transparent);
+  color: var(--text-3);
   line-height: 1.5;
   margin: 0;
 }
