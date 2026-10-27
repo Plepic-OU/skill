@@ -4,8 +4,8 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     match /users/{userId} {
-      // Anyone can view profiles (public read)
-      allow read: if true;
+      // Anyone can open a profile by its id; listing the collection is denied
+      allow get: if true;
 
       // Only the owner can create/update their own document, with schema validation
       allow create, update: if request.auth != null

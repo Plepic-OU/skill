@@ -71,7 +71,8 @@ export default function SignInModal({ open, onClose }: SignInModalProps) {
           Sign in
         </h2>
         <p id={subtitleId} className={styles.subtitle}>
-          Save your progress across devices. We only store your skill levels and display name.
+          Save your progress across devices. We store your display name, photo, skill levels, stakes
+          and the time of your last save. Anyone with your profile link can see them.
         </p>
         <div className={styles.buttons}>
           <button
