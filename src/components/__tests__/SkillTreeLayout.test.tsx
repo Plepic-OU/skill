@@ -102,3 +102,16 @@ describe('SkillTreeLayout crest placement', () => {
     expect(screen.getByRole('note')).toBeInTheDocument()
   })
 })
+
+describe('SkillTreeLayout icons', () => {
+  it('hides every icon glyph from screen readers', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <SkillTreeLayout headerMode="landing" state={DEFAULT_STATE} onSafetyZone={vi.fn()} />
+      </MemoryRouter>,
+    )
+    const icons = container.querySelectorAll('.material-symbols-rounded')
+    expect(icons.length).toBeGreaterThan(0)
+    icons.forEach((icon) => expect(icon.closest('[aria-hidden="true"]')).not.toBeNull())
+  })
+})

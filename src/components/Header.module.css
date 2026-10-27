@@ -284,6 +284,10 @@
   white-space: nowrap;
 }
 
+.syncStatus {
+  display: contents;
+}
+
 .syncBadge {
   display: inline-flex;
   align-items: center;

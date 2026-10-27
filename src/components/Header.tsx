@@ -63,25 +63,24 @@ interface OwnerControlsProps {
 function OwnerControls({ syncStatus, onSignOut }: OwnerControlsProps) {
   return (
     <>
-      {syncStatus === 'saved' && (
-        <span className={styles.syncBadge} aria-label="Progress saved">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-            <path
-              d="M3 7.5L5.5 10L11 4"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          Saved
-        </span>
-      )}
-      {syncStatus === 'syncing' && (
-        <span className={styles.syncBadge} aria-label="Saving...">
-          Saving...
-        </span>
-      )}
+      {/* Mounted while empty so changes inside it are announced. */}
+      <span className={styles.syncStatus} role="status">
+        {syncStatus === 'saved' && (
+          <span className={styles.syncBadge}>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path
+                d="M3 7.5L5.5 10L11 4"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            Saved
+          </span>
+        )}
+        {syncStatus === 'syncing' && <span className={styles.syncBadge}>Saving...</span>}
+      </span>
       <ShareButton />
       <button className={styles.btnSignOut} onClick={onSignOut}>
         Sign out
