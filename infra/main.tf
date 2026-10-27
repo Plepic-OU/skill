@@ -179,7 +179,8 @@ resource "google_iam_workload_identity_pool_provider" "github" {
     "attribute.repository" = "assertion.repository"
   }
 
-  attribute_condition = "assertion.repository == \"${var.github_repo}\""
+  # Only the preview workflows deploy to Cloud Run; tokens from any other workflow are rejected.
+  attribute_condition = "assertion.repository == \"${var.github_repo}\" && (assertion.workflow_ref.startsWith(\"${var.github_repo}/.github/workflows/preview-deploy.yml@\") || assertion.workflow_ref.startsWith(\"${var.github_repo}/.github/workflows/preview-cleanup.yml@\"))"
 
   oidc {
     issuer_uri = "https://token.actions.githubusercontent.com"

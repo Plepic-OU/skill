@@ -19,6 +19,7 @@
     "emulators": "./scripts/dev-emulators.sh",
     "test:e2e": "bddgen && playwright test",
     "test:e2e:emulator": "firebase emulators:exec 'pnpm test:e2e'",
+    "test:rules": "firebase emulators:exec --only firestore 'vitest run --config vitest.rules.config.ts'",
     "test:mutate": "if [ \"$SKILL_ENV\" != \"claude_web\" ]; then stryker run; else echo 'Skipped: mutation testing runs in CI, not in cloud'; fi",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.e2e.json --noEmit",
     "prepare": "husky",
@@ -34,6 +35,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@firebase/rules-unit-testing": "^5.0.2",
     "@playwright/test": "^1.59.1",
     "@stryker-mutator/core": "^9.6.0",
     "@stryker-mutator/vitest-runner": "^9.6.0",
