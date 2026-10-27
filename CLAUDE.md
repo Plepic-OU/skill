@@ -10,10 +10,10 @@ Gamified web app where developers self-assess agentic coding skills via an RPG-s
 
 - **Frontend:** React + React Router v7 + Vite + TypeScript SPA, deployed to GitHub Pages from `web/`
 - **Backend:** Firebase (Auth with Google, Firestore for user data) — no custom API
-- **Styling:** Plepic design system, canonical at [design-system.html](https://github.com/Plepic-OU/public-web/blob/main/design-system.html) + [css/styles.css](https://github.com/Plepic-OU/public-web/blob/main/css/styles.css) in `public-web`. Main color is green; orange used sparingly only, one per viewport.
+- **Styling:** Plepic design system, canonical at [css/styles.css](https://github.com/Plepic-OU/public-web/blob/main/css/styles.css) in `public-web`. Main color is green; orange used sparingly only, one per viewport.
   - **Colour and spacing tokens arrive from a CDN pin that cannot be advanced.** `index.html` loads `design-system.css` from public-web commit `1fbf2e0` (2026-04-03); that file was later folded into `css/styles.css` and deleted from `main`, so there is no newer commit to point at. Fixing this means choosing a distribution mechanism (vendor the tokens here with a CI diff against public-web's `:root`, or publish a tagged artifact from public-web), not bumping the pin.
   - **Fonts are already realigned** and no longer depend on that pin: Bitter / Hanken Grotesk / JetBrains Mono are self-hosted in `public/fonts/`, declared in `src/fonts.css`, with the three font tokens overridden in `src/index.css`. The files are byte-identical copies of public-web's subsets. Do not reintroduce Zilla Slab or Plus Jakarta Sans.
-- **Infra:** Terraform for Firebase provisioning; Firebase CLI for security rules/indexes. Before running Terraform: `export GOOGLE_OAUTH_ACCESS_TOKEN=$(gcloud auth print-access-token)`
+- **Infra:** Terraform for Firebase provisioning; security rules (`firestore.rules`) deploy through Terraform (`google_firebaserules_ruleset` + `google_firebaserules_release`), run `terraform apply` from `infra/`; `firestore.indexes.json` is empty and not managed by Terraform. Before running Terraform: `export GOOGLE_OAUTH_ACCESS_TOKEN=$(gcloud auth print-access-token)`
 - **Preview Environments:** Each PR gets a Cloud Run service (`preview-pr-{number}`) running SPA + Firebase emulators via nginx reverse proxy. See `docs/superpowers/specs/2026-04-16-preview-environments-design.md`
 - **Package manager:** pnpm (not npm)
 
@@ -48,11 +48,14 @@ Pre-push hook runs unit tests only (`pnpm test:run`); CI runs the E2E tests.
 - `src/data/skill-trees.json` — Static skill tree data (3 axes: autonomy, parallel execution, skill usage) with Material Symbols icons
 - `src/firebase.ts` — Firebase app init, emulator detection
 - `src/contexts/AuthContext.tsx` — Auth state context + `useAuth()` hook
-- `src/pages/` — Page components: LandingPage (unauthenticated), ProfilePage (owner/visitor)
-- `src/hooks/` — Custom hooks: useSkillState (shared claim/unclaim/animation/safety-zone logic)
-- `src/components/` — React components: Header, Hero, SafetyZoneSelector, SkillTree, QuestPath, SkillNode, CelebrationEffect, SignInModal, ConfirmDialog, Toast, ShareButton
+- `src/pages/` — Page components: LandingPage (unauthenticated), ProfilePage (owner/visitor), SharedResultPage
+- `src/hooks/` — Custom hooks: useSkillState (shared claim/unclaim/animation/safety-zone logic), useSyncState, useAuthActions, useClaimAnimation, useActiveAxis, useDialog, useOwnerRedirect, usePageViewTracking, usePublicProfile
+- `src/components/` — React components: Header, Hero, SafetyZoneSelector, SafetyZoneBadge, StakesSelector, SkillTree, SkillTreeLayout, QuestPath, PathNav, SkillNode, LevelCrest, CelebrationEffect, FirstRunHint, SignInModal, ConfirmDialog, Toast, ShareButton, TrainingCTA
+- `src/analytics.ts` — Google Analytics 4 setup and page-view tracking
+- `src/fonts.css` — Self-hosted font-face declarations
+- `public/` — Static assets: favicons, og-image, `fonts/` (self-hosted woff2 subsets)
 - `src/types/skill-tree.ts` — TypeScript interfaces for skill tree data and app state
-- `src/data/` — Data module (skill-trees.ts), state persistence (state.ts), auth helpers (auth.ts), Firestore sync (sync.ts)
+- `src/data/` — Data module (skill-trees.ts), state persistence (state.ts), auth helpers (auth.ts), Firestore sync (sync.ts), sharing (share.ts), profile (profile.ts), progression (progression.ts), links (links.ts), Firestore helpers (firestore-utils.ts)
 - `infra/` — Terraform config (google-beta provider, Firebase project + Firestore, GCS remote state, preview env infra)
 - `preview/` — Preview environment container (Dockerfile, nginx.conf, startup.sh, seed.mjs, firebase.json). Seeder uses firebase-admin with deterministic UIDs (`demo-alice`, `demo-bob`) so `/profile/demo-alice` is a stable preview link across deploys.
 - `e2e/` — Playwright + playwright-bdd E2E tests (Gherkin features + step definitions)
@@ -62,6 +65,8 @@ Pre-push hook runs unit tests only (`pnpm test:run`); CI runs the E2E tests.
 - `.claude/skills/` — Custom Claude Code skills (validate-design, brainstorming, impeccable design suite)
 - `.claude/settings.json` — Claude Code hooks (SessionStart for cloud dependency install)
 - `scripts/cloud-install.sh` — Cloud session dependency installer (pnpm + Playwright)
+- `scripts/dev-emulators.sh` — Starts the Firebase emulators (`pnpm emulators`)
+- `scripts/screenshot-visitor.mjs` — Mobile + desktop screenshots of `/profile/demo-alice` (needs emulators + dev server running)
 
 ## Architecture Decisions
 
