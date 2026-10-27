@@ -14,6 +14,9 @@ vi.mock('./contexts/AuthContext', () => ({
   useAuth: () => ({ user: null, loading: false }),
 }))
 
+const readPublicProfile = vi.hoisted(() => vi.fn())
+vi.mock('./data/profile', () => ({ readPublicProfile }))
+
 beforeEach(() => {
   localStorage.clear()
 })
@@ -48,5 +51,37 @@ describe('App', () => {
     // The axis breakdown inside the LevelCrest shows "1 / 6" for each axis at default state.
     const breakdownLevels = screen.getAllByText(`1 / ${autonomyLevels}`)
     expect(breakdownLevels).toHaveLength(3)
+  })
+
+  describe('skip link', () => {
+    function renderAt(path: string) {
+      render(
+        <MemoryRouter initialEntries={[path]}>
+          <App />
+        </MemoryRouter>,
+      )
+      const href = screen.getByRole('link', { name: /^skip to/i }).getAttribute('href') as string
+      return document.getElementById(href.slice(1))
+    }
+
+    it.each([
+      ['the landing page', '/'],
+      ['a result that is not found', '/shared/9-9-9-nope'],
+    ])('has a target on %s', (_name, path) => {
+      expect(renderAt(path)).not.toBeNull()
+    })
+
+    it('has a target while a profile loads', () => {
+      readPublicProfile.mockReturnValue(new Promise(() => {}))
+      expect(renderAt('/profile/someone')).not.toBeNull()
+    })
+
+    it('has a target on a profile that is not found', async () => {
+      readPublicProfile.mockRejectedValue(new Error('missing'))
+      renderAt('/profile/someone')
+      await screen.findByRole('heading', { name: 'Profile not found' })
+      const href = screen.getByRole('link', { name: /^skip to/i }).getAttribute('href') as string
+      expect(document.getElementById(href.slice(1))).not.toBeNull()
+    })
   })
 })
