@@ -13,6 +13,7 @@ interface QuestPathProps {
   onClaim: (axisId: AxisId, level: number) => void
   onUnclaim: (axisId: AxisId, level: number) => void
   readonly?: boolean
+  locked?: boolean
 }
 
 interface QuestPathNodeProps {
@@ -28,6 +29,7 @@ interface QuestPathNodeProps {
   onClaim: (axisId: AxisId, level: number) => void
   onUnclaim: (axisId: AxisId, level: number) => void
   readonly?: boolean
+  locked?: boolean
 }
 
 function QuestPathNode({
@@ -43,6 +45,7 @@ function QuestPathNode({
   onClaim,
   onUnclaim,
   readonly,
+  locked,
 }: QuestPathNodeProps) {
   return (
     <div className={styles.nodeWrapper}>
@@ -62,6 +65,7 @@ function QuestPathNode({
         onClaim={onClaim}
         onUnclaim={onUnclaim}
         readonly={readonly}
+        locked={locked}
       />
     </div>
   )
@@ -74,6 +78,7 @@ export default function QuestPath({
   onClaim,
   onUnclaim,
   readonly,
+  locked,
 }: QuestPathProps) {
   const [expandedLevel, setExpandedLevel] = useState<number | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -168,6 +173,7 @@ export default function QuestPath({
               onClaim={onClaim}
               onUnclaim={onUnclaim}
               readonly={readonly}
+              locked={locked}
             />
           )
         })}
