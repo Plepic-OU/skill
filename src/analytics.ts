@@ -4,7 +4,7 @@
 const MEASUREMENT_ID = 'G-65CCEV6RS9'
 const PRODUCTION_HOSTNAME = 'skill.plepic.com'
 const DO_NOT_TRACK_ENABLED = '1'
-const PROFILE_ROUTE = /^\/profile\/[^/]+$/
+const PROFILE_ROUTE = /^\/profile\/[^/]+\/?$/
 const SHARED_ROUTE = /^\/shared\/[^/]+$/
 
 type GtagArgs =
@@ -72,13 +72,24 @@ export function initAnalytics(): void {
   window.gtag('config', MEASUREMENT_ID, { send_page_view: false })
 }
 
+/**
+ * GA4 otherwise reads the raw URL off window.location and document.referrer,
+ * so every event sets both explicitly, with usernames normalised out.
+ */
+function locationParams(path: string): Record<string, string> {
+  const { origin } = window.location
+  const params: Record<string, string> = { page_location: `${origin}${normalizePath(path)}` }
+  if (document.referrer.startsWith(`${origin}/`)) {
+    params.page_referrer = `${origin}${normalizePath(new URL(document.referrer).pathname)}`
+  }
+  return params
+}
+
 export function trackPageView(path: string): void {
   if (!enabled) return
-  const normalized = normalizePath(path)
   window.gtag?.('event', 'page_view', {
-    page_path: normalized,
-    // Set explicitly: GA4 otherwise reads the raw URL off window.location.
-    page_location: `${window.location.origin}${normalized}`,
+    page_path: normalizePath(path),
+    ...locationParams(path),
   })
 }
 
@@ -88,12 +99,20 @@ export type CtaPlacement = 'landing' | 'owner' | 'visitor' | 'shared'
 /** A click on one of the three conversation routes under the crest. */
 export function trackCtaClick(route: CtaRoute, placement: CtaPlacement): void {
   if (!enabled) return
-  window.gtag?.('event', 'cta_click', { cta_route: route, cta_placement: placement })
+  window.gtag?.('event', 'cta_click', {
+    cta_route: route,
+    cta_placement: placement,
+    ...locationParams(window.location.pathname),
+  })
 }
 
 export type ShareMethod = 'result_link' | 'profile_link'
 
 export function trackShare(method: ShareMethod): void {
   if (!enabled) return
-  window.gtag?.('event', 'share', { method, content_type: 'skill_tree' })
+  window.gtag?.('event', 'share', {
+    method,
+    content_type: 'skill_tree',
+    ...locationParams(window.location.pathname),
+  })
 }

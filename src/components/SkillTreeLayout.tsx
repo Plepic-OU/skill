@@ -18,6 +18,8 @@ interface SkillTreeLayoutProps {
   onUnclaim?: (axisId: AxisId, level: number) => void
   onSafetyZone?: (zone: SafetyZoneId) => void
   readOnly?: boolean
+  /** Claims and stakes wait for the sign-in sync. */
+  locked?: boolean
   /** A levels-only result from a share link: nobody's name, nobody's profile. */
   shared?: boolean
   visitorName?: string
@@ -37,6 +39,7 @@ export default function SkillTreeLayout({
   onUnclaim,
   onSafetyZone,
   readOnly,
+  locked,
   shared,
   visitorName,
   visitorAvatarUrl,
@@ -57,7 +60,7 @@ export default function SkillTreeLayout({
     readOnly || !onSafetyZone ? (
       <SafetyZoneBadge zoneId={state.safetyZone} />
     ) : (
-      <SafetyZoneSelector selected={state.safetyZone} onSelect={onSafetyZone} />
+      <SafetyZoneSelector selected={state.safetyZone} onSelect={onSafetyZone} disabled={locked} />
     )
   // Whisper-light first-run nudge above the tree, visible until the first
   // claim. Picking the stakes first must not dismiss it: no level has been
@@ -82,7 +85,13 @@ export default function SkillTreeLayout({
       {stakes}
       {showFirstRunHint && <FirstRunHint />}
       <PathNav state={state} />
-      <SkillTree state={state} onClaim={onClaim} onUnclaim={onUnclaim} readonly={readOnly} />
+      <SkillTree
+        state={state}
+        onClaim={onClaim}
+        onUnclaim={onUnclaim}
+        readonly={readOnly}
+        locked={locked}
+      />
       {!readOnly && crest}
       {showCta && <TrainingCTA variant={ctaVariant} state={state} />}
     </>

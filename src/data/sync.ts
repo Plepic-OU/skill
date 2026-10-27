@@ -2,7 +2,7 @@ import { doc, getDoc, setDoc, serverTimestamp, type FieldValue } from 'firebase/
 import type { User } from 'firebase/auth'
 import { db } from '../firebase'
 import type { SkillLevels, SkillState } from '../types/skill-tree'
-import { loadState } from './state'
+import { isValidState, loadState } from './state'
 
 interface FirestoreUserWrite {
   updatedAt: FieldValue
@@ -19,14 +19,12 @@ export interface FirestoreUserRead {
   skills: SkillLevels
 }
 
-export function hasValidSkills(data: Record<string, unknown>): boolean {
+export function hasValidProfile(data: Record<string, unknown>): boolean {
   const skills = data.skills
   return (
     typeof skills === 'object' &&
     skills !== null &&
-    typeof (skills as Record<string, unknown>).autonomy === 'number' &&
-    typeof (skills as Record<string, unknown>).parallelExecution === 'number' &&
-    typeof (skills as Record<string, unknown>).skillUsage === 'number'
+    isValidState({ ...skills, safetyZone: data.safetyZone })
   )
 }
 
@@ -56,7 +54,7 @@ export async function syncOnLogin(user: User): Promise<SkillState> {
   const snapshot = await getDoc(userRef)
 
   const raw = snapshot.exists() ? (snapshot.data() as Record<string, unknown>) : null
-  if (raw && hasValidSkills(raw)) {
+  if (raw && hasValidProfile(raw)) {
     const data = raw as unknown as FirestoreUserRead
     // Update profile info (may have changed since last login)
     await setDoc(
