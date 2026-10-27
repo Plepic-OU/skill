@@ -8,6 +8,7 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
   testDir,
+  forbidOnly: !!process.env.CI,
   workers: 1,
   timeout: 15_000,
   expect: { timeout: 5_000 },
