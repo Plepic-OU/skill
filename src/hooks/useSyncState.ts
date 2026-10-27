@@ -16,6 +16,7 @@ type SyncPhase =
   | { phase: 'initial' }
   | { phase: 'syncing'; userId: string }
   | { phase: 'ready'; userId: string }
+  | { phase: 'failed'; userId: string }
 
 /** Core login-sync logic, extracted for clarity. */
 async function performLoginSync(
@@ -36,11 +37,11 @@ async function performLoginSync(
     setSyncStatus('idle')
   } catch (err) {
     if (staleRef.current) return
-    console.error('Sync failed, keeping local state:', err)
-    sync.current = { phase: 'ready', userId: user.uid }
-    skipNextWrite.current = false
+    console.error('Sync failed, writes stay blocked:', err)
+    // Not 'ready': a write now would overwrite the saved profile with unsynced local state.
+    sync.current = { phase: 'failed', userId: user.uid }
     setSyncStatus('error')
-    setSyncError('Couldn\u2019t sync \u2014 working offline')
+    setSyncError('Couldn\u2019t sync. Reload to try again.')
   }
 }
 

@@ -1,7 +1,7 @@
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '../firebase'
 import type { SkillState } from '../types/skill-tree'
-import { hasValidSkills, toSkillState, type FirestoreUserRead } from './sync'
+import { hasValidProfile, toSkillState, type FirestoreUserRead } from './sync'
 
 // Stryker disable BlockStatement: catch returns false but undefined (falsy) has same effect in callers
 function isHttpUrl(url: string): boolean {
@@ -24,7 +24,7 @@ export async function readPublicProfile(userId: string): Promise<PublicProfile |
   const snapshot = await getDoc(userRef)
   if (!snapshot.exists()) return null
   const raw = snapshot.data() as Record<string, unknown>
-  if (!hasValidSkills(raw)) return null
+  if (!hasValidProfile(raw)) return null
   const data = raw as unknown as FirestoreUserRead
   return {
     ...toSkillState(data),

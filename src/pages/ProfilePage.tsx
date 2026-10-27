@@ -26,6 +26,7 @@ function OwnerProfile() {
     <SkillTreeLayout
       headerMode="owner"
       syncStatus={syncStatus}
+      locked={syncStatus === 'syncing'}
       state={state}
       onClaim={handleClaim}
       onUnclaim={handleUnclaim}

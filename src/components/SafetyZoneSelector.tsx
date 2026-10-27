@@ -8,6 +8,7 @@ const ZONE_IDS: SafetyZoneId[] = ['sandbox', 'normal', 'hardcore', 'impossible']
 interface SafetyZoneSelectorProps {
   selected: SafetyZoneId
   onSelect: (zone: SafetyZoneId) => void
+  disabled?: boolean
 }
 
 function getZoneStyle(
@@ -31,7 +32,11 @@ function getZoneStyle(
 // One compact row above the paths: the stakes are the context an answer is
 // given in, so they come first, but they must not push the tree out of the
 // first viewport. Desktop keeps label and pills on one line.
-export default function SafetyZoneSelector({ selected, onSelect }: SafetyZoneSelectorProps) {
+export default function SafetyZoneSelector({
+  selected,
+  onSelect,
+  disabled,
+}: SafetyZoneSelectorProps) {
   const zones = skillTreeData.safety.zones
   const buttons = useRef<(HTMLButtonElement | null)[]>([])
 
@@ -69,6 +74,7 @@ export default function SafetyZoneSelector({ selected, onSelect }: SafetyZoneSel
               tabIndex={isActive ? 0 : -1}
               onClick={() => onSelect(id)}
               onKeyDown={(e) => handleKeyDown(e, index)}
+              disabled={disabled}
               style={getZoneStyle(isActive, zone)}
             >
               <span className={`material-symbols-rounded ${styles.btnIcon}`} aria-hidden="true">
