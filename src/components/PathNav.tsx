@@ -45,6 +45,7 @@ export default function PathNav({ state }: PathNavProps) {
     const section = document.querySelector<HTMLElement>(`[data-quest-path="${axisId}"]`)
     if (!section) return
     section.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    section.focus({ preventScroll: true })
   }, [])
 
   if (isDesktop) return null

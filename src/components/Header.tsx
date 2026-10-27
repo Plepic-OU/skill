@@ -26,6 +26,7 @@ function scrollToCrest() {
   const crest = document.getElementById('level-crest')
   if (!crest) return
   crest.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  crest.focus({ preventScroll: true })
 }
 
 function LevelBadge({ state }: LevelBadgeProps) {

@@ -121,6 +121,7 @@ export default function LevelCrest({ state, visitor }: LevelCrestProps) {
   return (
     <section
       id="level-crest"
+      tabIndex={-1}
       className={classes}
       aria-label={visitor ? `Class: ${classInfo.name}` : `Your class: ${classInfo.name}`}
     >
