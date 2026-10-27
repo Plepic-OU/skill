@@ -426,7 +426,11 @@ export default function Header({ syncStatus = 'idle', mode = 'landing', state }:
       <ConfirmDialog
         open={isConfirmOpen}
         title="Sign out?"
-        message="Your progress is saved and will be here when you return."
+        message={
+          syncStatus === 'error'
+            ? 'Your latest change was not saved. It will be lost if you sign out.'
+            : 'Your progress is saved and will be here when you return.'
+        }
         confirmLabel="Sign out"
         onConfirm={confirmSignOut}
         onCancel={closeConfirm}
