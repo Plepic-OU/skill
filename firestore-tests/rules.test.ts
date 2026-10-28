@@ -5,7 +5,15 @@ import {
   initializeTestEnvironment,
   type RulesTestEnvironment,
 } from '@firebase/rules-unit-testing'
-import { collection, deleteDoc, doc, getDoc, getDocs, setDoc } from 'firebase/firestore'
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  serverTimestamp,
+  setDoc,
+} from 'firebase/firestore'
 
 const profile = {
   displayName: 'Alice',
@@ -53,17 +61,45 @@ describe('users', () => {
   })
 
   it('denies unknown keys', async () => {
-    await assertFails(setDoc(doc(alice(), 'users/alice'), { ...profile, email: 'alice@example.com' }))
+    await assertFails(
+      setDoc(doc(alice(), 'users/alice'), { ...profile, email: 'alice@example.com' }),
+    )
   })
 
   it('denies a level above 6', async () => {
     await assertFails(
-      setDoc(doc(alice(), 'users/alice'), { ...profile, skills: { ...profile.skills, autonomy: 7 } }),
+      setDoc(doc(alice(), 'users/alice'), {
+        ...profile,
+        skills: { ...profile.skills, autonomy: 7 },
+      }),
     )
   })
 
   it('denies an unknown stakes value', async () => {
     await assertFails(setDoc(doc(alice(), 'users/alice'), { ...profile, safetyZone: 'chill' }))
+  })
+
+  it('accepts a Google profile photo and a server timestamp', async () => {
+    await assertSucceeds(
+      setDoc(doc(alice(), 'users/alice'), {
+        ...profile,
+        avatarUrl: 'https://lh3.googleusercontent.com/a/photo=s96-c',
+        updatedAt: serverTimestamp(),
+      }),
+    )
+  })
+
+  it('denies an avatar from any other host', async () => {
+    await assertFails(
+      setDoc(doc(alice(), 'users/alice'), {
+        ...profile,
+        avatarUrl: 'https://example.com/pixel.png',
+      }),
+    )
+  })
+
+  it('denies an updatedAt that is not a timestamp', async () => {
+    await assertFails(setDoc(doc(alice(), 'users/alice'), { ...profile, updatedAt: 'yesterday' }))
   })
 
   it('denies deleting a profile', async () => {
