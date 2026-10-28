@@ -15,7 +15,9 @@ service cloud.firestore {
         && request.resource.data.displayName.size() <= 200
         && request.resource.data.avatarUrl is string
         && request.resource.data.avatarUrl.size() <= 2000
-        && (request.resource.data.avatarUrl == '' || request.resource.data.avatarUrl.matches('^https://.*'))
+        // Google serves profile photos from lh<N>.googleusercontent.com; any other host could track profile viewers
+        && (request.resource.data.avatarUrl == '' || request.resource.data.avatarUrl.matches('^https://lh[0-9]+[.]googleusercontent[.]com/.*'))
+        && (!('updatedAt' in request.resource.data) || request.resource.data.updatedAt is timestamp)
         && request.resource.data.safetyZone in ['sandbox', 'normal', 'hardcore', 'impossible']
         && request.resource.data.skills is map
         && request.resource.data.skills.keys().hasOnly(['autonomy', 'parallelExecution', 'skillUsage'])
