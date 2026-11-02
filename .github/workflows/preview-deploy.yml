@@ -90,8 +90,10 @@ jobs:
       - name: Build Docker image
         run: |
           IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/previews/${{ env.SERVICE_NAME }}:${{ env.IMAGE_TAG }}"
+          # No provenance attestation: one manifest per push, so the delete step below keeps exactly one version.
           docker build \
             -f preview/Dockerfile \
+            --provenance=false \
             --build-arg VITE_EMULATOR_HOST=${{ steps.get-url.outputs.emulator_host }} \
             -t "$IMAGE" \
             .
@@ -108,6 +110,17 @@ jobs:
             --project ${{ secrets.GCP_PROJECT_ID }} \
             ${{ env.CLOUD_RUN_FLAGS }} \
             --port 8080
+
+      # Artifact Registry's free tier is 0.5 GiB and one preview image is ~0.37 GiB.
+      - name: Delete superseded preview images
+        run: |
+          PACKAGE="${IMAGE%:*}"
+          CURRENT=$(gcloud artifacts docker images describe "$IMAGE" --format 'value(image_summary.digest)')
+          for DIGEST in $(gcloud artifacts docker images list "$PACKAGE" --format 'value(version)'); do
+            if [ "$DIGEST" != "$CURRENT" ]; then
+              gcloud artifacts docker images delete "$PACKAGE@$DIGEST" --delete-tags --quiet
+            fi
+          done
 
       - name: Post PR comment
         uses: actions/github-script@v7

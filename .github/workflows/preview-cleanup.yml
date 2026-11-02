@@ -35,11 +35,13 @@ jobs:
             --quiet \
           || echo "Service ${{ env.SERVICE_NAME }} not found (already deleted)"
 
-      - name: Untag Artifact Registry image
+      - name: Delete preview images
         run: |
-          IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/previews/${{ env.SERVICE_NAME }}:pr-${{ github.event.pull_request.number }}"
-          gcloud artifacts docker tags delete "$IMAGE" --quiet --project ${{ secrets.GCP_PROJECT_ID }} \
-          || echo "Image tag not found (already removed)"
+          gcloud artifacts packages delete ${{ env.SERVICE_NAME }} \
+            --repository previews \
+            --location ${{ env.REGION }} \
+            --project ${{ secrets.GCP_PROJECT_ID }} \
+            --quiet
 
       - name: Update PR comment
         uses: actions/github-script@v7
