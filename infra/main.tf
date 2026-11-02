@@ -221,12 +221,13 @@ resource "google_project_iam_member" "preview_ci_run_admin" {
   member   = "serviceAccount:${google_service_account.preview_ci.email}"
 }
 
-resource "google_artifact_registry_repository_iam_member" "preview_ci_ar_writer" {
+# repoAdmin, not writer: the preview workflows delete images, and writer has no delete permission.
+resource "google_artifact_registry_repository_iam_member" "preview_ci_ar_repo_admin" {
   provider   = google-beta
   project    = var.project_id
   location   = google_artifact_registry_repository.previews.location
   repository = google_artifact_registry_repository.previews.repository_id
-  role       = "roles/artifactregistry.writer"
+  role       = "roles/artifactregistry.repoAdmin"
   member     = "serviceAccount:${google_service_account.preview_ci.email}"
 }
 
